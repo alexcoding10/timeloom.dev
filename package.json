@@ -1,5 +1,5 @@
 {
-  "name": "my-turborepo",
+  "name": "timeloom.dev",
   "private": true,
   "scripts": {
     "build": "turbo run build",
