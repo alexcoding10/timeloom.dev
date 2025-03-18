@@ -1,0 +1,284 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum NotificationsStatus {
+  PENDING    // Notificación no leída
+  READ       // Notificación leída
+  DISMISSED  // Notificación descartada
+}
+
+enum IncidentType {
+  LATE_ARRIVAL     // Llegar tarde
+  EARLY_LEAVE      // Salida anticipada
+  OVERTIME_EXCEEDED // Exceder tiempo de trabajo
+  NO_CLOCK_IN      // Sin registro de entrada
+  NO_CLOCK_OUT     // Sin registro de salida
+  ABSENCE          // Falta al trabajo
+}
+
+enum IncidentStatus {
+  PENDING      // Pendiente de revisión
+  REVIEWED     // Revisada pero sin resolución
+  RESOLVED     // Resuelta
+  DISMISSED    // Descartada (no válida)
+}
+
+enum TypeContract {
+  FIXED      // Contrato fijo
+  TEMPORARY  // Contrato temporal
+  FREELANCE  // Contrato freelance
+}
+
+
+enum PayrollStatus {
+  PENDING  // Nómina pendiente de pago
+  PAID     // Nómina pagada
+}
+
+
+
+model Company{
+  id Int @id @default(autoincrement())
+  name String @unique
+  email String @unique
+  address String?
+  zipCode String?
+  logoUrl String?
+  coordinates Json?
+  users User[]  // relacion one-to-many
+  offices Office[] // relacion one-to-many
+  shifts Shift[] // relacion one-to-many
+  pauseTypes PauseType[]
+  rol Rol[]
+  team Team[]
+}    
+
+model Office{
+  id Int @id @default(autoincrement())
+  companyId Int // fk
+  company Company @relation(fields: [companyId],references: [id]) //relacion con company
+  name String
+  email String @unique
+  address String?
+  zipCode String? 
+  state String?
+  coordinates Json?
+  users User[] //relation one-to-many
+
+}
+
+//Turnos
+model Shift{
+  id Int @id @default(autoincrement())
+  companyId Int // fk_company
+  company Company @relation(fields: [companyId],references: [id]) //relacion con company
+  name String
+  start_time DateTime
+  end_time DateTime
+  description String?
+  users User[] // relation N:N con usuarios
+}
+
+//Dias que debe trabajar el usuario por semana
+model WorkWeek{
+  id Int @id @default(autoincrement())
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+  year Int
+  week Int
+  days Int 
+}
+
+model User{
+  id Int @id @default(autoincrement())
+  companyId Int // fk_company
+  company Company @relation(fields: [companyId],references: [id]) //relacion con company
+  officeId Int // fk_office
+  office Office @relation(fields: [officeId],references: [id]) // relacion con office
+  name String
+  email String @unique
+  password String 
+  address String?
+  zipCode String? 
+  imgProfile String?
+  shifts Shift[] // relation N:N con turnos
+  workWeeks WorkWeek[] // relation N:1 con dias que debe trabajar
+  incidents Indicent[] // relation N:1 con incidentes
+  timeEntries TimeEntry[] // relation N:1 con tiempos de entrada
+  notificationsReceived Notification[] @relation("UserNotifications")  // Notificaciones recibidas
+  notificationsSent     Notification[] @relation("ResponsibleNotifications") // Notificaciones enviadas
+  globalRol GlobalRol[]
+  teamRol TeamRolUser[]
+  contract Contract[]
+  payroll Payroll[]
+  workHour WorkHour[]
+
+}
+
+//incidentes del usuario
+model Indicent{
+  id Int @id @default(autoincrement())
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+  type IncidentType
+  description String
+  date DateTime @default(now())
+  status IncidentStatus @default(PENDING)  // Estado de la incidencia
+}
+
+//tiempo de entrada al tabajo 
+model TimeEntry{
+  id Int @id @default(autoincrement())
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+  clockIn DateTime @default(now())
+  clockOut DateTime?
+  duration Int?
+  coordinates Json?
+  timebreaks TimeBreak[] // relacion 1:N con pausas
+}
+
+//tiempo de pausa
+model TimeBreak{
+  id Int @id @default(autoincrement())
+  timeEntryId Int
+  timeEntry TimeEntry @relation(fields: [timeEntryId],references: [id])
+  clockIn DateTime @default(now())
+  clockOut DateTime?
+  duration Int?
+  coordinates Json?
+  pauseTypeId Int
+  pauseType   PauseType   @relation(fields: [pauseTypeId], references: [id])
+  description String
+}
+
+//para que el administrador pueda crear una pausa determinada, 
+//pero esta deberia de estar
+//relacionada tambien con la empresa
+model PauseType {
+  id          Int         @id @default(autoincrement())
+  name        String      // Nombre del tipo de pausa (por ejemplo, "Break" o "Meeting")
+  description String?     // Descripción opcional del tipo de pausa
+  pauses      TimeBreak[]     // Relación con las pausas
+  companyId   Int         // Relación con la empresa
+  company     Company     @relation(fields: [companyId], references: [id]) // Relación con la tabla `Company`
+}
+
+//Notificaciones 
+model Notification {
+  id            Int     @id @default(autoincrement())
+  userId        Int
+  user          User    @relation(fields: [userId], references: [id], name: "UserNotifications")  //Usuario que recibe la notificación
+  responsableId Int
+  responsable   User    @relation(fields: [responsableId], references: [id], name: "ResponsibleNotifications")  //Responsable de la notificación
+  message String
+  createAt DateTime @default(now())
+  readAt DateTime?
+  status NotificationsStatus @default(PENDING)
+}
+
+//Roles
+model Rol{
+  id            Int     @id @default(autoincrement())
+  name String
+  description String?
+  globalRoles GlobalRol[] // Relación con los roles globales
+  teamRol TeamRolUser[]
+  companyId Int? // fk
+  company Company? @relation(fields: [companyId],references: [id]) // relacion con company
+}
+
+model GlobalRol {
+  id      Int     @id @default(autoincrement())
+  userId  Int
+  user    User    @relation(fields: [userId], references: [id]) // Relación con el usuario
+  rolId   Int
+  rol     Rol     @relation(fields: [rolId], references: [id])  // Relación con el rol
+}
+
+model TeamRolUser {
+  id      Int     @id @default(autoincrement())
+  userId  Int
+  user    User    @relation(fields: [userId], references: [id]) // Relación con el usuario
+  rolId   Int
+  rol     Rol     @relation(fields: [rolId], references: [id])  // Relación con el rol
+  teamId Int
+  team Team @relation(fields: [teamId],references: [id])
+}
+
+model Team {
+  id      Int     @id @default(autoincrement())
+  name String
+  description String
+  teamRol TeamRolUser[]
+  companyId Int? // fk
+  company Company? @relation(fields: [companyId],references: [id]) // relacion con company
+}
+
+model Contract {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+  startDate   DateTime
+  endDate     DateTime?
+  grossSalary      Float
+  salaryHours Float
+  deductions  Deduction[]
+  bonuses     Bonus[]
+  job String
+  type TypeContract
+}
+
+model Deduction {
+  id          Int       @id @default(autoincrement())
+  name        String
+  percentage  Float
+  description String?
+  contract Contract[]
+}
+
+model Bonus {
+  id          Int       @id @default(autoincrement())
+  name        String
+  percentage  Float
+  description String?
+  contract Contract[]
+}
+
+model Payroll {
+  id              Int       @id @default(autoincrement())    // Identificador único
+  userId          Int                                            // ID del usuario (empleado)
+  user            User       @relation(fields: [userId], references: [id]) // Relación con el usuario
+  periodStartDate DateTime                                       // Fecha de inicio del período de nómina
+  periodEndDate   DateTime                                       // Fecha de fin del período de nómina
+  paymentDate     DateTime                                       // Fecha de pago de la nómina
+  grossSalary     Float                                           // Salario bruto calculado
+  deductions      Float                                           // Total de deducciones
+  bonuses         Float                                           // Total de bonificaciones
+  netSalary       Float                                           // Salario neto
+  status          PayrollStatus @default(PENDING)                 // Estado de la nómina (pendiente, pagado, etc.)
+}
+
+model WorkHour {
+  id             Int       @id @default(autoincrement())
+  userId         Int
+  user           User      @relation(fields: [userId], references: [id])
+  month          Int
+  year           Int
+  regularHours   Float
+  overtimeHours  Float
+}
+
+

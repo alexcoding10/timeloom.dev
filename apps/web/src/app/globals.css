@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+@import "tailwindcss";
+
+
+@theme inline {
+
+  --color-secondary-300 : #84BBF0;
+  --color-secondary-400 : #4798E9;
+  --color-secondary-500 : #1976D2;
+  --color-secondary-600: #13589D;
+  --color-secondary-700: #0C3B69;
+
+  --color-neutral-500: #fff;
+  --color-neutral-600: #DFDFDF;
+  --color-neutral-dark-400: #5b5b5b;
+  --color-neutral-dark-500: #44444;
+  --color-neutral-600: #080808;
+
+  --color-accent-primary-600: #FAB509;
+
+
+
+
+  --color-success-600:#5AD367;
+
+  --color-info-500:#7FBFFF;
+  
+  --color-warning-500:#FED97D;
+
+  --font-roboto: "Roboto", sans-serif; 
+  --font-montserrat: "Montserrat", sans-serif; 
+
+  --drop-shadow-content: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+
+
+body {
+color: #444444;
+font-family: "Roboto";
+}
