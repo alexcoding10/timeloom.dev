@@ -1,0 +1,1 @@
+export const URL_BACKEND_DEV = 'http://localhost:3001'
