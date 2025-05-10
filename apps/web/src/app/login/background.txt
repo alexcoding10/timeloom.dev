@@ -1,0 +1,33 @@
+      
+      por si lo utilizo
+      
+      {/* Imagen con efecto 3D */}
+      <motion.img
+        src="starts.svg"
+        className="absolute -top-70 -z-30 w-full h-full object-cover"
+        alt="Stars"
+        style={{ perspective: 1000 }}
+        animate={{
+          rotateX: mousePos.y,
+          rotateY: mousePos.x,
+        }}
+        transition={{ type: "spring", stiffness: 50, damping: 10 }}
+      />
+
+      {/* Fondo */}
+      <motion.img
+        src="nubes-01.png"
+        className="absolute bottom-0 -z-20 h-5/6 w-full"
+        alt=""
+        initial={{ y: 20 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 1.5, repeat: Infinity, repeatType: "reverse" }}
+      />
+      <motion.img
+        src="backgroun-01.svg"
+        className="absolute top-0 -z-40 w-full h-full object-cover"
+        alt=""
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 2 }}
+      />

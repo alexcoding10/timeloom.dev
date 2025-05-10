@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="128.67596mm"
+   height="128.67596mm"
+   viewBox="0 0 128.67596 128.67596"
+   version="1.1"
+   id="svg1"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <linearGradient
+       xlink:href="#linearGradient6"
+       id="linearGradient8"
+       x1="49.37986"
+       y1="111.19478"
+       x2="178.05582"
+       y2="111.19478"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       id="linearGradient6">
+      <stop
+         style="stop-color:#0c3b69;stop-opacity:1;"
+         offset="0"
+         id="stop7" />
+      <stop
+         style="stop-color:#1e82c6;stop-opacity:0.91052634;"
+         offset="0.49401197"
+         id="stop9" />
+      <stop
+         style="stop-color:#33d1c0;stop-opacity:1;"
+         offset="1"
+         id="stop8" />
+    </linearGradient>
+  </defs>
+  <g
+     id="layer1"
+     transform="translate(-0.37722192,-0.33900226)">
+    <a
+       id="a21"
+       transform="translate(-49.002638,-46.517794)">
+      <circle
+         style="display:inline;fill:url(#linearGradient8);fill-opacity:1;stroke-width:0.264583"
+         id="path1"
+         cx="113.71784"
+         cy="111.19478"
+         r="64.337982" />
+      <path
+         id="text12"
+         style="font-weight:bold;font-size:3.175px;font-family:'Devanagari MT';-inkscape-font-specification:'Devanagari MT Bold';white-space:pre;inline-size:31.8727;display:inline;fill:#ffffff;stroke-width:0.264583"
+         d="m 101.34677,103.66005 v 0.44649 h 0.72088 v 0.59718 l 0.18125,0.0839 0.41406,-0.46708 v -0.21403 h 0.18974 l 0.26185,-0.29539 a 0.33427182,0.25718627 0 0 1 0.21408,-0.1078 0.33427182,0.25718627 0 0 1 0.0552,-0.002 v -0.0409 z m 1.31619,1.57339 -0.0397,0.0448 a 0.33430525,0.25721199 0 0 1 -0.44852,0.0754 l -0.10709,-0.0496 v 0.66437 h 0.59531 z"
+         transform="matrix(29.915773,0,0,38.882325,-2949.0797,-3963.2078)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#text9"
+         id="use11"
+         style="display:inline" />
+      <path
+         style="display:inline;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+         d="M 84.137499,107.42084 112.7125,124.61875 143.93333,78.845833"
+         id="path19" />
+      <g
+         id="g21"
+         style="display:inline" />
+    </a>
+  </g>
+</svg>

@@ -1,11 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
+@import "leaflet/dist/leaflet.css";
 @import "tailwindcss";
 
 
 @theme inline {
 
+  --color-primary-400 : #FB8D8D;
+
+  --color-secondary-200 : #EFF7FF;
   --color-secondary-300 : #84BBF0;
   --color-secondary-400 : #4798E9;
   --color-secondary-500 : #1976D2;
@@ -19,14 +23,17 @@
   --color-neutral-600: #080808;
 
   --color-accent-primary-600: #FAB509;
+  
+  --color-accent-tertiary-400: #44D4C7;
+  
+  --color-light-blue-200: #CFE7FF;
 
-
-
-
+  --color-success-400:#B5ECBB;
   --color-success-600:#5AD367;
 
   --color-info-500:#7FBFFF;
   
+  --color-warning-400:#FEE39E;
   --color-warning-500:#FED97D;
 
   --font-roboto: "Roboto", sans-serif; 

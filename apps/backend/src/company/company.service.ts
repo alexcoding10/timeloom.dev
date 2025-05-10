@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Company, Office, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateCompanyDto } from './dto/CreateCompanyDto';
+import { CreateCompanyDto, CreateCompanyDtoWithUser } from './dto/CreateCompanyDto';
 import { CreateOfficeDto } from './dto/CreateOfficeDto';
 
 @Injectable()
 export class CompanyService {
+
   constructor(private readonly prismaService: PrismaService) {}
 
   async createCompany(companyData: CreateCompanyDto) {
@@ -25,6 +26,20 @@ export class CompanyService {
       },
     });
   }
+
+  async createCompanyWithUser(company: CreateCompanyDtoWithUser) {
+
+    const {userId,...companyData} = company;
+    //crear la company
+    const newCompany = await this.createCompany(companyData);
+    //actualizar la company del usuario a la nueva company
+    await this.prismaService.user.update({
+      where: { id: userId },
+      data: { companyId: newCompany.id },
+    });
+    //devolver la company
+    return newCompany;
+}
 
   async createCompanyWithOffice(
     companyData: CreateCompanyDto,
@@ -49,13 +64,15 @@ export class CompanyService {
     if (!companyDefault) {
       const result = await this.createCompanyWithOffice(
         {
-            name: 'companyDefault', email: 'companyDefault@default.com',
+            name: 'companyDefault', 
+            email: 'companyDefault@default.com',
             address: '',
             zipCode: '',
             logoUrl: ''
         },
         {
-            name: 'officeDefault', email: 'officeDefault@default.com',
+            name: 'officeDefault', 
+            email: 'officeDefault@default.com',
             address: '',
             zipCode: '',
             state: ''

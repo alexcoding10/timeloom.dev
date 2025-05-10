@@ -63,6 +63,8 @@ model Company{
   pauseTypes PauseType[]
   rol Rol[]
   team Team[]
+  Deduction Deduction[]
+  Bonus Bonus[]
 }    
 
 model Office{
@@ -203,19 +205,20 @@ model Rol{
 model GlobalRol {
   id      Int     @id @default(autoincrement())
   userId  Int
-  user    User    @relation(fields: [userId], references: [id]) // Relación con el usuario
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade) // Agregar onDelete: Cascade aquí
   rolId   Int
-  rol     Rol     @relation(fields: [rolId], references: [id])  // Relación con el rol
+  rol     Rol     @relation(fields: [rolId], references: [id])
 }
+
 
 model TeamRolUser {
   id      Int     @id @default(autoincrement())
   userId  Int
-  user    User    @relation(fields: [userId], references: [id]) // Relación con el usuario
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   rolId   Int
-  rol     Rol     @relation(fields: [rolId], references: [id])  // Relación con el rol
-  teamId Int
-  team Team @relation(fields: [teamId],references: [id])
+  rol     Rol     @relation(fields: [rolId], references: [id])
+  teamId  Int
+  team    Team    @relation(fields: [teamId], references: [id])
 }
 
 model Team {
@@ -233,8 +236,9 @@ model Contract {
   user        User      @relation(fields: [userId], references: [id])
   startDate   DateTime
   endDate     DateTime?
-  grossSalary      Float
+  grossSalary Float
   salaryHours Float
+  hoursForWeek Float
   deductions  Deduction[]
   bonuses     Bonus[]
   job String
@@ -247,6 +251,9 @@ model Deduction {
   percentage  Float
   description String?
   contract Contract[]
+
+  companyId   Int?          // FK opcional
+  company     Company?      @relation(fields: [companyId], references: [id], onDelete: Cascade)
 }
 
 model Bonus {
@@ -255,12 +262,16 @@ model Bonus {
   percentage  Float
   description String?
   contract Contract[]
+
+  companyId   Int?          // FK opcional
+  company     Company?      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
 }
 
 model Payroll {
   id              Int       @id @default(autoincrement())    // Identificador único
   userId          Int                                            // ID del usuario (empleado)
-  user            User       @relation(fields: [userId], references: [id]) // Relación con el usuario
+  user            User       @relation(fields: [userId], references: [id],onDelete: Cascade) // Relación con el usuario
   periodStartDate DateTime                                       // Fecha de inicio del período de nómina
   periodEndDate   DateTime                                       // Fecha de fin del período de nómina
   paymentDate     DateTime                                       // Fecha de pago de la nómina
@@ -274,7 +285,7 @@ model Payroll {
 model WorkHour {
   id             Int       @id @default(autoincrement())
   userId         Int
-  user           User      @relation(fields: [userId], references: [id])
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   month          Int
   year           Int
   regularHours   Float

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "../context/AuthContext";
+import { NavProvider } from "@/context/NavContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,10 +26,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
+      <head>
+        <link rel="icon" href="/logoTimeLoomsm.svg" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <AuthProvider>
+          <NavProvider>{children}</NavProvider>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { HeadingXL, TextBase } from "./Typography";
 import { URL_BACKEND_DEV } from "@/utils/config";
+import { registerSchema } from "@/schema/validator.schema";
 
 interface Props {
   registerToggle: () => void;
@@ -21,12 +22,14 @@ type TypeError =
   | "globalError";
 
 export default function RegisterForm(props: Props) {
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
+ 
 
   const [error, setError] = useState({
     name: { value: false, text: "" },
@@ -49,38 +52,49 @@ export default function RegisterForm(props: Props) {
     }));
   };
 
+  const handleDefaultRegisterForm = () => {
+    setFormData({
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    });
+    handlerDafaultErrors();
+  };
+
+  const handlerDafaultErrors = () => ({
+    name: { value: false, text: "" },
+    email: { value: false, text: "" },
+    password: { value: false, text: "" },
+    confirmPassword: { value: false, text: "" },
+    globalError: { value: false, text: "" },
+  });
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const validateForm = () => {
-    let validate = true;
+    handlerDafaultErrors(); //limpio los errores
+    const result = registerSchema.safeParse(formData);
 
-    // Validar el nombre, debe tener entre 3 y 25 caracteres
-    const nameLength = formData.name.length;
-    if (nameLength < 3 || nameLength > 25) {
-      handlerSetError("name", {
-        value: true,
-        text: "El nombre debe tener entre 3 y 25 caracteres",
-      });
-      validate = false;
-    } else {
-      handlerSetError("name"); // Limpia posibles errores
+    if (!result.success) {
+      const errors = result.error.format();
+
+      (["name", "email", "password", "confirmPassword"] as const).forEach(
+        (key) => {
+          if (errors[key]?._errors?.length) {
+            handlerSetError(key, {
+              value: true,
+              text: errors[key]._errors[0], // Tomamos el primer error
+            });
+          }
+        }
+      );
+      return false;
     }
 
-    //Todo validar un poco mas las pssword para asegurar que sean mas seguras
-    // Validar que las contraseñas sean iguales
-    if (formData.password !== formData.confirmPassword) {
-      handlerSetError("confirmPassword", {
-        value: true,
-        text: "Las contraseñas no son iguales",
-      });
-      validate = false;
-    } else {
-      handlerSetError("confirmPassword"); // Limpia posibles errores
-    }
-
-    return validate;
+    return true;
   };
 
   const handlerRequest = async () => {
@@ -91,7 +105,7 @@ export default function RegisterForm(props: Props) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(dataToSend ),
+      body: JSON.stringify(dataToSend),
     })
       .then((response) => {
         if (!response.ok) {
@@ -102,25 +116,21 @@ export default function RegisterForm(props: Props) {
       })
       .then((data) => {
         console.log(data);
-        if(!data.success){
+        if (!data.success) {
           //setear error
-          handlerSetError('globalError',{value:true,text:data.message})
+          handlerSetError("globalError", { value: true, text: data.message });
         }
-        //abre login 
-        props.registerToggle()
-        props.loginToggle()
+        //abre login
+        props.registerToggle();
+        props.loginToggle();
 
-        handlerSetError('globalError') // limpia errores
-        handlerSetError('confirmPassword') // limpia errores
-        handlerSetError('password') // limpia errores
-        handlerSetError('email') // limpia errores
-        handlerSetError('name') // limpia errores
+        handlerDafaultErrors(); //limpio los errores
         setFormData({
           name: "",
           email: "",
           password: "",
           confirmPassword: "",
-        }) //limpia el formulario
+        }); //limpia el formulario
       })
       .catch((error) => {
         handlerSetError("globalError", { value: true, text: error.message });
@@ -176,15 +186,24 @@ export default function RegisterForm(props: Props) {
 
         {/* Correo Electrónico */}
         <div>
-          <label className="text-gray-600 font-medium">Correo Electrónico</label>
+          <label className="text-gray-600 font-medium">
+            Correo Electrónico
+          </label>
           <input
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className={`w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+              error.email.value
+                ? "border-red-400 ring-red-400 focus:border-red-400 focus:ring-red-400 text-red-700"
+                : ""
+            }`}
             required
           />
+          {error.email.value && (
+            <p className="text-red-400">{error.email.text}</p>
+          )}
         </div>
 
         {/* Contraseña */}
@@ -202,11 +221,16 @@ export default function RegisterForm(props: Props) {
             }`}
             required
           />
+          {error.password.value && (
+            <p className="text-red-400">{error.password.text}</p>
+          )}
         </div>
 
         {/* Confirmar Contraseña */}
         <div>
-          <label className="text-gray-600 font-medium">Confirmar Contraseña</label>
+          <label className="text-gray-600 font-medium">
+            Confirmar Contraseña
+          </label>
           <input
             type="password"
             name="confirmPassword"
@@ -246,6 +270,7 @@ export default function RegisterForm(props: Props) {
         <a
           onClick={() => {
             props.registerToggle();
+            handleDefaultRegisterForm();
             props.loginToggle();
           }}
           className="text-blue-600 hover:underline"

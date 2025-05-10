@@ -21,3 +21,8 @@ export class CreateCompanyDto {
     @IsObject()
     coordinates?: Record<string, any>; // ✅ Mejor opción para JSON
 }
+
+export class CreateCompanyDtoWithUser extends CreateCompanyDto {
+    userId: number;
+}
+    

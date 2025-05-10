@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="69.79583mm"
+   height="89.75441mm"
+   viewBox="0 0 69.79583 89.75441"
+   version="1.1"
+   id="svg1"
+   inkscape:export-filename="logoTimeLoomsm.svg"
+   inkscape:export-xdpi="23.687408"
+   inkscape:export-ydpi="23.687408"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:export-bgcolor="#ffffff00">
+    <inkscape:page
+       x="0"
+       y="0"
+       width="69.79583"
+       height="89.75441"
+       id="page2"
+       margin="0"
+       bleed="0" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-30.134859,-20.81816)">
+    <a
+       id="a21"
+       transform="translate(-49.002638,-46.517794)">
+      <path
+         id="text12"
+         style="font-weight:bold;font-size:3.175px;font-family:'Devanagari MT';-inkscape-font-specification:'Devanagari MT Bold';white-space:pre;inline-size:31.8727;display:inline;fill:#ffffff;stroke-width:0.264583"
+         d="m 101.34677,103.66005 v 0.44649 h 0.72088 v 0.59718 l 0.18125,0.0839 0.41406,-0.46708 v -0.21403 h 0.18974 l 0.26185,-0.29539 a 0.33427182,0.25718627 0 0 1 0.21408,-0.1078 0.33427182,0.25718627 0 0 1 0.0552,-0.002 v -0.0409 z m 1.31619,1.57339 -0.0397,0.0448 a 0.33430525,0.25721199 0 0 1 -0.44852,0.0754 l -0.10709,-0.0496 v 0.66437 h 0.59531 z"
+         transform="matrix(29.915773,0,0,38.882325,-2949.0797,-3963.2078)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#text9"
+         id="use11"
+         style="display:none" />
+      <path
+         style="display:inline;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+         d="M 84.137499,107.42084 112.7125,124.61875 143.93333,78.845833"
+         id="path19" />
+    </a>
+  </g>
+</svg>
