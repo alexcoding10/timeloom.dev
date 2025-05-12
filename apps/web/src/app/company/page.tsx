@@ -34,6 +34,7 @@ export default function Company() {
     <LayoutWithNav>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {/**Balance de horas y pagos de la empresa */}
+        {/** Sincronizacion del server */}
         <Balances/> {/*Hay que conectarlo con base de datos */}
         {/**Deducciones y crear deducciones */}
         <Deductions/>
