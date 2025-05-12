@@ -1,15 +1,13 @@
 'use client'
 
 import { useAuth } from "@/hooks/useAuth";
-import useGetUsersByCompany from "@/hooks/useGetUsersByCompany";
-import React, { createContext, useState, useEffect, ReactNode } from "react";
-
+import React, { createContext, ReactNode } from "react";
 
 // Define los tipos para el estado de autenticación
 interface AuthState {
   user: any;  // Ajusta el tipo de `user` según lo que devuelva `useAuth()`
   loading: boolean;
-  fetchUser: () => Promise<void>
+  fetchUser: () => Promise<void>;
 }
 
 // Crea el contexto de autenticación
@@ -20,21 +18,10 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const { user, loading,fetchUser } = useAuth(); // Supongo que useAuth retorna un `user` y `loading`
-  const [authState, setAuthState] = useState<AuthState>({ user, loading, fetchUser});
-  //const {} = useGetUsersByCompany(user.companyId)
-
-
-
-  useEffect(() => {
-    // Cada vez que los datos de user o loading cambien
-    setAuthState({ user, loading ,fetchUser});
-
-  }, [user, loading]);
-
+  const { user, loading, fetchUser } = useAuth(); // Supongo que useAuth retorna un `user` y `loading`
 
   return (
-    <AuthContext.Provider value={authState}> 
+    <AuthContext.Provider value={{ user, loading, fetchUser }}>
       {children}
     </AuthContext.Provider>
   );

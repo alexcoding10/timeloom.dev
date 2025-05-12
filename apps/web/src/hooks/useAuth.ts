@@ -2,7 +2,7 @@ import { URL_BACKEND_DEV } from "@/utils/config";
 import { useEffect, useState } from "react";
 
 export const useAuth = () => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 

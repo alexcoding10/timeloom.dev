@@ -22,7 +22,7 @@ function ControlUser() {
       <Container>
         {/* Titulo */}
         <div className="text-start w-full py-5 px-10 flex justify-between items-center">
-          <div className="font-montserrat text-xl font-semibold">
+          <div className="font-montserrat md:text-xl font-semibold">
             {!openCreateUser ? (
               <p>Todos los usuarios</p>
             ):(

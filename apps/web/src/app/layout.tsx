@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "../context/AuthContext";
 import { NavProvider } from "@/context/NavContext";
+import 'rsuite/dist/rsuite-no-reset.min.css';
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

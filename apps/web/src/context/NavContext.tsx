@@ -1,6 +1,5 @@
 'use client';
 
-import useGetUsersByCompany from "@/hooks/useGetUsersByCompany";
 import React, { createContext, useState, useContext, ReactNode } from "react";
 
 // Define tipos del contexto

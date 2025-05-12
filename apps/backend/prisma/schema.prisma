@@ -47,6 +47,11 @@ enum PayrollStatus {
   PAID     // Nómina pagada
 }
 
+enum TypeDeduction {
+  FIXED
+  TEMPORARY
+  ALL
+}
 
 
 model Company{
@@ -239,6 +244,7 @@ model Contract {
   grossSalary Float
   salaryHours Float
   hoursForWeek Float
+  irpf_percentage Float? //ya que va gestionado en cada usuario
   deductions  Deduction[]
   bonuses     Bonus[]
   job String
@@ -250,6 +256,7 @@ model Deduction {
   name        String
   percentage  Float
   description String?
+  type TypeDeduction?
   contract Contract[]
 
   companyId   Int?          // FK opcional

@@ -22,19 +22,36 @@
   --color-neutral-dark-500: #44444;
   --color-neutral-600: #080808;
 
-  --color-accent-primary-600: #FAB509;
+  --color-accent-primary-400: #FDE096;
+  --color-accent-primary-500: #FBC02D;
+  --color-accent-primary-600: #FBC02D;
   
+  --color-accent-secundary-400: #FFAD59;
+  --color-accent-secundary-500: #F57C00;
+  --color-accent-secundary-600: #F57C00;
+
   --color-accent-tertiary-400: #44D4C7;
+  --color-accent-tertiary-500: #26A69A;
+  --color-accent-tertiary-600: #186860;
   
   --color-light-blue-200: #CFE7FF;
 
   --color-success-400:#B5ECBB;
+  --color-success-500:#7CDC86;
   --color-success-600:#5AD367;
+  --color-success-700:#289533;
 
+  --color-info-400:#9FCFFF;
   --color-info-500:#7FBFFF;
+  --color-info-600:#208FFF;
+
+  --color-error-400:#FFA4A4;
+  --color-error-500:#FF9797;
+  --color-error-600:#FF6464;
   
   --color-warning-400:#FEE39E;
   --color-warning-500:#FED97D;
+  --color-warning-600:#FECB4E;
 
   --font-roboto: "Roboto", sans-serif; 
   --font-montserrat: "Montserrat", sans-serif; 
