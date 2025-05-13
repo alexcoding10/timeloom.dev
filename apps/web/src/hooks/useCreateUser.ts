@@ -4,6 +4,7 @@ import { useGetDeductions } from "./useGetDeductions"
 import { useRol } from "./useRol"
 import { FormCreateUser, FormOptionInputCreateUser } from "@/types/user"
 import { capitalize } from "@/utils/utils"
+import { number } from "zod"
 
 
 const formSchema: FormCreateUser[] = [
@@ -51,6 +52,15 @@ const formSchema: FormCreateUser[] = [
         title: "Contrato",
         inputs: [
             {
+                name: "job",
+                label: 'Puesto de trabajo',
+                type: 'text',
+                min: "5",
+                max: "25",
+                hidden: false,
+                required: true,
+            },
+            {
                 name: "type",
                 label: "Tipo de contrato",
                 type: "select",
@@ -74,15 +84,7 @@ const formSchema: FormCreateUser[] = [
                         hidden: false,
                     },
                 ],
-            }, {
-                name: "job",
-                label: 'Puesto de trabajo',
-                type: 'text',
-                min: "5",
-                max: "25",
-                hidden: false,
-                required: true,
-            },
+            }, 
             {
                 name: "startDate",
                 label: "Fecha de comienzo",
@@ -109,13 +111,22 @@ const formSchema: FormCreateUser[] = [
             },
             {
                 name: "salaryHours",
-                label: "Salario por horas",
+                label: "Salario por horas (€)",
                 type: "number",
                 steps: "0.01",
                 min: "1",
                 max: "",
                 hidden: false,
                 required: true,
+            },
+            {
+                name:'irpf_percentage',
+                label:'Retención de IRPF (%)',
+                type:'number',
+                min:'0.1',
+                max:'100',
+                hidden:false,
+                required:true
             },
             {
                 name: "bonuses",
@@ -155,14 +166,14 @@ export const useCreateUser = () => {
 
     const [formState, setFormState] = useState<FormCreateUser[]>(formSchema)
 
-    const handlerHiddenInput = (sectionTitle: string, inputLabel: string, value?: boolean) => {
+    const handlerHiddenInput = (table: string, inputName: string, value?: boolean) => {
         setFormState((prev) => {
             return prev.map((section) => {
-                if (section.title === sectionTitle) {
+                if (section.table === table) {
                     return {
                         ...section,
                         inputs: section.inputs.map((input) => {
-                            if (input.label === inputLabel) {
+                            if (input.name === inputName) {
                                 return {
                                     ...input,
                                     hidden: value !== undefined ? value : !input.hidden,

@@ -6,9 +6,17 @@ import makeAnimated from "react-select/animated";
 import type { FormCreateUser } from "@/types/user";
 import { useCreateUser } from "@/hooks/useCreateUser";
 import Loading from "@/components/Loading";
+import { set } from "zod";
 
 export default function FormCreateUser() {
-  const { register, handleSubmit, control, watch, setValue, formState: { errors } } = useForm({mode: "onChange"});
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm({ mode: "onChange" });
   const {
     formState: formSchema,
     loading: loadingFormSchema,
@@ -44,26 +52,29 @@ export default function FormCreateUser() {
     }
   }, [nombre, autoCompletedEmail]);
 
-
   useEffect(() => {
     switch (tipoContrato?.value) {
       case "FIXED":
-        handlerHiddenInput("Contrato", "Fecha fin", true);
-        handlerHiddenInput("Contrato", "Bonificaciones por contrato", false);
-        handlerHiddenInput("Contrato", "Deducciones estándar", false);
+        handlerHiddenInput("Contract", "startDate", true);
+        handlerHiddenInput("Contract", "bonuses", false);
+        handlerHiddenInput("Contract", "deductions", false);
+        handlerHiddenInput("Contract", "irpf_percentage", false);
         setValue("Contract.endDate", "");
         mapFormOptions("Fijos");
         break;
       case "TEMPORARY":
-        handlerHiddenInput("Contrato", "Fecha fin", false);
-        handlerHiddenInput("Contrato", "Bonificaciones por contrato", false);
-        handlerHiddenInput("Contrato", "Deducciones estándar", false);
+        handlerHiddenInput("Contract", "endDate", false);
+        handlerHiddenInput("Contract", "bonuses", false);
+        handlerHiddenInput("Contract", "deductions", false);
+        handlerHiddenInput("Contract", "irpf_percentage", false);
         mapFormOptions("Temporeros");
         break;
       case "FREELANCE":
-        handlerHiddenInput("Contrato", "Fecha fin", false);
-        handlerHiddenInput("Contrato", "Bonificaciones por contrato", true);
-        handlerHiddenInput("Contrato", "Deducciones estándar", true);
+        handlerHiddenInput("Contract", "endDate", false);
+        handlerHiddenInput("Contract", "bonuses", true);
+        handlerHiddenInput("Contract", "deductions", true);
+        handlerHiddenInput("Contract", "irpf_percentage", true);
+        setValue("Contact.irpf_percentage", 0);
         setValue("Contract.bonuses", []);
         setValue("Contract.deductions", []);
         break;
@@ -149,17 +160,18 @@ export default function FormCreateUser() {
                         render={({ field }) => (
                           <Select
                             {...field}
-
                             inputId={inputId}
                             isMulti={input.multiple}
-                            options={
-                              input.option?.filter((opt) => !opt.hidden) //filtar por lo que no estan ocultos
-                                .map((opt) => ({
-                                  value: opt.id,
-                                  label: opt.name,
-                                }))}
+                            options={input.option
+                              ?.filter((opt) => !opt.hidden) //filtar por lo que no estan ocultos
+                              .map((opt) => ({
+                                value: opt.id,
+                                label: opt.name,
+                              }))}
                             placeholder="Seleccionar"
-                            noOptionsMessage={() => "No hay opciones disponibles"}
+                            noOptionsMessage={() =>
+                              "No hay opciones disponibles"
+                            }
                             closeMenuOnSelect={!input.multiple}
                             components={makeAnimated()}
                             className="basic-multi-select"
@@ -173,9 +185,13 @@ export default function FormCreateUser() {
                               }),
                             }}
                             defaultValue={
-                              (input.name === "type") &&
-                              input.option && input.option.length > 0
-                                ? { value: input.option[0].id, label: input.option[0].name }
+                              input.name === "type" &&
+                              input.option &&
+                              input.option.length > 0
+                                ? {
+                                    value: input.option[0].id,
+                                    label: input.option[0].name,
+                                  }
                                 : null
                             }
                           />
@@ -188,25 +204,39 @@ export default function FormCreateUser() {
                           type={input.type}
                           step={input.steps}
                           max={input.max}
-                          min={input.name === "endDate" ? formattedMinEndDate : input.min}
+                          min={
+                            input.name === "endDate"
+                              ? formattedMinEndDate
+                              : input.min
+                          }
                           disabled={input.name === "endDate" && !startDate}
                           {...register(inputName, {
-                            required: input?.required && "Este campo es obligatorio",
-                            min: input.min ? {
-                              value: parseFloat(input.min),
-                              message: `Debe ser al menos ${input.min}`,
-                            } : undefined,
-                            max: input.max ? {
-                              value: parseFloat(input.max),
-                              message: `No debe superar ${input.max}`,
-                            } : undefined,
+                            required:
+                              input?.required && "Este campo es obligatorio",
+                            min: input.min
+                              ? {
+                                  value: parseFloat(input.min),
+                                  message: `Debe ser al menos ${input.min}`,
+                                }
+                              : undefined,
+                            max: input.max
+                              ? {
+                                  value: parseFloat(input.max),
+                                  message: `No debe superar ${input.max}`,
+                                }
+                              : undefined,
                           })}
-                          
                           className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary-400"
                         />
-                        {(errors as any)?.[section.table ]?.[input.name]?.message && (
+                        {input.name === "password" && autoGeneredPassword && (
+                          <p className="text-sm ml-3 text-zinc-500">{`${watch("User.password")}`}</p>
+                        )}
+                        {(errors as any)?.[section.table]?.[input.name]
+                          ?.message && (
                           <p className="text-red-500 text-sm mt-1">
-                            {(errors as any)?.[section.table ]?.[input.name]?.message?.toString()}
+                            {(errors as any)?.[section.table]?.[
+                              input.name
+                            ]?.message?.toString()}
                           </p>
                         )}
                       </div>

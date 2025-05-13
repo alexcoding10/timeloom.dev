@@ -2,7 +2,7 @@
 
 import { useAuthContext } from "@/context/AuthContext";
 import { URL_BACKEND_DEV } from "@/utils/config";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { FaClock } from "react-icons/fa";
 import {
   BsFillPersonFill,
