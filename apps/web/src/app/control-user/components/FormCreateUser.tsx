@@ -3,210 +3,82 @@ import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
-
-type FormOption = {
-  id: number | string;
-  name: string;
-  desc?: string;
-};
-
-type FormInput = {
-  label: string;
-  type: string;
-  multiple?: boolean;
-  steps?: string;
-  max?: string;
-  min?: string;
-  option?: FormOption[];
-};
-
-type FormCreateUser = {
-  title: string;
-  inputs: FormInput[];
-};
-
-const formSchema: FormCreateUser[] = [
-  {
-    title: "Datos personales",
-    inputs: [
-      {
-        label: "Nombre",
-        type: "text",
-      },
-      {
-        label: "Email",
-        type: "email",
-      },
-      {
-        label: "Contraseña",
-        type: "password",
-      },
-      {
-        label: "Rol",
-        type: "select",
-        multiple: false,
-        option: [
-          {
-            id: 1,
-            name: "Administrador",
-            desc: "Acceso completo a todas las funcionalidades de la aplicación. Puede gestionar usuarios, equipos, horarios, permisos, configuraciones generales y ver todos los registros y reportes.",
-          },
-          {
-            id: 2,
-            name: "Supervisor",
-            desc: "Acceso para gestionar registros de trabajo y aprobar horarios. Puede revisar y modificar las entradas de tiempo de los usuarios, pero no puede modificar configuraciones globales o gestionar roles.",
-          },
-          {
-            id: 4,
-            name: "Recurso Humanos",
-            desc: "Acceso a la gestión de usuarios, nómina, vacaciones y otros aspectos relacionados con el personal. No tiene acceso a configuraciones globales de la aplicación, pero puede gestionar los registros de trabajo para generar informes de nómina y ausencias.",
-          },
-          {
-            id: 3,
-            name: "Trabajador",
-            desc: "Acceso básico a la aplicación. Solo puede registrar su tiempo (hora de entrada, hora de salida) y ver su propio historial de registros. No tiene acceso para modificar los horarios de otros usuarios o cambiar configuraciones.",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    title: "Contrato",
-    inputs: [
-      {
-        label: "Tipo de contrato",
-        type: "select",
-        multiple: false,
-        option: [
-          {
-            id: "FIXED",
-            name: "Fijo",
-          },
-          {
-            id: "TEMPORARY",
-            name: "Temporal",
-          },
-          {
-            id: "FREELANCE",
-            name: "Freelance",
-          },
-        ],
-      },{
-        label:'Puesto de trabajo',
-        type:'text'
-      },
-      {
-        label: "Fecha de comienzo",
-        type: "date",
-      },
-      {
-        label: "Fecha fin",
-        type: "date",
-      },
-      {
-        label: "Horas por semana",
-        type: "number",
-        steps: "0.01",
-        min: "1",
-        max: "45",
-      },
-      {
-        label: "Salario por horas",
-        type: "number",
-        steps: "0.01",
-        min: "1",
-        max: "",
-      },
-      {
-        label: "Bonificaciones por contrato",
-        type: "select",
-        multiple: true,
-        option: [
-          {
-            id: "FIXED_BONUS",
-            name: "Bonificación por permanencia",
-          },
-          {
-            id: "PRODUCTIVITY",
-            name: "Bonificación por productividad",
-          },
-          {
-            id: "SENIORITY",
-            name: "Bonificación por antigüedad",
-          },
-        ],
-      },
-      {
-        label: "Deducciones estándar",
-        type: "select",
-        multiple: true,
-        option: [
-          {
-            id: "INSS",
-            name: "Cotización a la seguridad social (INSS)",
-          },
-          {
-            id: "IRPF",
-            name: "Impuesto sobre la renta (IRPF)",
-          },
-          {
-            id: "PENSION",
-            name: "Aportación a fondo de pensión",
-          },
-        ],
-      },
-    ],
-  },
-];
+import type { FormCreateUser } from "@/types/user";
+import { useCreateUser } from "@/hooks/useCreateUser";
+import Loading from "@/components/Loading";
 
 export default function FormCreateUser() {
-  const { register, handleSubmit, control, watch, setValue } = useForm();
-  const [hiddenDateEnd, setHiddenDateEnd] = useState(false);
+  const { register, handleSubmit, control, watch, setValue, formState: { errors } } = useForm({mode: "onChange"});
+  const {
+    formState: formSchema,
+    loading: loadingFormSchema,
+    handlerHiddenInput,
+    mapFormOptions,
+  } = useCreateUser();
+
   const [autoCompletedEmail, setAutoCompletedEmail] = useState(true);
   const [autoGeneredPassword, setGeneredPassword] = useState(false);
 
-  const nombre = watch("datos_personales.nombre");
-  const tipoContrato = watch("contrato.tipo_de_contrato");
+  const nombre = watch("User.name");
+  const tipoContrato = watch("Contract.type");
+  const startDate = watch("Contract.startDate");
+  const minEndDate = startDate
+    ? new Date(new Date(startDate).getTime() + 24 * 60 * 60 * 1000) // +1 día
+    : null;
+  const formattedMinEndDate = minEndDate
+    ? minEndDate.toISOString().split("T")[0]
+    : undefined;
+
   const onSubmit = (data: any) => {
     console.log(data);
   };
 
-  const formatInputName = (sectionTitle: string, label: string) =>
-    `${sectionTitle}`.toLowerCase().replace(/\s+/g, "_") +
-    "." +
-    label.toLowerCase().replace(/\s+/g, "_");
-
   useEffect(() => {
-    if (nombre) {
+    if (nombre && autoCompletedEmail) {
       const palabras = nombre.trim().split(/\s+/);
-
-      if (palabras.length != 0 && autoCompletedEmail) {
-        const partes = palabras.map((p: string) =>
-          p.substring(0, 3).toLowerCase()
-        );
-        const correo = partes.join("") + "@gmail.com";
-        setValue("datos_personales.email", correo);
-      }
+      const partes = palabras.map((p: string) =>
+        p.substring(0, 3).toLowerCase()
+      );
+      const correo = partes.join("") + "@gmail.com";
+      setValue("User.email", correo);
     }
-  }, [nombre]);
+  }, [nombre, autoCompletedEmail]);
+
 
   useEffect(() => {
-    if (tipoContrato?.value === "FIXED") {
-      setHiddenDateEnd(true);
-      setValue("contrato.fecha_fin", "");
-    } else {
-      setHiddenDateEnd(false);
+    switch (tipoContrato?.value) {
+      case "FIXED":
+        handlerHiddenInput("Contrato", "Fecha fin", true);
+        handlerHiddenInput("Contrato", "Bonificaciones por contrato", false);
+        handlerHiddenInput("Contrato", "Deducciones estándar", false);
+        setValue("Contract.endDate", "");
+        mapFormOptions("Fijos");
+        break;
+      case "TEMPORARY":
+        handlerHiddenInput("Contrato", "Fecha fin", false);
+        handlerHiddenInput("Contrato", "Bonificaciones por contrato", false);
+        handlerHiddenInput("Contrato", "Deducciones estándar", false);
+        mapFormOptions("Temporeros");
+        break;
+      case "FREELANCE":
+        handlerHiddenInput("Contrato", "Fecha fin", false);
+        handlerHiddenInput("Contrato", "Bonificaciones por contrato", true);
+        handlerHiddenInput("Contrato", "Deducciones estándar", true);
+        setValue("Contract.bonuses", []);
+        setValue("Contract.deductions", []);
+        break;
     }
   }, [tipoContrato]);
 
-  useEffect(()=>{
-    if(autoGeneredPassword){
-      setValue('datos_personales.contraseña',generarPasswordSegura())
-    }else{
-      setValue('datos_personales.contraseña','')
-    }
+  useEffect(() => {
+    //generar contraseña
+    setValue(
+      "User.password",
+      autoGeneredPassword ? generarPasswordSegura() : ""
+    );
+  }, [autoGeneredPassword]);
 
-  },[autoGeneredPassword])
+  if (loadingFormSchema) return <Loading />;
 
   return (
     <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
@@ -214,103 +86,134 @@ export default function FormCreateUser() {
         <div key={`section-${index}`}>
           <h1 className="font-montserrat font-medium mb-5">{section.title}</h1>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-x-12 my-4">
-            {section.inputs.map((input, idx) => {
-              const inputId = `${input.label.replace(/\s+/g, "-").toLowerCase()}-${idx}`;
-              const inputName = formatInputName(section.title, input.label);
+            {section.inputs
+              .filter((input) => !input.hidden) // 👈 no renderizamos inputs ocultos
+              .map((input, idx) => {
+                const inputId = `${input.label
+                  .replace(/\s+/g, "-")
+                  .toLowerCase()}-${idx}`;
 
-              return (
-                <div
-                  key={`input-${inputId}`}
-                  className="grid grid-row-[0.6fr_1fr] md:grid-col-[0.6fr_1fr] items-center gap-1"
-                >
-                  {hiddenDateEnd && input.label === "Fecha fin" ? (
-                    <div className="flex gap-3 items-center ">
-                      <label htmlFor={inputId}>{input.label}</label>
-                      <div className="bg-secondary-300 text-secondary-500 text-sm rounded-lg px-2">
-                        Deshabilitado contrato fijo
+                const inputName = `${section.table}.${input.name}`;
+
+                const renderLabel = () => {
+                  if (input.label === "Email") {
+                    return (
+                      <div className="flex gap-3 items-center">
+                        <label htmlFor={inputId}>{input.label}</label>
+                        <div className="flex gap-2 bg-neutral-300 text-sm rounded-lg px-2">
+                          <input
+                            type="checkbox"
+                            checked={autoCompletedEmail}
+                            onChange={(e) =>
+                              setAutoCompletedEmail(e.target.checked)
+                            }
+                          />
+                          <p>Autocompletar</p>
+                        </div>
                       </div>
-                    </div>
-                  ) : input.label === "Email" ? (
-                    <div className="flex gap-3 items-center ">
-                      <label htmlFor={inputId}>{input.label}</label>
-                      <div className="flex gap-2 bg-neutral-300 text-sm rounded-lg px-2">
-                        <input
-                          type="checkbox"
-                          checked={autoCompletedEmail}
-                          onChange={(e) =>
-                            setAutoCompletedEmail(e.target.checked)
-                          }
-                        />
-                        <p>Autocompletar</p>
+                    );
+                  }
+
+                  if (input.label === "Contraseña") {
+                    return (
+                      <div className="flex gap-3 items-center">
+                        <label htmlFor={inputId}>{input.label}</label>
+                        <div className="flex gap-2 bg-neutral-300 text-sm rounded-lg px-2">
+                          <input
+                            type="checkbox"
+                            checked={autoGeneredPassword}
+                            onChange={(e) =>
+                              setGeneredPassword(e.target.checked)
+                            }
+                          />
+                          <p>Autogenerar</p>
+                        </div>
                       </div>
-                    </div>
-                  ) : input.label === 'Contraseña' ? (
-                    <div className="flex gap-3 items-center ">
-                    <label htmlFor={inputId}>{input.label}</label>
-                    <div className="flex gap-2 bg-neutral-300 text-sm rounded-lg px-2">
-                      <input
-                        type="checkbox"
-                        checked={autoGeneredPassword}
-                        onChange={(e) =>
-                          setGeneredPassword(e.target.checked)
-                        }
+                    );
+                  }
+
+                  return <label htmlFor={inputId}>{input.label}</label>;
+                };
+
+                return (
+                  <div
+                    key={`input-${inputId}`}
+                    className="grid grid-row-[0.6fr_1fr] md:grid-col-[0.6fr_1fr] items-center gap-1"
+                  >
+                    {renderLabel()}
+                    {input.type === "select" ? (
+                      <Controller
+                        name={inputName}
+                        control={control}
+                        rules={{ required: input?.required }}
+                        render={({ field }) => (
+                          <Select
+                            {...field}
+
+                            inputId={inputId}
+                            isMulti={input.multiple}
+                            options={
+                              input.option?.filter((opt) => !opt.hidden) //filtar por lo que no estan ocultos
+                                .map((opt) => ({
+                                  value: opt.id,
+                                  label: opt.name,
+                                }))}
+                            placeholder="Seleccionar"
+                            noOptionsMessage={() => "No hay opciones disponibles"}
+                            closeMenuOnSelect={!input.multiple}
+                            components={makeAnimated()}
+                            className="basic-multi-select"
+                            classNamePrefix="Select"
+                            styles={{
+                              control: (base) => ({
+                                ...base,
+                                padding: "2px",
+                                borderRadius: "0.5rem",
+                                borderColor: "#D1D5DB",
+                              }),
+                            }}
+                            defaultValue={
+                              (input.name === "type") &&
+                              input.option && input.option.length > 0
+                                ? { value: input.option[0].id, label: input.option[0].name }
+                                : null
+                            }
+                          />
+                        )}
                       />
-                      <p>Autogenerar</p>
-                    </div>
-                  </div>
-                  ) : (
-                    <label htmlFor={inputId}>{input.label}</label>
-                  )}
-                  {input.type === "select" ? (
-                    <Controller
-                      name={inputName}
-                      control={control}
-                      rules={{ required: true }}
-                      render={({ field }) => (
-                        <Select
-                          {...field}
-                          inputId={inputId}
-                          isMulti={input.multiple}
-                          options={input.option?.map((opt) => ({
-                            value: opt.id,
-                            label: opt.name,
-                          }))}
-                          closeMenuOnSelect={!input.multiple}
-                          components={makeAnimated()}
-                          className="basic-multi-select"
-                          classNamePrefix="Select"
-                          styles={{
-                            control: (base) => ({
-                              ...base,
-                              padding: "2px",
-                              borderRadius: "0.5rem",
-                              borderColor: "#D1D5DB", // neutral-300
-                            }),
-                          }}
+                    ) : (
+                      <div>
+                        <input
+                          id={inputId}
+                          type={input.type}
+                          step={input.steps}
+                          max={input.max}
+                          min={input.name === "endDate" ? formattedMinEndDate : input.min}
+                          disabled={input.name === "endDate" && !startDate}
+                          {...register(inputName, {
+                            required: input?.required && "Este campo es obligatorio",
+                            min: input.min ? {
+                              value: parseFloat(input.min),
+                              message: `Debe ser al menos ${input.min}`,
+                            } : undefined,
+                            max: input.max ? {
+                              value: parseFloat(input.max),
+                              message: `No debe superar ${input.max}`,
+                            } : undefined,
+                          })}
+                          
+                          className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary-400"
                         />
-                      )}
-                    />
-                  ) : (
-                    <input
-                      id={inputId}
-                      type={input.type}
-                      step={input.steps}
-                      max={input.max}
-                      min={input.min}
-                      {...register(inputName, {
-                        required: !(
-                          hiddenDateEnd && input.label === "Fecha fin"
-                        ),
-                        min: input.min ? parseFloat(input.min) : undefined,
-                        max: input.max ? parseFloat(input.max) : undefined,
-                      })}
-                      disabled={hiddenDateEnd && input.label === "Fecha fin"}
-                      className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary-400"
-                    />
-                  )}
-                </div>
-              );
-            })}
+                        {(errors as any)?.[section.table ]?.[input.name]?.message && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {(errors as any)?.[section.table ]?.[input.name]?.message?.toString()}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
           </div>
         </div>
       ))}

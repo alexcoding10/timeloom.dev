@@ -7,7 +7,8 @@ import { CreateOfficeDto } from './dto/CreateOfficeDto';
 @Injectable()
 export class CompanyService {
 
-  constructor(private readonly prismaService: PrismaService) {}
+
+  constructor(private readonly prismaService: PrismaService) { }
 
   async createCompany(companyData: CreateCompanyDto) {
     return await this.prismaService.company.create({
@@ -29,7 +30,7 @@ export class CompanyService {
 
   async createCompanyWithUser(company: CreateCompanyDtoWithUser) {
 
-    const {userId,...companyData} = company;
+    const { userId, ...companyData } = company;
     //crear la company
     const newCompany = await this.createCompany(companyData);
     //actualizar la company del usuario a la nueva company
@@ -39,7 +40,7 @@ export class CompanyService {
     });
     //devolver la company
     return newCompany;
-}
+  }
 
   async createCompanyWithOffice(
     companyData: CreateCompanyDto,
@@ -52,7 +53,7 @@ export class CompanyService {
     //guardo la office
     const office = await this.createOffice(newOffice);
 
-    return {company,office}
+    return { company, office }
   }
 
   async ensureDefaultCompany() {
@@ -64,27 +65,88 @@ export class CompanyService {
     if (!companyDefault) {
       const result = await this.createCompanyWithOffice(
         {
-            name: 'companyDefault', 
-            email: 'companyDefault@default.com',
-            address: '',
-            zipCode: '',
-            logoUrl: ''
+          name: 'companyDefault',
+          email: 'companyDefault@default.com',
+          address: '',
+          zipCode: '',
+          logoUrl: ''
         },
         {
-            name: 'officeDefault', 
-            email: 'officeDefault@default.com',
-            address: '',
-            zipCode: '',
-            state: ''
+          name: 'officeDefault',
+          email: 'officeDefault@default.com',
+          address: '',
+          zipCode: '',
+          state: ''
         }
       );
-      return {companyDefault:result.company,officeDefault:result.office}
+      return { companyDefault: result.company, officeDefault: result.office }
     }
     //busca la primera oficina ya que si existe una empresa tiene su oficina
-    let officeDefault= await this.prismaService.office.findFirst({where:{companyId:companyDefault?.id}}); 
+    let officeDefault = await this.prismaService.office.findFirst({ where: { companyId: companyDefault?.id } });
 
     //devuelve la company y la oficina
-    return {companyDefault,officeDefault};
+    return { companyDefault, officeDefault };
   }
-  
+
+
+
+  //region Deduction
+  async createDeduction(newDeduction: Prisma.DeductionCreateInput) {
+    return this.prismaService.deduction.create({
+      data: newDeduction,
+    });
+  }
+
+  async getDeductions(companyId?: number) {
+    return await this.prismaService.deduction.findMany({
+      where: companyId ? { OR: [{ companyId }, { companyId: null }] } : { companyId: null }
+    })
+  }
+
+  async deletedDeduction(idDeduction: number) {
+    return await this.prismaService.deduction.delete({ where: { id: idDeduction } })
+  }
+  //enregion
+
+  //region Bonus
+  async createBonus(newBonus: Prisma.BonusCreateInput) {
+    return this.prismaService.bonus.create({
+      data: newBonus,
+    });
+  }
+
+  // bonus siempre tiene un companyId
+  async getBonus(companyId: number) {
+    return await this.prismaService.bonus.findMany({
+      where: { companyId }
+    })
+  }
+
+
+  async deletedBonus(idBonus: number) {
+    return await this.prismaService.bonus.delete({ where: { id: idBonus } })
+  }
+  //enregion
+
+
+  //region Roles
+  async getRoles(companyId?: number) {
+    return await this.prismaService.rol.findMany({
+      where: companyId ? { OR: [{ companyId }, { companyId: null }] } : { companyId: null }
+    });
+  }
+
+  async deletedRole(id: number) {
+    return await this.prismaService.rol.delete({ where: { id } })
+  }
+
+  async createRole(newRole: Prisma.RolCreateInput) {
+    return this.prismaService.rol.create({
+      data: newRole,
+    });
+  }
+  //endregion
+
+
+
 }

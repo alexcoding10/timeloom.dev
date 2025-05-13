@@ -6,7 +6,6 @@ import useGetUsersByCompany from "@/hooks/useGetUsersByCompany";
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import FormCreateUser from "./components/FormCreateUser";
-import { p } from "framer-motion/m";
 
 function ControlUser() {
   const { usersByCompany } = useGetUsersByCompany();

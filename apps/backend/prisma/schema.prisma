@@ -241,13 +241,12 @@ model Contract {
   user        User      @relation(fields: [userId], references: [id])
   startDate   DateTime
   endDate     DateTime?
-  grossSalary Float
   salaryHours Float
   hoursForWeek Float
+  job String
   irpf_percentage Float? //ya que va gestionado en cada usuario
   deductions  Deduction[]
   bonuses     Bonus[]
-  job String
   type TypeContract
 }
 

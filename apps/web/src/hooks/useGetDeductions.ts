@@ -26,7 +26,7 @@ export const useGetDeductions = () => {
 
   const removeDeduction = async (id: number) => {
     try {
-      const response = await fetch(`${URL_BACKEND_DEV}/contract/deduction/${id}`, {
+      const response = await fetch(`${URL_BACKEND_DEV}/company/deduction/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
@@ -47,7 +47,7 @@ export const useGetDeductions = () => {
   const addDeduction = async (newDeduction: Deduction) => {
     try {
       const response = await fetch(
-        `${URL_BACKEND_DEV}/contract/create/deduction`,
+        `${URL_BACKEND_DEV}/company/create/deduction`,
         {
           method: "POST",
           credentials: "include",
@@ -66,7 +66,7 @@ export const useGetDeductions = () => {
       }
 
       // Si el backend responde con la deducción creada (idealmente con su ID), la usamos
-      const savedDeduction = data.data || newDeduction;
+      const savedDeduction = data || newDeduction;
 
       // Mapear el tipo de la deducción agregada, asegurando que sea uno de los valores correctos
       const mappedDeduction = {
@@ -85,14 +85,14 @@ export const useGetDeductions = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `${URL_BACKEND_DEV}/contract/deductions/${user.companyId}`,
+        `${URL_BACKEND_DEV}/company/${user.companyId}/deductions`,
         {
           method: "GET",
           credentials: "include",
         }
       );
       const data = await response.json();
-      const responseDeductions: Deduction[] = data.data || [];
+      const responseDeductions: Deduction[] = data || [];
 
       // Mapeamos las deducciones y aplicamos mapType
       const mappedDeductions = responseDeductions.map((item) => ({

@@ -1,7 +1,7 @@
 import { useAuthContext } from "@/context/AuthContext";
 import { Bonus } from "@/types/bonus";
 import { URL_BACKEND_DEV } from "@/utils/config";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export const useBonus = () => {
   const { user } = useAuthContext();
@@ -10,7 +10,7 @@ export const useBonus = () => {
 
   const removeBonus = async (id: number) => {
     try {
-        const response = await fetch(`${URL_BACKEND_DEV}/contract/bonus/${id}`, {
+        const response = await fetch(`${URL_BACKEND_DEV}/company/bonus/${id}`, {
           method: "DELETE",
           credentials: "include",
         });
@@ -30,7 +30,7 @@ export const useBonus = () => {
   const addBonus = async (newBonus: Bonus) => {
     try {
       const response = await fetch(
-        `${URL_BACKEND_DEV}/contract/create/bonus`,
+        `${URL_BACKEND_DEV}/company/create/bonus`,
         {
           method: "POST",
           credentials: "include",
@@ -60,15 +60,15 @@ export const useBonus = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `${URL_BACKEND_DEV}/contract/bonus/${user.companyId}`,
+        `${URL_BACKEND_DEV}/company/${user.companyId}/bonus`,
         {
           method: "GET",
           credentials: "include",
         }
       );
       const data = await response.json();
-      const responseDeductions: Bonus[] = data.data || [];
-      setBonus(responseDeductions);
+      const responseBonus: Bonus[] = data || [];
+      setBonus(responseBonus);
     } catch (err) {
       console.error("Error fetching bonus:", err);
       setBonus([]);

@@ -9,12 +9,15 @@ import { AddressModule } from './address/address.module';
 import { UploadModule } from './upload/upload.module';
 import { UsersModule } from './users/users.module';
 import { ContractModule } from './contract/contract.module';
+import { ConfigModule } from '@nestjs/config';
 
 
 
 @Module({
   controllers: [AppController],
   providers: [AppService, ResponseService],
-  imports: [AuthModule, CompanyModule, ResponseModule, AddressModule, UploadModule, UsersModule, ContractModule],
+  imports: [AuthModule, CompanyModule, ResponseModule, AddressModule, UploadModule, UsersModule, ContractModule,ConfigModule.forRoot({
+    isGlobal: true,
+  }),],
 })
 export class AppModule {}
