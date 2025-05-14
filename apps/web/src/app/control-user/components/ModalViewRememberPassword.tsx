@@ -7,6 +7,7 @@ interface Props {
         password: string;
     },
     handlerCloseViewPassword: () => void,
+    
 }
 
 

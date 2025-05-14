@@ -102,7 +102,7 @@ model Shift{
 model WorkWeek{
   id Int @id @default(autoincrement())
   userId Int
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   year Int
   week Int
   days Int 
@@ -138,7 +138,7 @@ model User{
 model Indicent{
   id Int @id @default(autoincrement())
   userId Int
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   type IncidentType
   description String
   date DateTime @default(now())
@@ -149,7 +149,7 @@ model Indicent{
 model TimeEntry{
   id Int @id @default(autoincrement())
   userId Int
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   clockIn DateTime @default(now())
   clockOut DateTime?
   duration Int?
@@ -238,7 +238,7 @@ model Team {
 model Contract {
   id          Int       @id @default(autoincrement())
   userId      Int
-  user        User      @relation(fields: [userId], references: [id])
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   startDate   DateTime
   endDate     DateTime?
   salaryHours Float

@@ -1,5 +1,5 @@
 import { generarPasswordSegura, mapSubmitUser } from "@/utils/utils";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
@@ -10,10 +10,9 @@ import { useAuthContext } from "@/context/AuthContext";
 import { quitarTildes } from "@/utils/utils";
 import ModalViewRememberPassword from "./ModalViewRememberPassword";
 
-
 type Props = {
-  handlerCloseCreateUserView?: () => void
-}
+  handlerCloseCreateUserView?: () => void;
+};
 
 export default function FormCreateUser({ handlerCloseCreateUserView }: Props) {
   const {
@@ -24,21 +23,24 @@ export default function FormCreateUser({ handlerCloseCreateUserView }: Props) {
     setValue,
     formState: { errors },
   } = useForm({ mode: "onChange" });
+
   const {
     formState: formSchema,
-    loading: loadingFormSchema,
-    handlerHiddenInput,
-    mapFormOptions,
+    loading:loadingFormSchema,
     onSubmit: onSubmitUser,
     errorSubmit,
+    selectContract,
   } = useCreateUser();
 
   const { user } = useAuthContext();
+
+
   const [autoCompletedEmail, setAutoCompletedEmail] = useState(true);
   const [autoGeneredPassword, setGeneredPassword] = useState(false);
   const [openViewPassword, setOpenViewPassword] = useState({
     open: false,
     password: "",
+    isClosed: false,
   });
 
   const nombre = watch("User.name");
@@ -51,39 +53,32 @@ export default function FormCreateUser({ handlerCloseCreateUserView }: Props) {
     ? minEndDate.toISOString().split("T")[0]
     : undefined;
 
-    const handlerOpenViewPassword = (password: string) => {
-      setOpenViewPassword({
-        open: true,
-        password: password,
-      });
-    };
-    const handlerCloseViewPassword = () => {
-      setOpenViewPassword({
-        open: false,
-        password: "",
-      });
-    };
-    
+  const handlerOpenViewPassword = (password: string) => {
+    setOpenViewPassword({
+      open: true,
+      password: password,
+      isClosed: false,
+    });
+  };
+  const handlerCloseViewPassword = () => {
+    setOpenViewPassword({
+      open: false,
+      password: "",
+      isClosed: true,
+    });
+  };
+
   const onSubmit = async (data: any) => {
     const requestData = mapSubmitUser(data, user);
-    await onSubmitUser(requestData) //espera aque termine la peticion
+    await onSubmitUser(requestData); //espera aque termine la peticion
     if (errorSubmit.status) {
       //mostrar un popup con el error
     }
-
     //Mostrar un mensaje mostrando la contraseña generada
     //para que el usuario sepa la contraseña que se le ha generado
     //y la pase al usuario.
-    handlerOpenViewPassword(data.User.password);
-
-    //si todo esta bien, redirigir a la lista de usuarios
-    handlerCloseCreateUserView?.();
-
+    handlerOpenViewPassword(requestData.user.password);
   };
-
-  useEffect(() => {
-    setValue("Contract.type", { id: "FIXED", label: "Fijo" });
-  }, []);
 
   useEffect(() => {
     if (nombre && autoCompletedEmail) {
@@ -91,7 +86,8 @@ export default function FormCreateUser({ handlerCloseCreateUserView }: Props) {
       const partes = palabras.map((p: string) =>
         quitarTildes(p.substring(0, 3).toLowerCase())
       );
-      const correo = partes.join("") + `@${user?.company?.name.toLowerCase()}.com`;
+      const correo =
+        partes.join("") + `@${user?.company?.name.toLowerCase()}.com`;
       setValue("User.email", correo);
     }
   }, [nombre, autoCompletedEmail]);
@@ -99,26 +95,19 @@ export default function FormCreateUser({ handlerCloseCreateUserView }: Props) {
   useEffect(() => {
     switch (tipoContrato?.value) {
       case "FIXED":
-        handlerHiddenInput("Contract", "startDate", false, true);
-        handlerHiddenInput("Contract", "endDate", true, false); //ocultar fecha fin ya que es fijo
-        handlerHiddenInput("Contract", "bonuses", false, false);
-        handlerHiddenInput("Contract", "deductions", false, true);
-        handlerHiddenInput("Contract", "irpf_percentage", false, true);
+        selectContract("FIXED"); //oculta y mapea
+        //setea
         setValue("Contract.endDate", "");
-        mapFormOptions("Fijos");
+        setValue("Contract.bonuses", []);
         break;
       case "TEMPORARY":
-        handlerHiddenInput("Contract", "endDate", false, true);
-        handlerHiddenInput("Contract", "bonuses", false, false);
-        handlerHiddenInput("Contract", "deductions", false, true);
-        handlerHiddenInput("Contract", "irpf_percentage", false, true);
-        mapFormOptions("Temporeros");
+        selectContract("TEMPORARY"); //oculta y mapea
+        //setea
+        setValue("Contract.bonuses", []);
         break;
       case "FREELANCE":
-        handlerHiddenInput("Contract", "endDate", false, true);
-        handlerHiddenInput("Contract", "bonuses", true, false);
-        handlerHiddenInput("Contract", "deductions", true, false);
-        handlerHiddenInput("Contract", "irpf_percentage", true, false);
+        selectContract("FREELANCE"); //oculta y mapea
+        //setea
         setValue("Contract.irpf_percentage", 0);
         setValue("Contract.bonuses", []);
         setValue("Contract.deductions", []);
@@ -127,22 +116,35 @@ export default function FormCreateUser({ handlerCloseCreateUserView }: Props) {
   }, [tipoContrato]);
 
   useEffect(() => {
-    //generar contraseña
-    setValue(
-      "User.password",
-      autoGeneredPassword ? generarPasswordSegura() : ""
-    );
+    if (autoGeneredPassword) {
+      const generated = generarPasswordSegura();
+      setValue("User.password", generated);
+    } else {
+      setValue("User.password", "");
+    }
   }, [autoGeneredPassword]);
+
+  useEffect(() => {
+    if (openViewPassword.isClosed && handlerCloseCreateUserView) {
+      //cambio la vista
+      handlerCloseCreateUserView()
+      console.log("cambio la vista");
+    }
+  }, [openViewPassword]);
 
   if (loadingFormSchema) return <Loading />;
 
   return (
     <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
       {/*Modal contraseña generada */}
-      <ModalViewRememberPassword
-        openViewPassword={openViewPassword}
-        handlerCloseViewPassword={handlerCloseViewPassword}
-      />
+      {
+        openViewPassword && (
+          <ModalViewRememberPassword
+            openViewPassword={openViewPassword}
+            handlerCloseViewPassword={handlerCloseViewPassword}
+          />
+        )
+      }
 
       {/* Formulario */}
       {formSchema.map((section, index) => (
@@ -209,10 +211,22 @@ export default function FormCreateUser({ handlerCloseCreateUserView }: Props) {
                         name={inputName}
                         control={control}
                         rules={{
-                          required: input?.required ? "Este campo es obligatorio" : false,
+                          required: input?.required
+                            ? "Este campo es obligatorio"
+                            : false,
                           validate: input.multiple
-                            ? (value) => (input.required ? (value && value.length > 0) ? true : "Debe seleccionar al menos una opción" : undefined)
-                            : (value) => (input.required ? (value) ? true : "Debe seleccionar una opción" : undefined),
+                            ? (value) =>
+                                input.required
+                                  ? value && value.length > 0
+                                    ? true
+                                    : "Debe seleccionar al menos una opción"
+                                  : undefined
+                            : (value) =>
+                                input.required
+                                  ? value
+                                    ? true
+                                    : "Debe seleccionar una opción"
+                                  : undefined,
                         }}
                         render={({ field }) => (
                           <Select
@@ -241,19 +255,8 @@ export default function FormCreateUser({ handlerCloseCreateUserView }: Props) {
                                 borderColor: "#D1D5DB",
                               }),
                             }}
-                            defaultValue={
-                              input.name === "type" &&
-                                input.option &&
-                                input.option.length > 0
-                                ? {
-                                  value: input.option[0].id,
-                                  label: input.option[0].name,
-                                }
-                                : null
-                            }
                           />
                         )}
-
                       />
                     ) : (
                       <div>
@@ -273,23 +276,30 @@ export default function FormCreateUser({ handlerCloseCreateUserView }: Props) {
                               input?.required && "Este campo es obligatorio",
                             min: input.min
                               ? {
-                                value: parseFloat(input.min),
-                                message: `Debe ser al menos ${input.min}`,
-                              }
+                                  value: parseFloat(input.min),
+                                  message: `Debe ser al menos ${input.min}`,
+                                }
                               : undefined,
                             max: input.max
                               ? {
-                                value: parseFloat(input.max),
-                                message: `No debe superar ${input.max}`,
-                              }
+                                  value: parseFloat(input.max),
+                                  message: `No debe superar ${input.max}`,
+                                }
                               : undefined,
-                            pattern: input.name === "name" || input.name === "job" ? {
-                              value: /^[a-zA-ZáéíóúÁÉÍÓÚ ]+$/, // Solo letras y espacios
-                              message: `El ${input.label.toLowerCase()} solo puede contener letras`,
-                            } : input.name === "password" ? {
-                              value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/,
-                              message: "La contraseña debe tener al menos 8 caracteres, una mayúscula, un número y un carácter especial",
-                            } : undefined,
+                            pattern:
+                              input.name === "name" || input.name === "job"
+                                ? {
+                                    value: /^[a-zA-ZáéíóúÁÉÍÓÚ ]+$/, // Solo letras y espacios
+                                    message: `El ${input.label.toLowerCase()} solo puede contener letras`,
+                                  }
+                                : input.name === "password"
+                                  ? {
+                                      value:
+                                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/,
+                                      message:
+                                        "La contraseña debe tener al menos 8 caracteres, una mayúscula, un número y un carácter especial",
+                                    }
+                                  : undefined,
                           })}
                           className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary-400"
                         />
@@ -300,12 +310,12 @@ export default function FormCreateUser({ handlerCloseCreateUserView }: Props) {
                     )}
                     {(errors as any)?.[section.table]?.[input.name]
                       ?.message && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {(errors as any)?.[section.table]?.[
-                            input.name
-                          ]?.message?.toString()}
-                        </p>
-                      )}
+                      <p className="text-red-500 text-sm mt-1">
+                        {(errors as any)?.[section.table]?.[
+                          input.name
+                        ]?.message?.toString()}
+                      </p>
+                    )}
                   </div>
                 );
               })}

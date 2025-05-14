@@ -93,7 +93,7 @@ function ControlUser() {
             className="flex gap-2  w-full px-10  sm:px-20 lg:px-40 xl:px-80"
             
           >
-            <FormCreateUser />
+            <FormCreateUser handlerCloseCreateUserView={handlerCloseCreateUserView}/>
             {/* Aquí podrías poner el formulario para crear un usuario */}
           </motion.div>
         ) : (
