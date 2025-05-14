@@ -4,7 +4,8 @@ import { useGetDeductions } from "./useGetDeductions"
 import { useRol } from "./useRol"
 import { FormCreateUser, FormOptionInputCreateUser } from "@/types/user"
 import { capitalize } from "@/utils/utils"
-import { number } from "zod"
+import { CreateUserData } from "@/types/forms"
+import { URL_BACKEND_DEV } from "@/utils/config"
 
 
 const formSchema: FormCreateUser[] = [
@@ -96,8 +97,8 @@ const formSchema: FormCreateUser[] = [
                 name: "endDate",
                 label: "Fecha fin",
                 type: "date",
-                hidden: false,
-                required: true,
+                hidden: true,
+                required: false,
             },
             {
                 name: "hoursForWeek",
@@ -105,7 +106,7 @@ const formSchema: FormCreateUser[] = [
                 type: "number",
                 steps: "0.01",
                 min: "1",
-                max: "45",
+                max: "40",
                 hidden: false,
                 required: true,
             },
@@ -123,6 +124,7 @@ const formSchema: FormCreateUser[] = [
                 name:'irpf_percentage',
                 label:'Retención de IRPF (%)',
                 type:'number',
+                steps: "0.01",
                 min:'0.1',
                 max:'100',
                 hidden:false,
@@ -157,6 +159,19 @@ export const useCreateUser = () => {
     const { roles } = useRol()
     const [loading, setLoading] = useState(true)
     const [loadingFormSchema, setLoadingFormSchema] = useState(true)
+    const [errorSubmit, setErrorSubmit] = useState({
+        message: '',
+        status: false,
+    })
+
+    const handlerErrorSubmit = (message?: string) => {
+        //si hay un mensaje se crea el error si no , se reestablece
+        setErrorSubmit({
+            message: message ? message : '',
+            status: message ? true : false,
+        })
+    }
+    
 
     const [FormOptions, setFormOptions] = useState({
         bonus: [] as FormOptionInputCreateUser[],
@@ -166,7 +181,7 @@ export const useCreateUser = () => {
 
     const [formState, setFormState] = useState<FormCreateUser[]>(formSchema)
 
-    const handlerHiddenInput = (table: string, inputName: string, value?: boolean) => {
+    const handlerHiddenInput = (table: string, inputName: string, value?: boolean, required?: boolean) => {
         setFormState((prev) => {
             return prev.map((section) => {
                 if (section.table === table) {
@@ -177,7 +192,7 @@ export const useCreateUser = () => {
                                 return {
                                     ...input,
                                     hidden: value !== undefined ? value : !input.hidden,
-                                    required: value !== undefined ? value : !input.required //quitamos que sea requerido
+                                    required: required !== undefined ? required : !input.required //quitamos que sea requerido
                                 }
                             }
                             return input
@@ -229,6 +244,26 @@ export const useCreateUser = () => {
         });
     }
 
+    //enviar los datos al backend
+    const onSubmit = async (data: CreateUserData) => {
+        const response = await fetch(`${URL_BACKEND_DEV}/users/create-with-contract`,{
+            method:'POST',
+            body:JSON.stringify(data),
+            headers:{
+                'Content-Type':'application/json'
+            },
+            credentials:'include'
+        })
+        const dataResponse = await response.json()
+
+        if (!response.ok) {
+            handlerErrorSubmit('Error al crear el usuario')
+            return  
+        }
+        //aqui no hay errores
+        handlerErrorSubmit('')
+    }
+
 
     useEffect(() => {
         const allLoaded =
@@ -268,5 +303,5 @@ export const useCreateUser = () => {
     }, [FormOptions])
 
 
-    return { formState, loading, handlerHiddenInput, mapFormOptions }
+    return { formState, loading, handlerHiddenInput, mapFormOptions , onSubmit,errorSubmit}
 }

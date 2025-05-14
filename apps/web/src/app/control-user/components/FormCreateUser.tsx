@@ -1,4 +1,4 @@
-import { generarPasswordSegura } from "@/utils/utils";
+import { generarPasswordSegura, mapSubmitUser } from "@/utils/utils";
 import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import Select from "react-select";
@@ -6,9 +6,16 @@ import makeAnimated from "react-select/animated";
 import type { FormCreateUser } from "@/types/user";
 import { useCreateUser } from "@/hooks/useCreateUser";
 import Loading from "@/components/Loading";
-import { set } from "zod";
+import { useAuthContext } from "@/context/AuthContext";
+import { quitarTildes } from "@/utils/utils";
+import ModalViewRememberPassword from "./ModalViewRememberPassword";
 
-export default function FormCreateUser() {
+
+type Props = {
+  handlerCloseCreateUserView?: () => void
+}
+
+export default function FormCreateUser({ handlerCloseCreateUserView }: Props) {
   const {
     register,
     handleSubmit,
@@ -22,10 +29,17 @@ export default function FormCreateUser() {
     loading: loadingFormSchema,
     handlerHiddenInput,
     mapFormOptions,
+    onSubmit: onSubmitUser,
+    errorSubmit,
   } = useCreateUser();
 
+  const { user } = useAuthContext();
   const [autoCompletedEmail, setAutoCompletedEmail] = useState(true);
   const [autoGeneredPassword, setGeneredPassword] = useState(false);
+  const [openViewPassword, setOpenViewPassword] = useState({
+    open: false,
+    password: "",
+  });
 
   const nombre = watch("User.name");
   const tipoContrato = watch("Contract.type");
@@ -37,17 +51,47 @@ export default function FormCreateUser() {
     ? minEndDate.toISOString().split("T")[0]
     : undefined;
 
-  const onSubmit = (data: any) => {
-    console.log(data);
+    const handlerOpenViewPassword = (password: string) => {
+      setOpenViewPassword({
+        open: true,
+        password: password,
+      });
+    };
+    const handlerCloseViewPassword = () => {
+      setOpenViewPassword({
+        open: false,
+        password: "",
+      });
+    };
+    
+  const onSubmit = async (data: any) => {
+    const requestData = mapSubmitUser(data, user);
+    await onSubmitUser(requestData) //espera aque termine la peticion
+    if (errorSubmit.status) {
+      //mostrar un popup con el error
+    }
+
+    //Mostrar un mensaje mostrando la contraseña generada
+    //para que el usuario sepa la contraseña que se le ha generado
+    //y la pase al usuario.
+    handlerOpenViewPassword(data.User.password);
+
+    //si todo esta bien, redirigir a la lista de usuarios
+    handlerCloseCreateUserView?.();
+
   };
+
+  useEffect(() => {
+    setValue("Contract.type", { id: "FIXED", label: "Fijo" });
+  }, []);
 
   useEffect(() => {
     if (nombre && autoCompletedEmail) {
       const palabras = nombre.trim().split(/\s+/);
       const partes = palabras.map((p: string) =>
-        p.substring(0, 3).toLowerCase()
+        quitarTildes(p.substring(0, 3).toLowerCase())
       );
-      const correo = partes.join("") + "@gmail.com";
+      const correo = partes.join("") + `@${user?.company?.name.toLowerCase()}.com`;
       setValue("User.email", correo);
     }
   }, [nombre, autoCompletedEmail]);
@@ -55,26 +99,27 @@ export default function FormCreateUser() {
   useEffect(() => {
     switch (tipoContrato?.value) {
       case "FIXED":
-        handlerHiddenInput("Contract", "startDate", true);
-        handlerHiddenInput("Contract", "bonuses", false);
-        handlerHiddenInput("Contract", "deductions", false);
-        handlerHiddenInput("Contract", "irpf_percentage", false);
+        handlerHiddenInput("Contract", "startDate", false, true);
+        handlerHiddenInput("Contract", "endDate", true, false); //ocultar fecha fin ya que es fijo
+        handlerHiddenInput("Contract", "bonuses", false, false);
+        handlerHiddenInput("Contract", "deductions", false, true);
+        handlerHiddenInput("Contract", "irpf_percentage", false, true);
         setValue("Contract.endDate", "");
         mapFormOptions("Fijos");
         break;
       case "TEMPORARY":
-        handlerHiddenInput("Contract", "endDate", false);
-        handlerHiddenInput("Contract", "bonuses", false);
-        handlerHiddenInput("Contract", "deductions", false);
-        handlerHiddenInput("Contract", "irpf_percentage", false);
+        handlerHiddenInput("Contract", "endDate", false, true);
+        handlerHiddenInput("Contract", "bonuses", false, false);
+        handlerHiddenInput("Contract", "deductions", false, true);
+        handlerHiddenInput("Contract", "irpf_percentage", false, true);
         mapFormOptions("Temporeros");
         break;
       case "FREELANCE":
-        handlerHiddenInput("Contract", "endDate", false);
-        handlerHiddenInput("Contract", "bonuses", true);
-        handlerHiddenInput("Contract", "deductions", true);
-        handlerHiddenInput("Contract", "irpf_percentage", true);
-        setValue("Contact.irpf_percentage", 0);
+        handlerHiddenInput("Contract", "endDate", false, true);
+        handlerHiddenInput("Contract", "bonuses", true, false);
+        handlerHiddenInput("Contract", "deductions", true, false);
+        handlerHiddenInput("Contract", "irpf_percentage", true, false);
+        setValue("Contract.irpf_percentage", 0);
         setValue("Contract.bonuses", []);
         setValue("Contract.deductions", []);
         break;
@@ -93,6 +138,13 @@ export default function FormCreateUser() {
 
   return (
     <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
+      {/*Modal contraseña generada */}
+      <ModalViewRememberPassword
+        openViewPassword={openViewPassword}
+        handlerCloseViewPassword={handlerCloseViewPassword}
+      />
+
+      {/* Formulario */}
       {formSchema.map((section, index) => (
         <div key={`section-${index}`}>
           <h1 className="font-montserrat font-medium mb-5">{section.title}</h1>
@@ -156,7 +208,12 @@ export default function FormCreateUser() {
                       <Controller
                         name={inputName}
                         control={control}
-                        rules={{ required: input?.required }}
+                        rules={{
+                          required: input?.required ? "Este campo es obligatorio" : false,
+                          validate: input.multiple
+                            ? (value) => (input.required ? (value && value.length > 0) ? true : "Debe seleccionar al menos una opción" : undefined)
+                            : (value) => (input.required ? (value) ? true : "Debe seleccionar una opción" : undefined),
+                        }}
                         render={({ field }) => (
                           <Select
                             {...field}
@@ -186,16 +243,17 @@ export default function FormCreateUser() {
                             }}
                             defaultValue={
                               input.name === "type" &&
-                              input.option &&
-                              input.option.length > 0
+                                input.option &&
+                                input.option.length > 0
                                 ? {
-                                    value: input.option[0].id,
-                                    label: input.option[0].name,
-                                  }
+                                  value: input.option[0].id,
+                                  label: input.option[0].name,
+                                }
                                 : null
                             }
                           />
                         )}
+
                       />
                     ) : (
                       <div>
@@ -215,32 +273,39 @@ export default function FormCreateUser() {
                               input?.required && "Este campo es obligatorio",
                             min: input.min
                               ? {
-                                  value: parseFloat(input.min),
-                                  message: `Debe ser al menos ${input.min}`,
-                                }
+                                value: parseFloat(input.min),
+                                message: `Debe ser al menos ${input.min}`,
+                              }
                               : undefined,
                             max: input.max
                               ? {
-                                  value: parseFloat(input.max),
-                                  message: `No debe superar ${input.max}`,
-                                }
+                                value: parseFloat(input.max),
+                                message: `No debe superar ${input.max}`,
+                              }
                               : undefined,
+                            pattern: input.name === "name" || input.name === "job" ? {
+                              value: /^[a-zA-ZáéíóúÁÉÍÓÚ ]+$/, // Solo letras y espacios
+                              message: `El ${input.label.toLowerCase()} solo puede contener letras`,
+                            } : input.name === "password" ? {
+                              value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/,
+                              message: "La contraseña debe tener al menos 8 caracteres, una mayúscula, un número y un carácter especial",
+                            } : undefined,
                           })}
                           className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary-400"
                         />
                         {input.name === "password" && autoGeneredPassword && (
-                          <p className="text-sm ml-3 text-zinc-500">{`${watch("User.password")}`}</p>
-                        )}
-                        {(errors as any)?.[section.table]?.[input.name]
-                          ?.message && (
-                          <p className="text-red-500 text-sm mt-1">
-                            {(errors as any)?.[section.table]?.[
-                              input.name
-                            ]?.message?.toString()}
-                          </p>
+                          <p className="text-sm ml-1 mt-1 text-zinc-500">{`${watch("User.password")}`}</p>
                         )}
                       </div>
                     )}
+                    {(errors as any)?.[section.table]?.[input.name]
+                      ?.message && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {(errors as any)?.[section.table]?.[
+                            input.name
+                          ]?.message?.toString()}
+                        </p>
+                      )}
                   </div>
                 );
               })}

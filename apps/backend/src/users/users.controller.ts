@@ -1,6 +1,7 @@
-import { Controller, Get, Param, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Response } from 'express';
+import { Prisma } from '@prisma/client';
 
 @Controller('users')
 export class UsersController {
@@ -16,4 +17,16 @@ export class UsersController {
       return res.status(200).json({ data: users });
     }
 
-}
+    @Post('create-with-contract')
+    async createUserWithContract(
+      @Body() body: { user: Prisma.UserCreateInput; contract:  Omit<Prisma.ContractUncheckedCreateInput, 'userId' >},
+    ) {
+      const { user, contract } = body;
+  
+      // Llamamos al servicio que maneja la lógica de crear el usuario y el contrato
+      return await this.usersService.createUserWhithContract(user, contract);
+    }
+  }
+
+
+
