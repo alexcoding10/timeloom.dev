@@ -1,9 +1,14 @@
+import dynamic from "next/dynamic";
 import React, { useState, useCallback } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import MapComponent from "@/components/maps/MapComponent";
 import { URL_BACKEND_DEV } from "@/utils/config";
 import { motion } from "framer-motion";
 import StepPhoto from "./StepPhoto";
+
+// Carga MapComponent solo en el cliente
+const MapComponent = dynamic(() => import('@/components/maps/MapComponent'), {
+  ssr: false,
+});
 
 interface Props {
   user: any;

@@ -1,3 +1,5 @@
+import { RolName } from "./rol";
+
 export type FormOptionInputCreateUser = {
     id: number | string;
     name: string;
@@ -59,3 +61,15 @@ export type UserAuth = {
     }>;
 };
 
+
+export type UserControl = {
+  id: number;
+  name: string;
+  email: string;
+  imgProfile: string | null;
+  address: string | null;
+  zipCode: string | null;
+  globalRol: {
+    name: RolName;
+  }[];
+};

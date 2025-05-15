@@ -12,9 +12,11 @@ async function bootstrap() {
     credentials: true, // Permite el uso de credenciales como cookies y cabeceras de autorización
   });
 
-  
+   const port = process.env.PORT || 3001; // <-- PORT
  
-  await app.listen(process.env.PORT ?? 3001,'0.0.0.0');
+  await app.listen(port,'0.0.0.0');
+  console.log(`App is running on http://localhost:${port}`);
+
 }
 
 bootstrap();

@@ -6,9 +6,11 @@ import useGetUsersByCompany from "@/hooks/useGetUsersByCompany";
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import FormCreateUser from "./components/FormCreateUser";
+import UsersCompanyView from "./components/UsersCompanyView";
+import Loading from "@/components/Loading";
 
 function ControlUser() {
-  const { usersByCompany } = useGetUsersByCompany();
+  const { usersByCompany ,loadingUserFetch} = useGetUsersByCompany();
   const [openCreateUser, setOpenCreateUser] = useState(false);
 
   const handlerCloseCreateUserView = ()=>{
@@ -16,8 +18,14 @@ function ControlUser() {
   }
   useEffect(() => {
     // Este log se ejecutará cada vez que usersByCompany cambie
-    console.log(usersByCompany.length);
+    console.log(usersByCompany);
   }, [usersByCompany]);
+
+  if(loadingUserFetch){
+    return(
+      <Loading/>
+    )
+  }
 
   return (
     <LayoutWithNav>
@@ -109,7 +117,7 @@ function ControlUser() {
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="py-4 flex gap-2"
           >
-            <p>Mostrar todos los usuarios</p>
+            <UsersCompanyView usersByCompany={usersByCompany}/>
             {/* Aquí puedes mostrar la lista de usuarios */}
           </motion.div>
         )}

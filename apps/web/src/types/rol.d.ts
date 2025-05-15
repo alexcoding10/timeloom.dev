@@ -6,3 +6,5 @@ export type Rol = {
     description?: string;
     companyId: number;
 }
+
+export type RolName ='admin'|'supervisor'|'employee'|'hr'|'teamLeader'|'teamWorker'

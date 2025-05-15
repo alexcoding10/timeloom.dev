@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, {  useState } from "react";
+import { motion, } from "framer-motion";
 import { HeadingXL, TextLG } from "@/components/Typography";
 import { ArrowRight } from "lucide-react";
 import FormCompany from "./components/FormCompany";
