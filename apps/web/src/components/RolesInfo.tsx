@@ -9,13 +9,13 @@ const rolesSchemaInfo = {
     },
     supervisor: {
         label: 'Supervisor',
-        bgColor: '#9989F6',        // Verde agua (Light Sea Green)
+        bgColor: '#BCB3F7',        // Verde agua (Light Sea Green)
         textColor: '#4F36E9'
     },
     employee: {
         label: 'Trabajador',
-        bgColor: '#8FFFDC',        // Naranja pastel suave
-        textColor: '#1AD267'
+        bgColor: '#87F48A',        // Naranja pastel suave
+        textColor: '#1D8431'
     },
     hr: {
         label: 'Recursos Humanos',

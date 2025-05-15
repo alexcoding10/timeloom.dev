@@ -36,7 +36,7 @@ export default function UsersCompanyView({ usersByCompany }: Props) {
           >
             {
               usersByCompany.map(user => (
-                <li key={user.id} onClick={()=> handlerSelectUser(user.id)} className='grid  grid-cols-[1fr_auto] sm:grid-cols-[1fr_1fr_auto]   px-4 py-2 border-b border-zinc-300  transition-all duration-300 '>
+                <li key={user.id} onClick={()=> handlerSelectUser(user.id)} className='grid  grid-cols-[1fr_auto] sm:grid-cols-[1fr_1fr_auto]   px-4 py-2 border-b border-zinc-300  hover:bg-zinc-100 transition-all rounded duration-300 '>
                   {/*Seccion de info del usuario */}
                   <div className='flex flex-col sm:flex-row gap-2 sm:gap-5 items-center  transition-all duration-300'>
                     <Avatar name={user.name} url={user.imgProfile} />

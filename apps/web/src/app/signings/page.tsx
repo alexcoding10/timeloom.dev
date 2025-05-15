@@ -1,13 +1,15 @@
-import LayoutWithNav from '@/components/LayoutWithNav'
-import React from 'react'
-
+import AuthGuard from "@/components/auth/AuthGuard";
+import LayoutWithNav from "@/components/LayoutWithNav";
+import React from "react";
 
 function Signings() {
   return (
-    <LayoutWithNav>
-      <div>Signings</div>
-    </LayoutWithNav>
-  )
+    <AuthGuard allowedRoles={["supervisor", "employee", "hr"]}>
+      <LayoutWithNav>
+        <div>Signings</div>
+      </LayoutWithNav>
+    </AuthGuard>
+  );
 }
 
-export default Signings
+export default Signings;

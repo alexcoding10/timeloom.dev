@@ -4,8 +4,17 @@ import { useEffect, useState } from "react";
 export const useAuth = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
+  const logout = () => {
+    //elimina el token y el usuario
+    //el token se elimina desde el back
+    fetch(`${URL_BACKEND_DEV}/auth/logout`,{
+      method:'GET',
+      credentials:"include"
+    })
+    setUser(null); // hace que vaya al login
+  };
 
   const fetchUser = async () => {
     setLoading(true);
@@ -34,5 +43,5 @@ export const useAuth = () => {
     fetchUser();
   }, []);
 
-  return { user, loading, error, fetchUser };
+  return { user, loading, error, fetchUser, logout };
 };

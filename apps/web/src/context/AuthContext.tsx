@@ -8,6 +8,7 @@ interface AuthState {
   user: any;  // Ajusta el tipo de `user` según lo que devuelva `useAuth()`
   loading: boolean;
   fetchUser: () => Promise<void>;
+  logout:()=>void
 }
 
 // Crea el contexto de autenticación
@@ -18,10 +19,10 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const { user, loading, fetchUser } = useAuth(); // Supongo que useAuth retorna un `user` y `loading`
+  const { user, loading, fetchUser ,logout} = useAuth(); // Supongo que useAuth retorna un `user` y `loading`
 
   return (
-    <AuthContext.Provider value={{ user, loading, fetchUser }}>
+    <AuthContext.Provider value={{ user, loading, fetchUser ,logout}}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,30 +1,56 @@
-'use client'
+'use client';
 
-import { useAuthContext } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import { useAuthContext } from '@/context/AuthContext';
+import { div } from 'framer-motion/client';
+import { useRouter, usePathname } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import Loading from '../Loading';
 
-export default function AuthGuard({ children }: React.PropsWithChildren) {
+type AuthGuardProps = {
+  children: React.ReactNode;
+  allowedRoles?: string[]; // roles opcionales permitidos
+};
+
+export default function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
   const { user, loading } = useAuthContext();
   const router = useRouter();
+  const pathname = usePathname();
+  const [checking, setChecking] = useState(true);
 
-  // Usamos useEffect para realizar la redirección después del renderizado
   useEffect(() => {
-    if (loading == false && !user) {
-      // Si no hay usuario y no está cargando, redirige al login
-      router.push("/login");
+    if (loading) return;
+
+    if (!user) {
+      router.push('/login');
+      return;
     }
-  }, [user, loading, router]);  // Dependencias para que se ejecute cuando cambien `user` o `loading`
 
-  if (loading) {
-    return <p>Loading...</p>; // Opcional: Muestra un mensaje de carga mientras se determina el estado
+    const userRoles = Array.isArray(user.globalRol)
+      ? user.globalRol.map((r: any) => r.rol?.name)
+      : [];
+
+    //console.log("✅ userRoles:", userRoles);
+    //console.log("🚨 allowedRoles:", allowedRoles);
+
+    if (allowedRoles && allowedRoles.length > 0) {
+      const hasAccess = allowedRoles.some((rol) => userRoles.includes(rol));
+      if (!hasAccess) {
+        router.push('/home');
+        return;
+      }
+    }
+
+    setChecking(false);
+  }, [user, loading, allowedRoles, router, pathname]);
+
+  if (loading || checking) {
+    return (
+      <div className='w-full h-screen flex justify-center items-center'>
+        <Loading/>
+
+      </div>
+    )
   }
 
-  // Si no hay usuario, no se renderiza nada
-  if (!user) {
-    return null;
-  }
-
-  // Si hay usuario, renderiza el contenido
   return <>{children}</>;
 }

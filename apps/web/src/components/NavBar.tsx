@@ -11,12 +11,13 @@ import {
   BsTrello,
 } from "react-icons/bs";
 import { FaUsers } from "react-icons/fa";
-import { IoIosArrowBack } from "react-icons/io";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { useRouter, usePathname } from "next/navigation";
 import { useNav } from "@/hooks/useNav";
 import Loading from "./Loading";
+import SubNavBar from "./SubNavBar";
 
-const NavBarData = {
+export const NavBarData = {
   menu: [
     { title: "DashBoard", url: "/home", icon: <BsTrello />, rol: null },
     {
@@ -58,7 +59,8 @@ export default function NavBar() {
   const { user, loading } = useAuthContext();
   const router = useRouter();
   const pathname = usePathname();
-  const { collapsed, setCollapsed } = useNav();
+  const { collapsed, setCollapsed, handlerOpenSettings, openSettings } =
+    useNav();
 
   const handlerReload = (urlReload: string) => {
     if (urlReload === pathname) return;
@@ -176,7 +178,14 @@ export default function NavBar() {
 
       {/* Footer / User Info */}
       <div className="flex items-center justify-center py-4 border-t border-zinc-200">
-        <div className="flex items-center gap-3">
+        <div
+          onClick={() => {
+            if (collapsed) {
+              handlerOpenSettings();
+            }
+          }}
+          className="flex items-center gap-3"
+        >
           {user.imgProfile ? (
             <img
               className="w-10 h-10 rounded-lg"
@@ -191,16 +200,25 @@ export default function NavBar() {
             </div>
           )}
           {!collapsed && (
-            <div>
-              <h3 className="font-medium text-sm">{user.name}</h3>
-              <a
-                href={`mailto:${user.email}`}
-                className="text-blue-500 text-xs"
+            <div className="grid grid-cols-[1fr_0.4fr] ">
+              <div>
+                <h3 className="font-medium text-sm">{user.name}</h3>
+                <a
+                  href={`mailto:${user.email}`}
+                  className="text-blue-500 text-xs"
+                >
+                  {user.email}
+                </a>
+              </div>
+              <button
+                onClick={handlerOpenSettings}
+                className=" h-full flex justify-center items-center"
               >
-                {user.email}
-              </a>
+                {!openSettings ? <IoIosArrowForward /> : <IoIosArrowBack />}
+              </button>
             </div>
           )}
+          <SubNavBar />
         </div>
       </div>
     </nav>
