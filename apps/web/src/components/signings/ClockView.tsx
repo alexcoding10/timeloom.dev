@@ -13,13 +13,13 @@ export default function ClockView() {
                 format={'dddd, DD MMMM YYYY'}
                 ticking={true}
                 timezone={'Europe/Madrid'}
-                className="font-montserrat text-neutral-dark-400 text-lg lg:text-xl font-semibold capitalize transition-all duration-300 ease-in-out"
+                className="font-montserrat text-neutral-dark-400 text-lg md:text-xl font-semibold capitalize transition-all duration-300 ease-in-out"
             />
             <Clock
                 format="HH[h] mm[m] ss[s]"
                 ticking={true}
                 timezone="Europe/Madrid"
-                className="font-montserrat text-neutral-dark-400 text-3xl lg:text-5xl font-bold transition-all duration-300 ease-in-out"
+                className="font-montserrat text-neutral-dark-400 text-3xl md:text-5xl font-bold transition-all duration-300 ease-in-out"
             />
         </Container>
     )
