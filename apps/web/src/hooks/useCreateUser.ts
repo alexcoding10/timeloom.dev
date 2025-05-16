@@ -6,6 +6,8 @@ import { FormCreateUser, FormOptionInputCreateUser } from "@/types/user";
 import { capitalize } from "@/utils/utils";
 import { CreateUserData } from "@/types/forms";
 import { URL_BACKEND_DEV } from "@/utils/config";
+import useGetUsersByCompany from "./useGetUsersByCompany";
+import { useUserControlContext } from "@/context/UserControlContext";
 
 const formSchema: FormCreateUser[] = [
   {
@@ -152,6 +154,8 @@ const formSchema: FormCreateUser[] = [
     ],
   },
 ];
+
+
 export const useCreateUser = () => {
   const { bonus } = useBonus();
   const { deductions } = useGetDeductions();
@@ -162,6 +166,7 @@ export const useCreateUser = () => {
     message: "",
     status: false,
   });
+  const {addUsersByCompany} = useUserControlContext();
 
   const handlerErrorSubmit = (message?: string) => {
     //si hay un mensaje se crea el error si no , se reestablece
@@ -292,6 +297,8 @@ export const useCreateUser = () => {
       handlerErrorSubmit("Error al crear el usuario");
       return;
     }
+    console.log('esta es la respuesta luego de crear el usuario',dataResponse)
+    addUsersByCompany(dataResponse.data.user);
     //aqui no hay errores
     handlerErrorSubmit("");
   };
@@ -346,3 +353,5 @@ export const useCreateUser = () => {
     selectContract
   };
 };
+
+

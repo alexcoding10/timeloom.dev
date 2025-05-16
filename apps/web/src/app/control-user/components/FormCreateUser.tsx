@@ -3,18 +3,17 @@ import React, { useEffect, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
-import type { FormCreateUser } from "@/types/user";
+import type { FormCreateUser, UserControl } from "@/types/user";
 import { useCreateUser } from "@/hooks/useCreateUser";
 import Loading from "@/components/Loading";
 import { useAuthContext } from "@/context/AuthContext";
 import { quitarTildes } from "@/utils/utils";
 import ModalViewRememberPassword from "./ModalViewRememberPassword";
+import { useUserControlContext } from "@/context/UserControlContext";
 
-type Props = {
-  handlerCloseCreateUserView?: () => void;
-};
-
-export default function FormCreateUser({ handlerCloseCreateUserView }: Props) {
+export default function FormCreateUser() {
+  const {handlerCloseCreateUserView} = useUserControlContext();
+  
   const {
     register,
     handleSubmit,
@@ -70,6 +69,8 @@ export default function FormCreateUser({ handlerCloseCreateUserView }: Props) {
 
   const onSubmit = async (data: any) => {
     const requestData = mapSubmitUser(data, user);
+    
+    
     await onSubmitUser(requestData); //espera aque termine la peticion
     if (errorSubmit.status) {
       //mostrar un popup con el error
@@ -126,9 +127,10 @@ export default function FormCreateUser({ handlerCloseCreateUserView }: Props) {
 
   useEffect(() => {
     if (openViewPassword.isClosed && handlerCloseCreateUserView) {
+      //agrega el usuario a la lista
+      
       //cambio la vista
       handlerCloseCreateUserView()
-      console.log("cambio la vista");
     }
   }, [openViewPassword]);
 
@@ -331,3 +333,4 @@ export default function FormCreateUser({ handlerCloseCreateUserView }: Props) {
     </form>
   );
 }
+

@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import PanelControl from "@/components/PanelControl";
 import { HeadingXL, TextBase, TextLG } from "@/components/Typography";
 import RegisterForm from "@/components/RegisterForm";
-import LoginForm from "@/components/LoginForm";
+import LoginForm from "@/components/form/LoginForm";
 
 export default function Login() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });

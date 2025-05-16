@@ -1,6 +1,6 @@
 import {useState } from "react";
 import { motion } from "framer-motion";
-import { HeadingXL } from "./Typography";
+import { HeadingXL } from "../Typography";
 import { URL_BACKEND_DEV } from "@/utils/config";
 import {  useRouter } from "next/navigation";
 import { useAuthContext } from "@/context/AuthContext";

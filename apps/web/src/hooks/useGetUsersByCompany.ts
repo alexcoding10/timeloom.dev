@@ -1,13 +1,19 @@
 'use client'
 
 import { useAuthContext } from '@/context/AuthContext'
+import { UserControl } from '@/types/user'
 import { URL_BACKEND_DEV } from '@/utils/config'
 import { useEffect, useState } from 'react'
 
 function useGetUsersByCompany() {
   const { user, loading } = useAuthContext()
   const [loadingUserFetch, setLoadingUserFetch] = useState(true)
-  const [usersByCompany, setUsersByCompany] = useState([])
+  const [usersByCompany, setUsersByCompany] = useState<UserControl[]>([])
+
+
+  const addUsersByCompany = (user: UserControl) => {
+    setUsersByCompany((prevUsers) => [...prevUsers, user])
+  }
 
   const fetchUsersByCompany = async () => {
     setLoadingUserFetch(true)
@@ -45,7 +51,7 @@ function useGetUsersByCompany() {
     }
   }, [user, loading]) // Dependemos de 'user' y 'loading'
 
-  return { usersByCompany, setUsersByCompany, loadingUserFetch }
+  return { usersByCompany, setUsersByCompany, addUsersByCompany,loadingUserFetch }
 }
 
 export default useGetUsersByCompany

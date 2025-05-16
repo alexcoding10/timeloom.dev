@@ -1,4 +1,4 @@
-import LayoutWithNav from '@/components/LayoutWithNav';
+import LayoutWithNav from '@/components/nav/LayoutWithNav';
 import { useAuthContext } from '@/context/AuthContext';
 import { URL_BACKEND_DEV } from '@/utils/config';
 import React, { useEffect } from 'react'

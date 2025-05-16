@@ -1,5 +1,5 @@
 "use client";
-import LayoutWithNav from "@/components/LayoutWithNav";
+import LayoutWithNav from "@/components/nav/LayoutWithNav";
 import React from "react";
 import Balances from "./components/Balances";
 import Deductions from "./components/Deductions";

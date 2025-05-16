@@ -19,8 +19,8 @@ const rolesSchemaInfo = {
     },
     hr: {
         label: 'Recursos Humanos',
-        bgColor: '#E93639',        // Amarillo pastel (Light Yellow)
-        textColor: '#F6898B'
+        bgColor: '#F6898B',        // Amarillo pastel (Light Yellow)
+        textColor: '#cd1215'
     },
     teamLeader: {
         label: 'Jefe de un equipo',
@@ -28,9 +28,9 @@ const rolesSchemaInfo = {
         textColor: '#1F80FF'
     },
     teamWorker: {
-        label: 'Trabajador de un equipo',
+        label: 'Se encuentra en un equipo',
         bgColor: '#F6F689',        // Verde menta suave (mint)
-        textColor: '#CDBC08'
+        textColor: '#8c8903'
     }
 };
 
@@ -42,7 +42,7 @@ export default function RolesInfo({ rol }: Props) {
     const myRol = rolesSchemaInfo[rol]
     return (
         <div
-            className="px-4 py-1 text-sm  rounded-full flex justify-center w-max max-w-[100px] h-auto max-h-[30px] text-center"
+            className="px-4 py-1 text-sm  rounded-full flex justify-center w-max h-auto max-h-[30px] text-center"
             style={{
                 backgroundColor: myRol.bgColor,
                 color: myRol.textColor,

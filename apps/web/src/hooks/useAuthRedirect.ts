@@ -3,7 +3,7 @@
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { useAuthContext } from "@/context/AuthContext";
-import { NavBarData } from "@/components/NavBar";
+import { NavBarData } from "@/components/nav/NavBar";
 
 export const useAuthRedirect = () => {
   const { user } = useAuthContext();

@@ -1,5 +1,5 @@
 import React from 'react'
-import LayoutWithNav from '@/components/LayoutWithNav'
+import LayoutWithNav from '@/components/nav/LayoutWithNav'
 
 function Profile() {
   return (

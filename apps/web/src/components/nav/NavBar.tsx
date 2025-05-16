@@ -14,7 +14,7 @@ import { FaUsers } from "react-icons/fa";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { useRouter, usePathname } from "next/navigation";
 import { useNav } from "@/hooks/useNav";
-import Loading from "./Loading";
+import Loading from "../Loading";
 import SubNavBar from "./SubNavBar";
 
 export const NavBarData = {

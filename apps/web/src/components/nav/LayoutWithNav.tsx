@@ -25,7 +25,7 @@ export default function LayoutWithNav({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.25 }}
-          className={`flex-1 p-4 ${collapsed? 'ml-[100px]' : 'sm:ml-[250px]'}`}
+          className={`flex-1 py-4 px-4 lg:py-5 lg:px-20 ${collapsed? 'ml-[100px]' : 'sm:ml-[250px]'} transition-all duration-300 ease-in-out`}
         >
           {children}
         </motion.div>

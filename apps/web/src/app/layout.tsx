@@ -4,6 +4,7 @@ import "./globals.css";
 import "rsuite/dist/rsuite-no-reset.min.css";
 import Providers from "@/components/Providers";
 
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
