@@ -8,7 +8,6 @@ export class UsersService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly authService: AuthService
-
   ) { }
   
   async getUsersByCompany(companyId: number) {

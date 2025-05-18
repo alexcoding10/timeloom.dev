@@ -10,6 +10,7 @@ import { UploadModule } from './upload/upload.module';
 import { UsersModule } from './users/users.module';
 import { ContractModule } from './contract/contract.module';
 import { ConfigModule } from '@nestjs/config';
+import { SigningModule } from './signing/signing.module';
 
 
 
@@ -18,6 +19,6 @@ import { ConfigModule } from '@nestjs/config';
   providers: [AppService, ResponseService],
   imports: [AuthModule, CompanyModule, ResponseModule, AddressModule, UploadModule, UsersModule, ContractModule,ConfigModule.forRoot({
     isGlobal: true,
-  }),],
+  }), SigningModule,],
 })
 export class AppModule {}

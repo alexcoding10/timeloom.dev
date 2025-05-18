@@ -1,9 +1,20 @@
+'use client'
 import Container from "@/components/Container";
+import Loading from "@/components/Loading";
 import ClockView from "@/components/signings/ClockView";
 import ControlSignings from "@/components/signings/ControlSignings";
+import { useSigningsContext } from "@/context/SigningsContext";
 import React from "react";
 
 export default function SigningsView() {
+  const {loading} = useSigningsContext()
+
+  if(loading){
+    return(
+      <Loading/>
+    )
+  }
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 grid-rows-[auto_1fr] gap-5 h-full">
       <div>
