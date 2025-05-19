@@ -7,7 +7,7 @@ import { useSigningsContext } from "@/context/SigningsContext";
 import React from "react";
 
 export default function SigningsView() {
-  const {loading} = useSigningsContext()
+  const {loadingSignings:loading} = useSigningsContext()
 
   if(loading){
     return(

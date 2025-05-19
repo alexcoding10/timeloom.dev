@@ -81,6 +81,9 @@ export class SigningService {
         userId,
         ...dateFilter,
       },
+      include:{
+        timebreaks:true
+      },
       orderBy: { clockIn: 'asc' },
     });
   }

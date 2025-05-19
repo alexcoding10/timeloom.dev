@@ -1,14 +1,14 @@
 "use client";
 import { createContext, ReactNode, useContext, useState } from "react";
 import { useSignings } from "@/hooks/useSignings";
-import { ControlSigningsType } from "@/types/signings";
+import { ControlSigningsType, TimeEntry } from "@/types/signings";
 
 
 type SigningsState = {
   controlData: ControlSigningsType;
   onClickControl: (name: string) => void;
-  signings: never[];
-  loading:boolean;
+  signings: TimeEntry | null;
+  loadingSignings:boolean;
 };
 
 export const SigningsContext = createContext<SigningsState | undefined>(
@@ -16,10 +16,10 @@ export const SigningsContext = createContext<SigningsState | undefined>(
 );
 
 export const SigningsProvider = ({ children }: { children: ReactNode }) => {
-  const {signings,loading,controlData,onClickControl} = useSignings()
+  const {signings,controlData,onClickControl,loadingSignings} = useSignings()
 
   return (
-    <SigningsContext.Provider value={{ controlData ,onClickControl, signings,loading}}>
+    <SigningsContext.Provider value={{ controlData ,onClickControl,loadingSignings, signings}}>
       {children}
     </SigningsContext.Provider>
   );
