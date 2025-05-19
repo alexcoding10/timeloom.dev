@@ -32,8 +32,8 @@ export type ControlSigningsType = {
 export type TimeEntry = {
   id?: number;
   userId: number;
-  clockIn: Date;
-  clockOut?: Date ;
+  clockIn: string;
+  clockOut?: string ;
   duration?: number ;
   coordinates?: {lat:number,lon:number} | null ;
   timebreaks?: TimeBreak[];
@@ -43,8 +43,8 @@ export type TimeBreak = {
   id: number;
   timeEntryId: number;
   timeEntry: TimeEntry;
-  clockIn: Date;
-  clockOut: Date | null;
+  clockIn: string;
+  clockOut: string | null;
   duration: number | null;
   coordinates: any | null;
   pauseTypeId: number;
