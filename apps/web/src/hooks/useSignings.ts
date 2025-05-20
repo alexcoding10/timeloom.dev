@@ -2,12 +2,11 @@
 
 import { useAuthContext } from "@/context/AuthContext";
 import { URL_BACKEND_DEV } from "@/utils/config";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CreateTimeBreak, NameInfo, TimeEntry } from "@/types/signings";
 import { getLocation } from "@/utils/navigator";
 import { usePauseType } from "./usePauseType";
 import { controlDataState } from "@/state/signings.state";
-
 
 export const useSignings = () => {
   const [controlData, setControlData] = useState(controlDataState);
@@ -18,13 +17,18 @@ export const useSignings = () => {
   const [loadingSignings, setLoadingSignings] = useState(true);
   const [runningTimeWorker, setRunningTimeWorker] = useState(false);
   const [runningTimePause, setRunningTimePause] = useState(false);
-  const [openPauseModal, setOpenPauseModal] = useState(false)
-  const { pauseType } = usePauseType()
-
+  const [openPauseModal, setOpenPauseModal] = useState(false);
+  const { pauseType } = usePauseType();
+  const timersRef = useRef<
+    Record<
+      string,
+      { intervalId: ReturnType<typeof setInterval> | null; count: number }
+    >
+  >({});
 
   const closePauseModal = () => {
-    setOpenPauseModal(false)
-  }
+    setOpenPauseModal(false);
+  };
 
   const fetchGetSignings = async () => {
     setLoading(true);
@@ -94,75 +98,81 @@ export const useSignings = () => {
 
   const fetchCreatePause = async (createPause: CreateTimeBreak) => {
     const response = await fetch(`${URL_BACKEND_DEV}/signings/pause`, {
-      method: 'POST',
-      credentials: 'include',
+      method: "POST",
+      credentials: "include",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(createPause)
-    })
-    if (!response.ok) throw new Error('No se a podido crear una pausa')
-    const data = await response.json()
-    console.log('pausa', data)
+      body: JSON.stringify(createPause),
+    });
+    if (!response.ok) throw new Error("No se a podido crear una pausa");
+    const data = await response.json();
+    //console.log("pausa", data);
     //agrego la pausa
-    setSignings(prev =>
-      prev ? {
-        ...prev,
-        timebreaks: [...(prev.timebreaks || []), data.pause]  // Crear una nueva referencia para timebreaks
-      } : prev
+    setSignings((prev) =>
+      prev
+        ? {
+            ...prev,
+            timebreaks: [...(prev.timebreaks || []), data.pause], // Crear una nueva referencia para timebreaks
+          }
+        : prev
     );
-
-  }
+  };
 
   const fetchStopPause = async () => {
-    const clockOut = new Date()
-    const lastPause = signings?.timebreaks?.at(-1)
-    const response = await fetch(`${URL_BACKEND_DEV}/signings/pause/stop/${lastPause?.id}`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ clockOut: clockOut })
-    })
-    if (!response.ok) throw new Error('No se a podido parar la pausa')
-    const data = await response.json();
+    const clockOut = new Date();
+    const lastPause = signings?.timebreaks?.at(-1);
+    const response = await fetch(
+      `${URL_BACKEND_DEV}/signings/pause/stop/${lastPause?.id}`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ clockOut: clockOut }),
+      }
+    );
+    if (!response.ok) throw new Error("No se a podido parar la pausa");
     //setear el clockOut en el ultimo timeBreak
-    setSignings(prev =>
-      prev ? {
-        ...prev,
-        timebreaks: prev.timebreaks?.map(pausa =>
-          lastPause && (pausa.id === lastPause.id) ?
-            { ...pausa, clockOut: clockOut.toISOString() } : pausa
-        )
-      } : prev
-
-    )
-
-  }
-
+    setSignings((prev) =>
+      prev
+        ? {
+            ...prev,
+            timebreaks: prev.timebreaks?.map((pausa) =>
+              lastPause && pausa.id === lastPause.id
+                ? { ...pausa, clockOut: clockOut.toISOString() }
+                : pausa
+            ),
+          }
+        : prev
+    );
+  };
 
   const fetchFinishSignings = async () => {
-    const clockOut = new Date()
-    const response = await fetch(`${URL_BACKEND_DEV}/signings/finish/${signings?.id}`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ clockOut: clockOut })
-    })
-    if (!response.ok) throw new Error('No se a podido parar la pausa')
-    const data = await response.json();
+    const clockOut = new Date();
+    const response = await fetch(
+      `${URL_BACKEND_DEV}/signings/finish/${signings?.id}`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ clockOut: clockOut }),
+      }
+    );
+    if (!response.ok) throw new Error("No se a podido parar la pausa");
     //setear el clockOut en el ultimo timeBreak
-    setSignings(prev =>
-      prev ? {
-        ...prev,
-        clockOut: clockOut.toISOString()
-      } : prev
-
-    )
-  }
+    setSignings((prev) =>
+      prev
+        ? {
+            ...prev,
+            clockOut: clockOut.toISOString(),
+          }
+        : prev
+    );
+  };
 
   const getControl = (name: string) => {
     return controlData.controls.find((control) => control.name === name);
@@ -192,48 +202,75 @@ export const useSignings = () => {
   };
 
   const startTimer = (name: NameInfo) => {
+    if (timersRef.current[name]) return; // ❗ Ya existe, no hacer nada
 
     let clockInStr: string | null = null;
-
-    if (name === 'timeWorker') {
+    if (name === "timeWorker") {
       clockInStr = signings?.clockIn ?? null;
-    } else if (name === 'timePause' && runningTimePause) {
+    } else if (name === "timePause") {
       clockInStr = signings?.timebreaks?.at(-1)?.clockIn ?? null;
     }
 
     if (!clockInStr) return;
 
-    const clockIn = new Date(clockInStr).getTime();
-    const now = Date.now();
+    let count = Math.floor(
+      (Date.now() - new Date(clockInStr).getTime()) / 1000
+    );
 
-    // Cálculo de la diferencia de tiempo inicial
-    const initialDiffSeconds = Math.floor((now - clockIn) / 1000);
-
-    let count = initialDiffSeconds; // Comienza con la diferencia ya calculada
-
-    // Establecer el intervalo
     const intervalId = setInterval(() => {
-      count++; // Incrementa el contador por cada intervalo de 1 segundo
+      count++;
+      timersRef.current[name] = { intervalId, count };
 
-      const hours = Math.floor(count / 3600); // Calcular las horas
-      const minutes = Math.floor((count % 3600) / 60); // Calcular los minutos
-      const seconds = count % 60; // Calcular los segundos restantes
+      const hours = Math.floor(count / 3600);
+      const minutes = Math.floor((count % 3600) / 60);
+      const seconds = count % 60;
 
-      // Actualizar el estado de controlData para mostrar la hora correctamente
       setControlData((prev) => ({
         ...prev,
         info: prev.info.map((i) =>
           i.name === name
-            ? {
-              ...i,
-              hour: { h: hours, m: minutes, s: seconds },
-            }
+            ? { ...i, hour: { h: hours, m: minutes, s: seconds } }
             : i
         ),
       }));
-    }, 1000); // Cada segundo
+    }, 1000);
 
-    return intervalId; // Retorna el intervalId para limpiarlo luego si es necesario
+    timersRef.current[name] = { intervalId, count };
+  };
+
+  const pauseTimer = (name: NameInfo) => {
+    const timer = timersRef.current[name];
+    if (timer?.intervalId) {
+      clearInterval(timer.intervalId);
+      timersRef.current[name].intervalId = null;
+    }
+  };
+
+  const resumeTimer = (name: NameInfo) => {
+    const timer = timersRef.current[name];
+    if (timer && timer.intervalId == null) {
+      let count = timer.count;
+
+      const intervalId = setInterval(() => {
+        count++;
+        timersRef.current[name] = { intervalId, count };
+
+        const hours = Math.floor(count / 3600);
+        const minutes = Math.floor((count % 3600) / 60);
+        const seconds = count % 60;
+
+        setControlData((prev) => ({
+          ...prev,
+          info: prev.info.map((i) =>
+            i.name === name
+              ? { ...i, hour: { h: hours, m: minutes, s: seconds } }
+              : i
+          ),
+        }));
+      }, 1000);
+
+      timersRef.current[name] = { intervalId, count };
+    }
   };
 
   const getTimePause = () => {
@@ -280,13 +317,13 @@ export const useSignings = () => {
         fetchStartSigning();
         break;
       case "pause":
-        setOpenPauseModal(true)
+        setOpenPauseModal(true);
         break;
       case "play":
-        fetchStopPause()
+        fetchStopPause();
         break;
       case "finish":
-        fetchFinishSignings()
+        fetchFinishSignings();
         break;
       default:
         console.error(`${name} no es un valor correcto.`);
@@ -294,30 +331,41 @@ export const useSignings = () => {
     }
   };
 
-
-  const setInfo = () =>{
-    if(!signings){
-      return
+  const setInfo = () => {
+    if (!signings) {
+      return;
     }
-      const clockIn = new Date(signings.clockIn);
-      const clockOut = signings.clockOut ? new Date(signings.clockOut) : null
-      const timeOut = new Date(clockIn.getTime() + 8 * 60 * 60 * 1000); //!mas 8 horas de momento
-      let timePause = getTimePause();
-      //Setear tiempo de salida
-      setTimeControl(timeOut, "timeOut");
+    const clockIn = new Date(signings.clockIn);
+    const clockOut = signings.clockOut
+      ? new Date(signings.clockOut)
+      : new Date();
+    const timeOut = new Date(clockIn.getTime() + 8 * 60 * 60 * 1000); //!mas 8 horas de momento
+    let timePause = getTimePause();
+    //Setear tiempo de salida
+    setTimeControl(timeOut, "timeOut");
 
-      if (timePause != 0) {
-        const pauseAsDate = new Date(timePause);
-        //seta las pausa
-        setTimeControl(pauseAsDate, "timePause");
-      }
+    if (timePause != 0) {
+      setTimerMs(timePause, "timePause");
+    }
 
-      if(clockOut){
-        const differenceInMilliseconds = clockOut.getTime() - clockIn.getTime();
-        const difference = new Date(differenceInMilliseconds)
-        setTimeControl(difference,'timeWorker')
-      }
-  }
+    //time worker si no hay una pausa final se setea con la hora actual
+    const differenceInMilliseconds = clockOut.getTime() - clockIn.getTime();
+    setTimerMs(differenceInMilliseconds, "timeWorker");
+  };
+
+  const setTimerMs = (time: number, name: string) => {
+    const totalSeconds = Math.floor(time / 1000);
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+
+    setControlData((prev) => ({
+      ...prev,
+      info: prev.info.map((i) =>
+        i.name === name ? { ...i, hour: { h, m, s } } : i
+      ),
+    }));
+  };
 
   useEffect(() => {
     //cargar los fichajes cuando se monta el componente
@@ -327,7 +375,7 @@ export const useSignings = () => {
   //mapear la informacion
   useEffect(() => {
     setLoadingSignings(true); // esta cargando
-    console.log("fichajes", signings);
+    //console.log("fichajes", signings);
     if (loading) {
       // Aún se están cargando los datos, no hacer nada
       return;
@@ -336,8 +384,8 @@ export const useSignings = () => {
     if (!signings) {
       // No hay fichaje iniciado
       // Mostrar botón "Comenzar"
-      handlerDisableAll()
-      handlerToggleDisabledControl(['start'])
+      handlerDisableAll();
+      handlerToggleDisabledControl(["start"]);
       setLoadingSignings(false);
       return;
     }
@@ -345,33 +393,37 @@ export const useSignings = () => {
     if (signings.clockOut) {
       // Fichaje finalizado
       // Desactivar todos los botones (el usuario no puede hacer nada)
-      handlerDisableAll()
+      handlerDisableAll();
       //setear todo sin contadores
-      setInfo()
+      setInfo();
       setLoadingSignings(false);
       return;
     }
 
     // Si hay fichaje pero aún no ha finalizado
     const lastPause = signings.timebreaks?.at(-1);
+    console.log(lastPause)
 
     if (lastPause && !lastPause.clockOut) {
       // Está en pausa activa
       // Activar botones "Reanudar" y "Finalizar"
-      handlerDisableAll()
-      handlerToggleDisabledControl(['play', 'finish'])
+      handlerDisableAll();
+      handlerToggleDisabledControl(["play", "finish"]);
+      //si la pausa es pagada se activa el timeWorker
+      //Si no se para
+      console.log('pausa pagada? ',lastPause)
       setRunningTimePause(true);
-      setRunningTimeWorker(false);
+      //setRunningTimeWorker(lastPause.pauseType.isPaid);
       setLoadingSignings(false);
     } else {
       // No está en pausa
-      setInfo()
+      setInfo();
       //empezar el contador??
       setRunningTimeWorker(true);
       setRunningTimePause(false);
 
-      handlerDisableAll()
-      handlerToggleDisabledControl(['pause', 'finish'])
+      handlerDisableAll();
+      handlerToggleDisabledControl(["pause", "finish"]);
       //dejar de cargar
       setLoadingSignings(false);
     }
@@ -380,19 +432,37 @@ export const useSignings = () => {
   //useEffect para los contadores
   useEffect(() => {
     if (runningTimeWorker) {
-      startTimer("timeWorker");
+      if (!timersRef.current["timeWorker"]) {
+        startTimer("timeWorker"); // primera vez
+      } else {
+        resumeTimer("timeWorker"); // continuar si estaba pausado
+      }
     } else {
-      //para crono
+      pauseTimer("timeWorker");
     }
   }, [runningTimeWorker]);
 
   useEffect(() => {
     if (runningTimePause) {
-      startTimer("timePause");
+      if (!timersRef.current["timePause"]) {
+        startTimer("timePause");
+      } else {
+        resumeTimer("timePause");
+      }
     } else {
-      //parar crono
+      pauseTimer("timePause");
     }
   }, [runningTimePause]);
 
-  return { signings, loading, loadingSignings, controlData, onClickControl, openPauseModal, closePauseModal, pauseType, fetchCreatePause };
+  return {
+    signings,
+    loading,
+    loadingSignings,
+    controlData,
+    onClickControl,
+    openPauseModal,
+    closePauseModal,
+    pauseType,
+    fetchCreatePause,
+  };
 };

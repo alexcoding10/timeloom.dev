@@ -6,7 +6,7 @@ import { Prisma, TimeBreak } from '@prisma/client';
 export class SigningService {
   constructor(
     private readonly prismaService: PrismaService, //conexion a la base de datos
-  ) { }
+  ) {}
 
   async start(userId: number, data: Prisma.TimeEntryCreateInput) {
     // existe ya un fichaje?
@@ -25,7 +25,11 @@ export class SigningService {
 
   async createPause(data: Prisma.TimeBreakCreateInput) {
     // Verificar si timeEntry está presente y contiene el id
-    if (!data.timeEntry || !data.timeEntry.connect || !data.timeEntry.connect.id) {
+    if (
+      !data.timeEntry ||
+      !data.timeEntry.connect ||
+      !data.timeEntry.connect.id
+    ) {
       throw new Error('Faltan datos de timeEntry o su ID no está presente.');
     }
 
@@ -45,7 +49,10 @@ export class SigningService {
     }
 
     //comienza una pausa
-    const newPause = await this.prismaService.timeBreak.create({ data });
+    const newPause = await this.prismaService.timeBreak.create({
+      data,
+      include: { pauseType: true },
+    });
 
     return { pause: newPause };
   }
@@ -87,13 +94,19 @@ export class SigningService {
         ...dateFilter,
       },
       include: {
-        timebreaks: true
+        timebreaks: { include: { pauseType: true } },
       },
       orderBy: { clockIn: 'asc' },
     });
   }
 
-  async getSigningsByCompany(companyId: number, from?: Date, to?: Date, skip = 0, take = 50) {
+  async getSigningsByCompany(
+    companyId: number,
+    from?: Date,
+    to?: Date,
+    skip = 0,
+    take = 50,
+  ) {
     const dateFilter = this.buildDateFilter(from, to);
     return await this.prismaService.timeEntry.findMany({
       where: {
@@ -102,9 +115,12 @@ export class SigningService {
         },
         ...dateFilter,
       },
+      include: {
+        timebreaks: { include: { pauseType: true } },
+      },
       orderBy: { clockIn: 'asc' },
       skip,
-      take
+      take,
     });
   }
 
@@ -112,20 +128,17 @@ export class SigningService {
     try {
       return await this.prismaService.pauseType.findMany({
         where: {
-          OR: [
-            { companyId: 1 },
-            { companyId }
-          ]
-        }, omit: {
-          companyId: true
-        }
+          OR: [{ companyId: 1 }, { companyId }],
+        },
+        omit: {
+          companyId: true,
+        },
       });
     } catch (error) {
-      console.error("Error al obtener los tipos de pausa:", error);
-      throw new Error("No se pudieron obtener los tipos de pausa.");
+      console.error('Error al obtener los tipos de pausa:', error);
+      throw new Error('No se pudieron obtener los tipos de pausa.');
     }
   }
-
 
   buildDateFilter(from?: Date, to?: Date) {
     if (from && to) {
