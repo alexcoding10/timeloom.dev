@@ -37,13 +37,13 @@ export default function SigningsView() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr]  grid-rows-[auto_1fr] gap-5">
       <ModalPause />
-      <div className="min-w-[400px] lg:max-w-[400px] ">
+      <div className="min-w-[370px] lg:max-w-[400px] ">
         <ClockView />
       </div>
-      <div className="min-w-[400px] lg:max-w-[400px]  col-start-1">
+      <div className="min-w-[370px] lg:max-w-[400px]  col-start-1">
         <ControlSignings />
       </div>
-      <div className="lg:row-span-2 lg:row-start-1  lg:col-start-2">
+      <div className="lg:row-span-2 lg:row-start-1  lg:col-start-2 min-w-[370px]">
         <Container>
           <h1 className="text-xl font-bold font-montserrat text-neutral-dark-400 w-full text-start px-4">Detalles de mi fichaje</h1>
           <div>
