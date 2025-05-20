@@ -3,7 +3,12 @@
 import { useAuthContext } from "@/context/AuthContext";
 import { URL_BACKEND_DEV } from "@/utils/config";
 import { useEffect, useRef, useState } from "react";
-import { CreateTimeBreak, NameInfo, TimeEntry } from "@/types/signings";
+import {
+  CreateTimeBreak,
+  NameControl,
+  NameInfo,
+  TimeEntry,
+} from "@/types/signings";
 import { getLocation } from "@/utils/navigator";
 import { usePauseType } from "./usePauseType";
 import { controlDataState } from "@/state/signings.state";
@@ -15,16 +20,11 @@ export const useSignings = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [loadingSignings, setLoadingSignings] = useState(true);
-  const [runningTimeWorker, setRunningTimeWorker] = useState(false);
-  const [runningTimePause, setRunningTimePause] = useState(false);
   const [openPauseModal, setOpenPauseModal] = useState(false);
   const { pauseType } = usePauseType();
-  const timersRef = useRef<
-    Record<
-      string,
-      { intervalId: ReturnType<typeof setInterval> | null; count: number }
-    >
-  >({});
+
+  const intervalWorkerRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalPauseRef = useRef<NodeJS.Timeout | null>(null);
 
   const closePauseModal = () => {
     setOpenPauseModal(false);
@@ -86,7 +86,6 @@ export const useSignings = () => {
       setSignings(responseData);
 
       // Ahora puedes llamar a startTimer sin problemas
-      startTimer("timeWorker");
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error("Hubo un error:", error.message);
@@ -201,78 +200,6 @@ export const useSignings = () => {
     }));
   };
 
-  const startTimer = (name: NameInfo) => {
-    if (timersRef.current[name]) return; // ❗ Ya existe, no hacer nada
-
-    let clockInStr: string | null = null;
-    if (name === "timeWorker") {
-      clockInStr = signings?.clockIn ?? null;
-    } else if (name === "timePause") {
-      clockInStr = signings?.timebreaks?.at(-1)?.clockIn ?? null;
-    }
-
-    if (!clockInStr) return;
-
-    let count = Math.floor(
-      (Date.now() - new Date(clockInStr).getTime()) / 1000
-    );
-
-    const intervalId = setInterval(() => {
-      count++;
-      timersRef.current[name] = { intervalId, count };
-
-      const hours = Math.floor(count / 3600);
-      const minutes = Math.floor((count % 3600) / 60);
-      const seconds = count % 60;
-
-      setControlData((prev) => ({
-        ...prev,
-        info: prev.info.map((i) =>
-          i.name === name
-            ? { ...i, hour: { h: hours, m: minutes, s: seconds } }
-            : i
-        ),
-      }));
-    }, 1000);
-
-    timersRef.current[name] = { intervalId, count };
-  };
-
-  const pauseTimer = (name: NameInfo) => {
-    const timer = timersRef.current[name];
-    if (timer?.intervalId) {
-      clearInterval(timer.intervalId);
-      timersRef.current[name].intervalId = null;
-    }
-  };
-
-  const resumeTimer = (name: NameInfo) => {
-    const timer = timersRef.current[name];
-    if (timer && timer.intervalId == null) {
-      let count = timer.count;
-
-      const intervalId = setInterval(() => {
-        count++;
-        timersRef.current[name] = { intervalId, count };
-
-        const hours = Math.floor(count / 3600);
-        const minutes = Math.floor((count % 3600) / 60);
-        const seconds = count % 60;
-
-        setControlData((prev) => ({
-          ...prev,
-          info: prev.info.map((i) =>
-            i.name === name
-              ? { ...i, hour: { h: hours, m: minutes, s: seconds } }
-              : i
-          ),
-        }));
-      }, 1000);
-
-      timersRef.current[name] = { intervalId, count };
-    }
-  };
-
   const getTimePause = () => {
     let timePause = 0;
     // obtener el tiempo en pausa
@@ -290,7 +217,6 @@ export const useSignings = () => {
         }
       });
     }
-
     return timePause;
   };
 
@@ -298,7 +224,6 @@ export const useSignings = () => {
     const h = data.getHours();
     const m = data.getMinutes();
     const s = data.getSeconds();
-
     setControlData((prev) => ({
       ...prev,
       info: prev.info.map((i) =>
@@ -347,9 +272,8 @@ export const useSignings = () => {
     if (timePause != 0) {
       setTimerMs(timePause, "timePause");
     }
-
     //time worker si no hay una pausa final se setea con la hora actual
-    const differenceInMilliseconds = clockOut.getTime() - clockIn.getTime();
+    const differenceInMilliseconds = clockOut.getTime() - clockIn.getTime()- timePause;
     setTimerMs(differenceInMilliseconds, "timeWorker");
   };
 
@@ -367,6 +291,45 @@ export const useSignings = () => {
     }));
   };
 
+  const timer = (name: NameInfo) => {
+    const control = controlData.info.find((control) => control.name === name);
+    if (!control) return;
+
+    let { h, m, s } = control.hour;
+
+    const interval = setInterval(() => {
+      s += 1;
+      if (s >= 60) {
+        s = 0;
+        m += 1;
+      }
+      if (m >= 60) {
+        m = 0;
+        h += 1;
+      }
+
+      const updatedHour = { h, m, s };
+
+      setControlData((prev) =>
+        prev
+          ? {
+              ...prev,
+              info: prev.info.map((cont) =>
+                cont.name === name ? { ...cont, hour: updatedHour } : cont
+              ),
+            }
+          : prev
+      );
+    }, 1000);
+
+    if (name === "timeWorker") {
+      intervalWorkerRef.current = interval;
+    }
+    if (name === "timePause") {
+      intervalPauseRef.current = interval;
+    }
+  };
+
   useEffect(() => {
     //cargar los fichajes cuando se monta el componente
     fetchGetSignings();
@@ -375,7 +338,6 @@ export const useSignings = () => {
   //mapear la informacion
   useEffect(() => {
     setLoadingSignings(true); // esta cargando
-    //console.log("fichajes", signings);
     if (loading) {
       // Aún se están cargando los datos, no hacer nada
       return;
@@ -399,60 +361,90 @@ export const useSignings = () => {
       setLoadingSignings(false);
       return;
     }
-
     // Si hay fichaje pero aún no ha finalizado
     const lastPause = signings.timebreaks?.at(-1);
-    console.log(lastPause)
-
     if (lastPause && !lastPause.clockOut) {
       // Está en pausa activa
       // Activar botones "Reanudar" y "Finalizar"
       handlerDisableAll();
       handlerToggleDisabledControl(["play", "finish"]);
-      //si la pausa es pagada se activa el timeWorker
-      //Si no se para
-      console.log('pausa pagada? ',lastPause)
-      setRunningTimePause(true);
-      //setRunningTimeWorker(lastPause.pauseType.isPaid);
+      setInfo();
       setLoadingSignings(false);
+      return;
     } else {
       // No está en pausa
       setInfo();
       //empezar el contador??
-      setRunningTimeWorker(true);
-      setRunningTimePause(false);
-
       handlerDisableAll();
       handlerToggleDisabledControl(["pause", "finish"]);
       //dejar de cargar
       setLoadingSignings(false);
+      return;
     }
   }, [signings]); // importante agregar `signings` como dependencia también
 
-  //useEffect para los contadores
   useEffect(() => {
-    if (runningTimeWorker) {
-      if (!timersRef.current["timeWorker"]) {
-        startTimer("timeWorker"); // primera vez
-      } else {
-        resumeTimer("timeWorker"); // continuar si estaba pausado
-      }
-    } else {
-      pauseTimer("timeWorker");
-    }
-  }, [runningTimeWorker]);
+    if (loadingSignings) return;
+    const controls = controlData.controls.reduce(
+      (acc, control) => {
+        acc[control.name] = control;
+        return acc;
+      },
+      {} as Record<string, (typeof controlData.controls)[0]>
+    );
+    const lastPause = signings?.timebreaks?.at(-1);
 
-  useEffect(() => {
-    if (runningTimePause) {
-      if (!timersRef.current["timePause"]) {
-        startTimer("timePause");
-      } else {
-        resumeTimer("timePause");
+    if (!controls["pause"].disabled) {
+      console.log("iniciar el contador de worker");
+      // limpiar primero el intervalo worker si existe
+      if (intervalWorkerRef.current) {
+        clearInterval(intervalWorkerRef.current);
+        intervalWorkerRef.current = null;
       }
-    } else {
-      pauseTimer("timePause");
+      // limpiar intervalo pausa si existe
+      if (intervalPauseRef.current) {
+        clearInterval(intervalPauseRef.current);
+        intervalPauseRef.current = null;
+      }
+      timer("timeWorker");
     }
-  }, [runningTimePause]);
+    if (!controls["play"].disabled) {
+      console.log("Iniciar contador PAUSA");
+      // Siempre limpiamos el intervalo de pausa para no duplicar
+      if (intervalPauseRef.current) {
+        clearInterval(intervalPauseRef.current);
+        intervalPauseRef.current = null;
+      }
+
+      if (lastPause?.pauseType.isPaid) {
+        // Pausa pagada: corren ambos timers
+        console.log("Pausa PAGADA - corren worker y pausa");
+        if (!intervalWorkerRef.current) {
+          timer("timeWorker");
+        }
+        timer("timePause");
+      } else {
+        // Pausa no pagada: solo corre el timer pausa, worker se detiene
+        console.log("Pausa NO PAGADA - se detiene worker y corre pausa");
+        if (intervalWorkerRef.current) {
+          clearInterval(intervalWorkerRef.current);
+          intervalWorkerRef.current = null;
+        }
+        timer("timePause");
+      }
+    }
+
+    return () => {
+      if (intervalWorkerRef.current) {
+        clearInterval(intervalWorkerRef.current);
+        intervalWorkerRef.current = null;
+      }
+      if (intervalPauseRef.current) {
+        clearInterval(intervalPauseRef.current);
+        intervalPauseRef.current = null;
+      }
+    };
+  }, [controlData]);
 
   return {
     signings,
