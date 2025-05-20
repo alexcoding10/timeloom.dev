@@ -6,7 +6,7 @@ import { Prisma, TimeBreak } from '@prisma/client';
 export class SigningService {
   constructor(
     private readonly prismaService: PrismaService, //conexion a la base de datos
-  ) {}
+  ) { }
 
   async start(userId: number, data: Prisma.TimeEntryCreateInput) {
     // existe ya un fichaje?
@@ -24,6 +24,11 @@ export class SigningService {
   }
 
   async createPause(data: Prisma.TimeBreakCreateInput) {
+    // Verificar si timeEntry está presente y contiene el id
+    if (!data.timeEntry || !data.timeEntry.connect || !data.timeEntry.connect.id) {
+      throw new Error('Faltan datos de timeEntry o su ID no está presente.');
+    }
+
     //Tiene una pausa ya activa?
     const lastPause = await this.prismaService.timeBreak.findFirst({
       where: { timeEntryId: data.timeEntry.connect?.id },
@@ -81,14 +86,14 @@ export class SigningService {
         userId,
         ...dateFilter,
       },
-      include:{
-        timebreaks:true
+      include: {
+        timebreaks: true
       },
       orderBy: { clockIn: 'asc' },
     });
   }
 
-  async getSigningsByCompany(companyId: number, from?: Date, to?: Date,skip = 0, take = 50) {
+  async getSigningsByCompany(companyId: number, from?: Date, to?: Date, skip = 0, take = 50) {
     const dateFilter = this.buildDateFilter(from, to);
     return await this.prismaService.timeEntry.findMany({
       where: {
@@ -102,6 +107,25 @@ export class SigningService {
       take
     });
   }
+
+  async getTypePause(companyId: number) {
+    try {
+      return await this.prismaService.pauseType.findMany({
+        where: {
+          OR: [
+            { companyId: 1 },
+            { companyId }
+          ]
+        }, omit: {
+          companyId: true
+        }
+      });
+    } catch (error) {
+      console.error("Error al obtener los tipos de pausa:", error);
+      throw new Error("No se pudieron obtener los tipos de pausa.");
+    }
+  }
+
 
   buildDateFilter(from?: Date, to?: Date) {
     if (from && to) {

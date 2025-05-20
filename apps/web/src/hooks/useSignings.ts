@@ -2,101 +2,12 @@
 
 import { useAuthContext } from "@/context/AuthContext";
 import { URL_BACKEND_DEV } from "@/utils/config";
-import { useEffect, useRef, useState } from "react";
-import { HiOutlineClock } from "react-icons/hi";
-import { LuClockAlert, LuAlarmClockCheck } from "react-icons/lu";
-import { CgPlayButtonO } from "react-icons/cg";
-import { FaRegCirclePause } from "react-icons/fa6";
-import { GiAnticlockwiseRotation } from "react-icons/gi";
-import { IoCheckmark } from "react-icons/io5";
-import {
-  NameInfo,
-  TimeEntry,
-  type ControlSigningsType,
-} from "@/types/signings";
+import { useEffect, useState } from "react";
+import { CreateTimeBreak, NameInfo, TimeEntry } from "@/types/signings";
 import { getLocation } from "@/utils/navigator";
+import { usePauseType } from "./usePauseType";
+import { controlDataState } from "@/state/signings.state";
 
-//estado por defecto
-export const controlDataState: ControlSigningsType = {
-  info: [
-    {
-      name: "timeWorker",
-      icon: {
-        bgColor: "bg-secondary-300",
-        color: "text-secondary-600",
-        icon: HiOutlineClock,
-      },
-      title: "Tiempo Trabajado",
-      hour: { h: 0, m: 0, s: 0 },
-    },
-    {
-      name: "timePause",
-      icon: {
-        bgColor: "bg-warning-400",
-        color: "text-accent-primary-600",
-        icon: LuClockAlert,
-      },
-      title: "Tiempo pausado",
-      hour: { h: 0, m: 0, s: 0 },
-    },
-    {
-      name: "timeOut",
-      icon: {
-        bgColor: "bg-accent-tertiary-400",
-        color: "text-accent-tertiary-600",
-        icon: LuAlarmClockCheck,
-      },
-      title: "Hora de salida esperada",
-      hour: { h: 0, m: 0, s: 0 },
-    },
-  ],
-  controls: [
-    {
-      name: "start",
-      disabled: false,
-      hidden: false,
-      icon: {
-        bgColor: "bg-[#9AFF8D]",
-        color: "text-[#065F46]",
-        icon: CgPlayButtonO,
-      },
-      title: "Comenzar",
-    },
-    {
-      name: "pause",
-      disabled: true,
-      hidden: false,
-      icon: {
-        bgColor: "bg-error-400",
-        color: "text-[#9B0505]",
-        icon: FaRegCirclePause,
-      },
-      title: "Pausar",
-    },
-    {
-      name: "play",
-      disabled: true,
-      hidden: false,
-      icon: {
-        bgColor: "bg-success-400",
-        color: "text-success-700",
-        icon: GiAnticlockwiseRotation,
-      },
-      title: "Reanudar",
-    },
-    {
-      name: "finish",
-      disabled: true,
-      hidden: false,
-      icon: {
-        bgColor: "bg-success-400",
-        color: "text-success-700",
-        icon: IoCheckmark,
-      },
-      title: "Finalizar",
-    },
-  ],
-};
 
 export const useSignings = () => {
   const [controlData, setControlData] = useState(controlDataState);
@@ -105,11 +16,15 @@ export const useSignings = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [loadingSignings, setLoadingSignings] = useState(true);
-
   const [runningTimeWorker, setRunningTimeWorker] = useState(false);
-  const countTimeWorker = useRef(0);
-  const countStart = useRef(0);
   const [runningTimePause, setRunningTimePause] = useState(false);
+  const [openPauseModal, setOpenPauseModal] = useState(false)
+  const { pauseType } = usePauseType()
+
+
+  const closePauseModal = () => {
+    setOpenPauseModal(false)
+  }
 
   const fetchGetSignings = async () => {
     setLoading(true);
@@ -177,21 +92,90 @@ export const useSignings = () => {
     }
   };
 
+  const fetchCreatePause = async (createPause: CreateTimeBreak) => {
+    const response = await fetch(`${URL_BACKEND_DEV}/signings/pause`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(createPause)
+    })
+    if (!response.ok) throw new Error('No se a podido crear una pausa')
+    const data = await response.json()
+    console.log('pausa', data)
+    //agrego la pausa
+    setSignings(prev =>
+      prev ? {
+        ...prev,
+        timebreaks: [...(prev.timebreaks || []), data.pause]  // Crear una nueva referencia para timebreaks
+      } : prev
+    );
+
+  }
+
+  const fetchStopPause = async () => {
+    const clockOut = new Date()
+    const lastPause = signings?.timebreaks?.at(-1)
+    const response = await fetch(`${URL_BACKEND_DEV}/signings/pause/stop/${lastPause?.id}`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ clockOut: clockOut })
+    })
+    if (!response.ok) throw new Error('No se a podido parar la pausa')
+    const data = await response.json();
+    //setear el clockOut en el ultimo timeBreak
+    setSignings(prev =>
+      prev ? {
+        ...prev,
+        timebreaks: prev.timebreaks?.map(pausa =>
+          lastPause && (pausa.id === lastPause.id) ?
+            { ...pausa, clockOut: clockOut.toISOString() } : pausa
+        )
+      } : prev
+
+    )
+
+  }
+
+
+  const fetchFinishSignings = async () => {
+    const clockOut = new Date()
+    const response = await fetch(`${URL_BACKEND_DEV}/signings/finish/${signings?.id}`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ clockOut: clockOut })
+    })
+    if (!response.ok) throw new Error('No se a podido parar la pausa')
+    const data = await response.json();
+    //setear el clockOut en el ultimo timeBreak
+    setSignings(prev =>
+      prev ? {
+        ...prev,
+        clockOut: clockOut.toISOString()
+      } : prev
+
+    )
+  }
+
   const getControl = (name: string) => {
     return controlData.controls.find((control) => control.name === name);
   };
-  const getInfo = (name: string) => {
-    return controlData.info.find((info) => info.name === name);
-  };
 
-  const handlerToggleDisabledControl = (names: string[]) => {
+  const handlerToggleDisabledControl = (names: string[], value?: boolean) => {
     //Funcion que cambiara al valor contrario el disable de los
     //controles que se pasen por parametro.
     setControlData((prev) => ({
       ...prev,
       controls: prev.controls.map((control) =>
         names.includes(control.name)
-          ? { ...control, disabled: !control.disabled }
+          ? { ...control, disabled: value ? value : !control.disabled }
           : control
       ),
     }));
@@ -207,48 +191,50 @@ export const useSignings = () => {
     }));
   };
 
-const startTimer = (name: NameInfo) => {
-  // clockIn debe venir de alguna fuente, aquí lo simulo desde timerInfo
-  let clockInStr: string | null = null;
+  const startTimer = (name: NameInfo) => {
 
-if (name === 'timeWorker') {
-  clockInStr = signings?.clockIn ?? null;
-} else if (name === 'timePause' && runningTimePause) {
-  clockInStr = signings?.timebreaks?.at(-1)?.clockIn ?? null;
-}
-  if (!clockInStr) return;
+    let clockInStr: string | null = null;
 
-  const clockIn = new Date(clockInStr).getTime();
-  const now = Date.now();
+    if (name === 'timeWorker') {
+      clockInStr = signings?.clockIn ?? null;
+    } else if (name === 'timePause' && runningTimePause) {
+      clockInStr = signings?.timebreaks?.at(-1)?.clockIn ?? null;
+    }
 
-  const initialDiffSeconds = Math.floor((now - clockIn) / 1000);
+    if (!clockInStr) return;
 
-  let count = 0;
+    const clockIn = new Date(clockInStr).getTime();
+    const now = Date.now();
 
-  const intervalId = setInterval(() => {
-    const totalSeconds = initialDiffSeconds + count;
-    count++;
+    // Cálculo de la diferencia de tiempo inicial
+    const initialDiffSeconds = Math.floor((now - clockIn) / 1000);
 
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
+    let count = initialDiffSeconds; // Comienza con la diferencia ya calculada
 
-    setControlData((prev) => ({
-      ...prev,
-      info: prev.info.map((i) =>
-        i.name === name
-          ? {
+    // Establecer el intervalo
+    const intervalId = setInterval(() => {
+      count++; // Incrementa el contador por cada intervalo de 1 segundo
+
+      const hours = Math.floor(count / 3600); // Calcular las horas
+      const minutes = Math.floor((count % 3600) / 60); // Calcular los minutos
+      const seconds = count % 60; // Calcular los segundos restantes
+
+      // Actualizar el estado de controlData para mostrar la hora correctamente
+      setControlData((prev) => ({
+        ...prev,
+        info: prev.info.map((i) =>
+          i.name === name
+            ? {
               ...i,
               hour: { h: hours, m: minutes, s: seconds },
             }
-          : i
-      ),
-    }));
-  }, 1000);
+            : i
+        ),
+      }));
+    }, 1000); // Cada segundo
 
-  return intervalId;
-};
-
+    return intervalId; // Retorna el intervalId para limpiarlo luego si es necesario
+  };
 
   const getTimePause = () => {
     let timePause = 0;
@@ -269,18 +255,6 @@ if (name === 'timeWorker') {
     }
 
     return timePause;
-  };
-
-  const isLastPauseActive = () => {
-    const lastPause =
-      signings && signings.timebreaks && signings?.timebreaks?.length > 0
-        ? signings?.timebreaks[signings?.timebreaks.length - 1]
-        : null;
-
-    if (!lastPause) {
-      return false;
-    }
-    return lastPause.clockOut ? true : false;
   };
 
   const setTimeControl = (data: Date, name: NameInfo) => {
@@ -304,21 +278,46 @@ if (name === 'timeWorker') {
     switch (name) {
       case "start":
         fetchStartSigning();
-        handlerToggleDisabledControl(["start", "pause", "finish"]);
         break;
       case "pause":
-        handlerToggleDisabledControl(["pause", "play"]);
+        setOpenPauseModal(true)
         break;
       case "play":
-        handlerToggleDisabledControl(["pause", "play"]);
+        fetchStopPause()
         break;
       case "finish":
+        fetchFinishSignings()
         break;
       default:
         console.error(`${name} no es un valor correcto.`);
         break;
     }
   };
+
+
+  const setInfo = () =>{
+    if(!signings){
+      return
+    }
+      const clockIn = new Date(signings.clockIn);
+      const clockOut = signings.clockOut ? new Date(signings.clockOut) : null
+      const timeOut = new Date(clockIn.getTime() + 8 * 60 * 60 * 1000); //!mas 8 horas de momento
+      let timePause = getTimePause();
+      //Setear tiempo de salida
+      setTimeControl(timeOut, "timeOut");
+
+      if (timePause != 0) {
+        const pauseAsDate = new Date(timePause);
+        //seta las pausa
+        setTimeControl(pauseAsDate, "timePause");
+      }
+
+      if(clockOut){
+        const differenceInMilliseconds = clockOut.getTime() - clockIn.getTime();
+        const difference = new Date(differenceInMilliseconds)
+        setTimeControl(difference,'timeWorker')
+      }
+  }
 
   useEffect(() => {
     //cargar los fichajes cuando se monta el componente
@@ -337,6 +336,8 @@ if (name === 'timeWorker') {
     if (!signings) {
       // No hay fichaje iniciado
       // Mostrar botón "Comenzar"
+      handlerDisableAll()
+      handlerToggleDisabledControl(['start'])
       setLoadingSignings(false);
       return;
     }
@@ -344,7 +345,9 @@ if (name === 'timeWorker') {
     if (signings.clockOut) {
       // Fichaje finalizado
       // Desactivar todos los botones (el usuario no puede hacer nada)
-
+      handlerDisableAll()
+      //setear todo sin contadores
+      setInfo()
       setLoadingSignings(false);
       return;
     }
@@ -355,71 +358,41 @@ if (name === 'timeWorker') {
     if (lastPause && !lastPause.clockOut) {
       // Está en pausa activa
       // Activar botones "Reanudar" y "Finalizar"
+      handlerDisableAll()
+      handlerToggleDisabledControl(['play', 'finish'])
       setRunningTimePause(true);
+      setRunningTimeWorker(false);
       setLoadingSignings(false);
     } else {
       // No está en pausa
-      const clockIn = new Date(signings.clockIn);
-      const timeOut = new Date(clockIn.getTime() + 8 * 60 * 60 * 1000); //!mas 8 horas de momento
-      let timePause = getTimePause();
-      //Setear tiempos
-      setTimeControl(clockIn, "timeWorker");
-      setTimeControl(timeOut, "timeOut");
-
-      if (timePause != 0) {
-        const pauseAsDate = new Date(timePause);
-        setTimeControl(pauseAsDate, "timePause");
-      }
-
+      setInfo()
       //empezar el contador??
       setRunningTimeWorker(true);
       setRunningTimePause(false);
 
+      handlerDisableAll()
+      handlerToggleDisabledControl(['pause', 'finish'])
       //dejar de cargar
       setLoadingSignings(false);
     }
-  }, [loading]); // importante agregar `signings` como dependencia también
+  }, [signings]); // importante agregar `signings` como dependencia también
 
   //useEffect para los contadores
   useEffect(() => {
-    if (runningTimeWorker && countTimeWorker.current != 1) {
+    if (runningTimeWorker) {
       startTimer("timeWorker");
-      countTimeWorker.current += 1;
+    } else {
+      //para crono
     }
   }, [runningTimeWorker]);
 
   useEffect(() => {
     if (runningTimePause) {
       startTimer("timePause");
+    } else {
+      //parar crono
     }
   }, [runningTimePause]);
 
-  useEffect(() => {
-    if (!signings) return;
-
-    if (signings.clockOut) {
-      // Si ya finalizó el fichaje
-      handlerDisableAll();
-      return;
-    }
-
-    if (countStart.current !== 1) {
-      // Fichaje activo pero contador no iniciado aún
-      handlerToggleDisabledControl(["start",'finish']);
-      countStart.current += 1;
-      return;
-    }
-
-    const lastPauseIsActive = signings.timebreaks && isLastPauseActive();
-
-    if (!lastPauseIsActive) {
-      // No está en pausa → mostrar botón "Pausar"
-      handlerToggleDisabledControl(["pause"]);
-    } else {
-      // Está en pausa → mostrar botón "Reanudar"
-      handlerToggleDisabledControl(["play"]);
-    }
-  }, [signings]);
-
-  return { signings, loading, loadingSignings, controlData, onClickControl };
+  return { signings, loading, loadingSignings, controlData, onClickControl, openPauseModal, closePauseModal, pauseType, fetchCreatePause };
 };

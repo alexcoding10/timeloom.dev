@@ -73,4 +73,11 @@ export class SigningController {
       Number(take),
     );
   }
+
+  @Get('pauseType/:companyId')
+  async getPauseType(
+    @Param('companyId', ParseIntPipe) companyId: number,
+  ){
+    return this.signingService.getTypePause(companyId)
+  }
 }

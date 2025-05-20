@@ -22,7 +22,7 @@ export default function ControlSignings() {
           }) => (
             <li
               key={name}
-              className="flex  gap-3 sm:gap-5 rounded-lg items-center border-b border-b-zinc-200 py-2 px-4  hover:bg-zinc-100 transition-all"
+              className="flex gap-3 sm:gap-5 rounded-lg items-center border-b border-b-zinc-200 py-2 px-4  hover:bg-zinc-100 transition-all"
             >
               <div className={`${bgColor} ${color} p-2 rounded-lg`}>
                 <Icon size={48} />

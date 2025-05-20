@@ -46,16 +46,26 @@ export type TimeBreak = {
   clockIn: string;
   clockOut: string | null;
   duration: number | null;
-  coordinates: any | null;
+  coordinates:{lat:number,lon:number} | null ;
   pauseTypeId: number;
   pauseType: PauseType;
   description: string;
 };
 
+export type CreateTimeBreak ={
+  timeEntry:{connect:{id:number}}
+  clockIn:Date,
+  coordinates:{lat:number,lon:number} | null,
+  pauseType:{connect:{id:number}},
+  description:string|null
+}
+
 export type PauseType = {
   id: number;
   name: string;
-  timeBreaks: TimeBreak[];
+  description:string;
+  isPaid:true;
+  requiresNotes:false;
 };
 
 
