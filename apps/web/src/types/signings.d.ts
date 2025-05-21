@@ -68,6 +68,10 @@ export type PauseType = {
   requiresNotes:false;
 };
 
+export type GetPauses =[{
+  day:string
+  timebreaks:TimeBreak[]
+}]
 
 export type NameControl = 'start' | 'pause' | 'play' | 'finish'
 export type NameInfo = 'timeWorker' | 'timePause' | 'timeOut' 

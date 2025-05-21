@@ -77,3 +77,35 @@ export const mapSubmitUser = (data: any, user: UserAuth): CreateUserData => {
   }
   return requestData;
 }
+
+type FormatDate = 'Hh Mm Ss' | 'hh:mm:ss dd/mm/yyyy' | 'hh:mm:ss' | 'dd/mm/yyyy' | 'dd-mm-yyyy' | 'hh:mm'
+
+export const formatDate = (date: string, format?: FormatDate): string => {
+  const parsedDate = new Date(date);
+
+  // Obtener las partes de la fecha y hora
+  const hours = parsedDate.getHours().toString().padStart(2, '0');
+  const minutes = parsedDate.getMinutes().toString().padStart(2, '0');
+  const seconds = parsedDate.getSeconds().toString().padStart(2, '0');
+  const day = parsedDate.getDate().toString().padStart(2, '0');
+  const month = (parsedDate.getMonth() + 1).toString().padStart(2, '0'); // Los meses son 0-indexados
+  const year = parsedDate.getFullYear();
+
+  // Formatear la fecha como hh:mm:ss dd/mm/yyyy
+  switch (format) {
+    case 'Hh Mm Ss':
+      return `${hours}h ${minutes}m ${seconds}s`;
+    case 'hh:mm:ss dd/mm/yyyy':
+      return `${hours}:${minutes}:${seconds} ${day}/${month}/${year}`;
+    case 'hh:mm:ss':
+      return `${hours}:${minutes}:${seconds}`;
+    case 'dd/mm/yyyy':
+      return `${day}/${month}/${year}`;
+    case 'dd-mm-yyyy':
+      return `${day}-${month}-${year}`;
+    case 'hh:mm':
+      return `${hours}:${minutes}`;
+    default:
+      return `${hours}:${minutes}:${seconds}`; // En caso de un formato no reconocido
+  }
+}
