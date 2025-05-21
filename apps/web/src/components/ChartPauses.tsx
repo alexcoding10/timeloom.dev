@@ -1,57 +1,21 @@
-import { GetPauses } from '@/types/signings'
+import { ColsPauses, GetPauses } from '@/types/signings'
 import { formatDate } from '@/utils/utils'
-import React, { useEffect, useRef, useState } from 'react'
+import { col } from 'framer-motion/client'
+import React, {  useRef} from 'react'
+import Loading from './Loading'
 
 interface Props {
-    options: GetPauses
-    numberCols: number
+    cols:ColsPauses 
+    handlerColSelected: (idx: number) => void 
 }
 
-export default function ChartPauses({ options, numberCols }: Props) {
-    // Referencia al último fichaje
-    const lastPause = useRef(options.at(-1))
+export default function ChartPauses({ cols ,handlerColSelected}: Props) {
 
-    // Comprobar si el último fichaje es hoy
-    const isSigningsToday = lastPause.current?.day
-        ? new Date(lastPause.current?.day).getDate() === new Date().getDate()
-        : false
+    if(cols.length === 0 ){
+        return <Loading/>
+    }
 
-    // Número de columnas con la información
-    const numberColsWithInfo = isSigningsToday ? options.length : options.length + 1
-
-    // Crear las barras
-    const cols = new Array(numberCols).fill(null).map((_, idx) => {
-        if (idx >= (numberCols - numberColsWithInfo)) {
-            // Calculamos el índice real del fichaje en 'options'
-            const index = idx - (numberCols - numberColsWithInfo);
-            const timebreaks = options[index]?.timebreaks || [];
-
-            const duration = timebreaks.map((pause) => {
-                if (!pause.clockOut && idx === numberCols - 1 && !isSigningsToday) {
-                    // Si no hay fichaje hoy y estamos en la última columna
-                    return { value: 0, duration: null };
-                }
-
-                if (pause.clockIn && pause.clockOut) {
-                    const durationMs = new Date(pause.clockOut).getTime() - new Date(pause.clockIn).getTime();
-                    return { value: 1, duration: formatDate(new Date(durationMs).toISOString(), 'Hh Mm Ss') };
-                }
-
-                return { value: 0, duration: null }; // Si no tiene fichaje, se marca 0
-            });
-
-            return {
-                value: timebreaks.length +1 || 0,
-                durations: duration,
-            };
-        }
-
-        return { value: 0, durations: null } // default value if no data
-    })
-
-    useEffect(() => {
-        console.log(cols)
-    }, [])
+    const numberCols = cols.length
 
     return (
         <div
@@ -62,7 +26,8 @@ export default function ChartPauses({ options, numberCols }: Props) {
                 return (
                     <div
                         key={idx}
-                        className={`${idx === numberCols - 1 ? 'bg-lime-green-600' : 'bg-light-blue-300'} w-full rounded-t-lg`}
+                        onClick={()=>handlerColSelected(idx)}
+                        className={`${idx === numberCols - 1 ? 'bg-lime-green-600' : 'bg-light-blue-300'} w-full rounded-t-lg hover:bg-secondary-500 transition-all duration-300 ease-in `}
                         style={{
                             height: `${rowHeight}px`, // Ajustar la altura de cada barra según el valor
                             maxHeight: '100%', // Para que no se desborde del contenedor

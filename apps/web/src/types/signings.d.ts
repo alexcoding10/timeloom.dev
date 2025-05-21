@@ -73,5 +73,19 @@ export type GetPauses =[{
   timebreaks:TimeBreak[]
 }]
 
+export type ColsPauses =({
+    value: number;
+    durations: ({
+        duration: null;
+    } | {
+        duration: string;
+    })[];
+    day: string;
+} | {
+    value: number;
+    durations: null;
+    day: string;
+})[]
+
 export type NameControl = 'start' | 'pause' | 'play' | 'finish'
 export type NameInfo = 'timeWorker' | 'timePause' | 'timeOut' 

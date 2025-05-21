@@ -1,8 +1,10 @@
 'use client'
+import ChartInfo from '@/components/ChartInfo'
 import ChartPauses from '@/components/ChartPauses'
 import Container from '@/components/Container'
 import Loading from '@/components/Loading'
 import { useSigningsContext } from '@/context/SigningsContext'
+import { useChartPause } from '@/hooks/useChartPause'
 import { usePause } from '@/hooks/usePause'
 import { formatDate } from '@/utils/utils'
 import React, { useEffect, useState } from 'react'
@@ -23,15 +25,18 @@ export default function DetailSignings() {
     const [pauseFind, setPauseFind] = useState(pauseFindDays[0].value)
     const { pauses } = usePause(pauseFind)
 
+    const {cols,colSelected,handlerColSelected} = useChartPause(pauses ?? [],pauseFind)
+
     useEffect(() => {
-        console.log(signings) //solo para dev
+        console.log(signings, pauses) //solo para dev
 
     }, [])
+    if(!colSelected || !pauses){
+        return <Loading/>
+    }
 
     return (
         <Container>
-
-
             <div className='w-full flex flex-col gap-10 xl:gap-20 xl:flex-row  px-20 py-5'>
                 <div className='flex justify-start items-center gap-5'>
                     <div>
@@ -87,10 +92,11 @@ export default function DetailSignings() {
                             <>
                                 <div className='border-b border-b-zinc-200 w-[370px] h-[150px]'>
                                     {/*Grafica de las pausa */}
-                                    <ChartPauses numberCols={pauseFind} options={pauses}/>
+                                    <ChartPauses cols={cols} handlerColSelected={handlerColSelected}/>
                                 </div>
                                 <div className='grid grid-cols-2'>
                                     {/*Mostrar todas las pausas */}
+                                    <ChartInfo colSelected={colSelected}/>
                                 </div>
 
                             </>
