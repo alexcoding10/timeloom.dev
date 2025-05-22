@@ -57,7 +57,7 @@ export const useSignings = () => {
       const coordinates = await getLocation();
 
       if (!coordinates) {
-        throw new Error("No se pudo obtener la ubicación.");
+        console.log("No se pudo obtener la ubicación.");
       }
 
       const data: TimeEntry = {
@@ -79,7 +79,7 @@ export const useSignings = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Error al iniciar fichaje");
+        console.log("Error al iniciar fichaje");
       }
 
       const responseData = await response.json();
@@ -88,9 +88,9 @@ export const useSignings = () => {
       // Ahora puedes llamar a startTimer sin problemas
     } catch (error: unknown) {
       if (error instanceof Error) {
-        console.error("Hubo un error:", error.message);
+        console.log("Hubo un error:", error.message);
       } else {
-        console.error("Hubo un error desconocido:", error);
+        console.log("Hubo un error desconocido:", error);
       }
     }
   };
@@ -342,7 +342,7 @@ export const useSignings = () => {
       // Aún se están cargando los datos, no hacer nada
       return;
     }
-
+    
     if (!signings) {
       // No hay fichaje iniciado
       // Mostrar botón "Comenzar"
@@ -351,7 +351,7 @@ export const useSignings = () => {
       setLoadingSignings(false);
       return;
     }
-
+    
     if (signings.clockOut) {
       // Fichaje finalizado
       // Desactivar todos los botones (el usuario no puede hacer nada)

@@ -9,8 +9,8 @@ export const getPosition = (): Promise<Position | null> => {
         resolve({ lat: latitude, lon: longitude }); // Resolvemos la promesa con las coordenadas
       },
       (error) => {
-        console.error("Error al obtener la ubicación:", error.message);
-        reject(null); // Rechazamos la promesa en caso de error
+        //console.error("Error al obtener la ubicación:", error.message);
+        resolve(null); // Rechazamos la promesa en caso de error
       }
     );
   });

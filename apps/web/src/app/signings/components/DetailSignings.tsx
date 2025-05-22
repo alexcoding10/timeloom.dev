@@ -4,7 +4,7 @@ import Container from '@/components/Container'
 import Loading from '@/components/Loading'
 import { useSigningsContext } from '@/context/SigningsContext'
 import { formatDate } from '@/utils/utils'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { InfoCard } from './InfoCard'
 
 
@@ -19,7 +19,7 @@ export default function DetailSignings() {
     const clockInValue = signings ? formatDate(signings.clockIn, 'Hh Mm Ss') : '0h 0m 0s';
     const lastPauseClockIn = signings?.timebreaks?.at(-1)?.clockIn ? formatDate(signings?.timebreaks.at(-1)?.clockIn ?? '', 'Hh Mm Ss') : '0h 0m 0s';
     const clockOutStatus = signings?.clockOut ? 'completed' : signings ? 'in-progress' : 'inactive';
-    const pauseStatus = signings?.timebreaks?.length === 0 ? 'inactive' : signings?.timebreaks?.at(-1)?.clockOut ? 'completed' : 'in-progress';
+    const pauseStatus = !signings || signings?.timebreaks?.length === 0 ? 'inactive' : signings?.timebreaks?.at(-1)?.clockOut ? 'completed' : 'in-progress';
 
     return (
         <Container>

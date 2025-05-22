@@ -1,4 +1,5 @@
-import React from 'react'
+'use client'
+import React, { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';
 import { useUserControlContext } from '@/context/UserControlContext';
 import ListUserSCompany from './ListUserSCompany';
@@ -7,6 +8,13 @@ import ListUserSCompany from './ListUserSCompany';
 export default function UsersCompanyView() {
 
   const { currentUserSelect,handlerDeselectUser } = useUserControlContext()
+
+
+  useEffect(()=>{
+    if(currentUserSelect){
+      console.log(currentUserSelect)
+    }
+  },[currentUserSelect])
 
   return (
     <AnimatePresence>

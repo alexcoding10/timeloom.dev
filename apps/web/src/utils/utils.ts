@@ -80,18 +80,32 @@ export const mapSubmitUser = (data: any, user: UserAuth): CreateUserData => {
 
 type FormatDate = 'Hh Mm Ss' | 'hh:mm:ss dd/mm/yyyy' | 'hh:mm:ss' | 'dd/mm/yyyy' | 'dd-mm-yyyy' | 'hh:mm'
 
-export const formatDate = (date: string, format?: FormatDate): string => {
-  const parsedDate = new Date(date);
+export const formatDate = (date: string | Date, format?: FormatDate): string => {
+  const parsedDate = typeof date === "string" ? new Date(date) : date;
 
-  // Obtener las partes de la fecha y hora
+  // Detectar si el formato requiere hora
+  const needsTime =
+    format === 'Hh Mm Ss' ||
+    format === 'hh:mm:ss' ||
+    format === 'hh:mm:ss dd/mm/yyyy' ||
+    format === 'hh:mm';
+
+  // Si no necesita hora y se recibe string ISO, evitamos errores de timezone
+  if (!needsTime && typeof date === "string") {
+    // Extrae solo la parte de la fecha (yyyy-mm-dd) del string
+    const [year, month, day] = date.split("T")[0].split("-").map(Number);
+    // Crea una fecha local sin hora para evitar timezone shifts
+    parsedDate.setFullYear(year, month - 1, day);
+    parsedDate.setHours(0, 0, 0, 0);
+  }
+
   const hours = parsedDate.getHours().toString().padStart(2, '0');
   const minutes = parsedDate.getMinutes().toString().padStart(2, '0');
   const seconds = parsedDate.getSeconds().toString().padStart(2, '0');
   const day = parsedDate.getDate().toString().padStart(2, '0');
-  const month = (parsedDate.getMonth() + 1).toString().padStart(2, '0'); // Los meses son 0-indexados
+  const month = (parsedDate.getMonth() + 1).toString().padStart(2, '0');
   const year = parsedDate.getFullYear();
 
-  // Formatear la fecha como hh:mm:ss dd/mm/yyyy
   switch (format) {
     case 'Hh Mm Ss':
       return `${hours}h ${minutes}m ${seconds}s`;
@@ -106,6 +120,14 @@ export const formatDate = (date: string, format?: FormatDate): string => {
     case 'hh:mm':
       return `${hours}:${minutes}`;
     default:
-      return `${hours}:${minutes}:${seconds}`; // En caso de un formato no reconocido
+      return `${hours}:${minutes}:${seconds}`;
   }
+};
+
+
+export function getCalendarDayDiff(date1: Date, date2: Date): number {
+  const d1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
+  const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
+  const msDiff = d1.getTime() - d2.getTime();
+  return Math.floor(msDiff / (1000 * 60 * 60 * 24)) + 1;
 }

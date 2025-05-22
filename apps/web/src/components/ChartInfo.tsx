@@ -1,7 +1,6 @@
 import { Col } from "@/hooks/useChartPause";
-import { GetPauses } from "@/types/signings";
 import { formatDate } from "@/utils/utils";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 
 interface Props {
   colSelected: Col;
@@ -9,7 +8,10 @@ interface Props {
 
 export default function ChartInfo({ colSelected }: Props) {
 
-  const isToday = useRef(formatDate(new Date().toISOString() , 'dd/mm/yyyy')=== colSelected.day)
+  const isToday = useMemo(() => {
+  return formatDate(new Date().toISOString(), 'dd/mm/yyyy') === colSelected.day;
+}, [colSelected]);
+
 
   useEffect(() => {
     console.log(colSelected)
@@ -38,7 +40,7 @@ export default function ChartInfo({ colSelected }: Props) {
                       <p>Inicio: </p>
                       <p>{formatDate(timeBreak.clockIn, 'hh:mm:ss')}</p>
                       <p>Final: </p>
-                      <p>{timeBreak.clockOut ? formatDate(timeBreak.clockOut, 'hh:mm:ss') : isToday ? 'En desarrollo' : 'No se fichó el fin de la pausa'}</p>
+                      <p>{timeBreak.clockOut ? formatDate(timeBreak.clockOut, 'hh:mm:ss') : isToday ? 'En desarrollo' : 'No fichado'}</p>
                     </div>
                   </div>
                   <div className="flex justify-center items-center">
