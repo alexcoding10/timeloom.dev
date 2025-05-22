@@ -1,7 +1,10 @@
 "use client";
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from "react";
 import { useSignings } from "@/hooks/useSignings";
-import { ControlSigningsType, CreateTimeBreak, PauseType, TimeEntry } from "@/types/signings";
+import { ControlSigningsType, CreateTimeBreak, GetPauses, PauseType, TimeEntry } from "@/types/signings";
+import { pauseFindDays } from "@/state/pause.state";
+import { usePause } from "@/hooks/usePause";
+import { Col, useChartPause } from "@/hooks/useChartPause";
 
 
 type SigningsState = {
@@ -12,7 +15,13 @@ type SigningsState = {
   openPauseModal: boolean;
   closePauseModal: () => void;
   pauseType: PauseType[];
-  fetchCreatePause: (createPause: CreateTimeBreak) => Promise<void>
+  fetchCreatePause: (createPause: CreateTimeBreak) => Promise<void>,
+  cols: Col[],
+  colSelected: Col | undefined,
+  handlerColSelected: (idx: number) => void,
+  pauses: GetPauses | null,
+  pauseFind: number,
+  setPauseFind: Dispatch<SetStateAction<number>>
 };
 
 export const SigningsContext = createContext<SigningsState | undefined>(
@@ -29,6 +38,10 @@ export const SigningsProvider = ({ children }: { children: ReactNode }) => {
     closePauseModal,
     pauseType,
     fetchCreatePause } = useSignings()
+  const [pauseFind, setPauseFind] = useState(pauseFindDays[0].value)
+  const { pauses } = usePause(pauseFind,signings)
+  const { cols, colSelected, handlerColSelected } = useChartPause(pauses ?? [], pauseFind )
+
 
   return (
     <SigningsContext.Provider value={{
@@ -39,7 +52,13 @@ export const SigningsProvider = ({ children }: { children: ReactNode }) => {
       openPauseModal,
       closePauseModal,
       pauseType,
-      fetchCreatePause
+      fetchCreatePause,
+      cols,
+      colSelected,
+      handlerColSelected,
+      pauses,
+      pauseFind,
+      setPauseFind
     }}>
       {children}
     </SigningsContext.Provider>

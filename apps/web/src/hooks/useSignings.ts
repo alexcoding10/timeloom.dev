@@ -395,7 +395,7 @@ export const useSignings = () => {
     const lastPause = signings?.timebreaks?.at(-1);
 
     if (!controls["pause"].disabled) {
-      console.log("iniciar el contador de worker");
+      //console.log("iniciar el contador de worker");
       // limpiar primero el intervalo worker si existe
       if (intervalWorkerRef.current) {
         clearInterval(intervalWorkerRef.current);
@@ -409,7 +409,7 @@ export const useSignings = () => {
       timer("timeWorker");
     }
     if (!controls["play"].disabled) {
-      console.log("Iniciar contador PAUSA");
+      //console.log("Iniciar contador PAUSA");
       // Siempre limpiamos el intervalo de pausa para no duplicar
       if (intervalPauseRef.current) {
         clearInterval(intervalPauseRef.current);
@@ -418,14 +418,14 @@ export const useSignings = () => {
 
       if (lastPause?.pauseType.isPaid) {
         // Pausa pagada: corren ambos timers
-        console.log("Pausa PAGADA - corren worker y pausa");
+        //console.log("Pausa PAGADA - corren worker y pausa");
         if (!intervalWorkerRef.current) {
           timer("timeWorker");
         }
         timer("timePause");
       } else {
         // Pausa no pagada: solo corre el timer pausa, worker se detiene
-        console.log("Pausa NO PAGADA - se detiene worker y corre pausa");
+        //console.log("Pausa NO PAGADA - se detiene worker y corre pausa");
         if (intervalWorkerRef.current) {
           clearInterval(intervalWorkerRef.current);
           intervalWorkerRef.current = null;

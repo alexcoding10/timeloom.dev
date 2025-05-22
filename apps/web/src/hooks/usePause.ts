@@ -1,12 +1,13 @@
 import Signings from "@/app/signings/page";
 import { useAuthContext } from "@/context/AuthContext";
-import { GetPauses, TimeBreak } from "@/types/signings";
+import { useSigningsContext } from "@/context/SigningsContext";
+import { GetPauses, TimeBreak, TimeEntry } from "@/types/signings";
 import { URL_BACKEND_DEV } from "@/utils/config";
 import { useEffect, useRef, useState } from "react";
 
 
 
-export const usePause = (numberDays: number) => {
+export const usePause = (numberDays: number,signings: TimeEntry | null) => {
   const { user } = useAuthContext();
   const [pauses, setPauses] = useState<GetPauses | null>(null);
   const today = useRef(new Date());
@@ -30,10 +31,7 @@ export const usePause = (numberDays: number) => {
 
     // hace la petición
     getPauses();
-  }, [numberDays]);
-  useEffect(()=>{
-    console.log(pauses)
-  },[pauses])
+  }, [numberDays,signings]);
 
   return { pauses };
 };
