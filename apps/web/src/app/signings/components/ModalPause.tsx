@@ -6,7 +6,6 @@ import { Modal } from "rsuite";
 import { PiArrowBendUpRightFill } from "react-icons/pi";
 import { CreateTimeBreak } from "@/types/signings";
 import { getLocation } from "@/utils/navigator";
-import { div } from "framer-motion/client";
 
 export default function ModalPause() {
   const {
