@@ -1,5 +1,5 @@
-import { GetPauses, TimeBreak, TimeEntry } from "@/types/signings";
-import { formatDate } from "@/utils/utils";
+import { GetPauses, TimeBreak } from "@/types/signings";
+import { formatDate, getCalendarDayDiff } from "@/utils/utils";
 import { useMemo, useState, useEffect } from "react";
 
 export type Col = {
@@ -15,8 +15,10 @@ export const useChartPause = (
   // Crear las columnas primero
   const cols: Col[] = useMemo(() => {
     if (!options || options.length === 0) return [];
-    const numberColsWithInfo = options.length;
+    const fristDay = options[0].day;
 
+    const numberColsWithInfo =  getCalendarDayDiff(new Date(),new Date(fristDay))
+    //console.log(options,numberColsWithInfo)
     return new Array(numberCols).fill(null).map((_, idx) => {
       const day = formatDate(
         new Date(
@@ -26,8 +28,8 @@ export const useChartPause = (
       );
 
       if (idx >= numberCols - numberColsWithInfo) {
-        const index = idx - (numberCols - numberColsWithInfo);
-        const timebreaks = options[index]?.timebreaks || [];
+        const option = options.find(option => formatDate(option.day,'dd/mm/yyyy')=== day)
+        const timebreaks = option?.timebreaks || [];
 
         return {
           value: timebreaks.length || 0,

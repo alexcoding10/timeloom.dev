@@ -95,5 +95,8 @@ export class UsersService {
     }
   }
 
+  async getUserById (id:number){
+    return await this.prismaService.user.findFirst({where:{id},include:{globalRol:true,incidents:true,contract:true,timeEntries:{include:{timebreaks:true}},office:true}})
+  }
 
 }
