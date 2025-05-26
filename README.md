@@ -2,22 +2,22 @@
 
 ## 🗂️ Índice
 
-1. [Introducción](#1-introducción)  
+1. [Introducción](#-1-introducción)  
     1.1 [TimeLoom — ¿De dónde viene?](#11-timeloom--de-dónde-viene)  
-    1.2 [Metodología](#12-metodología)
+    1.2 [Metodología](#-12-metodología)
 
-2. [Estado del Arte / Marco Teórico](#2-estado-del-arte--marco-teórico)
+2. [Estado del Arte / Marco Teórico](#-2-estado-del-arte--marco-teórico)
 
-3. [Requisitos](#3-requisitos)  
+3. [Requisitos](#-3-requisitos)  
     3.1 [Requisitos funcionales](#31-requisitos-funcionales-rf)  
     3.2 [Requisitos no funcionales](#32-requisitos-no-funcionales-rnf)
 
-4. [Diseño](#4-diseño)  
+4. [Diseño](#-4-diseño)  
     4.1 [Arquitectura General](#41-arquitectura-general)  
     4.2 [Diseño de Datos](#42-diseño-de-datos)  
     4.3 [Diseño de la Interfaz](#43-diseño-de-la-interfaz)
 
-5. [Implementación](#5-implementación)  
+5. [Implementación](#-5-implementación)  
 6. [Pruebas](#6-pruebas)  
 7. [Conclusiones](#7-conclusiones)  
 8. [Líneas de Investigación Futuras](#8-líneas-de-investigación-futuras)  
@@ -107,7 +107,9 @@ El sistema propuesto, TimeLoom, debe cumplir una serie de requisitos funcionales
 - RNF3: El backend debe ofrecer una API REST estructurada y segura.
 - RNF4: Los tiempos de respuesta del sistema no deben superar los 500ms en condiciones normales de uso.
 - RNF5: El sistema debe seguir una arquitectura modular, facilitando su mantenimiento y escalabilidad.
+
 ---
+
 
 ## 🧱 4 Diseño
 
@@ -121,7 +123,7 @@ El proyecto está estructurado como un monorepositorio utilizando **Turborepo**,
 - **Backend (NestJS):** API REST modular con TypeScript, usando Prisma para la capa de acceso a datos.
 - **Base de datos PostgreSQL:** modelada en Prisma con relaciones fuertes y soporte para lógica empresarial compleja.
 
-```mermaid
+```
 graph TD
     UI[Usuario]
     FE[Frontend (Next.js)]
@@ -179,3 +181,7 @@ El diseño de la UI se basa en los siguientes principios:
 - 👥**Interfaces adaptadas al rol del usuario**, diferenciando entre trabajadores, administradores y responsables de RRHH, mostrando solo la información relevante en cada caso.
 
 - 📱 **Diseño responsive** desde el inicio, asegurando la correcta visualización y usabilidad en dispositivos móviles y de escritorio.
+---
+
+### 💻 5 Implementación
+
