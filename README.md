@@ -116,10 +116,10 @@ Entra al directorio del backend y ejecuta las migraciones para preparar la base 
 cd apps/backend
 
 # Generar cliente de Prisma
-pnpm prisma generate
+npx prisma generate
 
 # Ejecutar migraciones y crear tablas
-pnpm prisma migrate dev
+npx prisma migrate dev
 ```
 
 > Si es la primera vez que ejecutas el proyecto, esto generará el esquema completo definido en `schema.prisma`.
@@ -150,7 +150,7 @@ Este comando lanzará los servicios necesarios en paralelo.
 * **Prisma Studio** (inspección de datos):
 
   ```bash
-  pnpm prisma studio
+  npx prisma studio
   ```
 
 * **DBeaver**: alternativa visual para gestionar la base de datos PostgreSQL.
