@@ -56,9 +56,6 @@
 
 En su versión final, este sistema debería facilitar la gestión de nóminas, el monitoreo del cumplimiento horario y la comunicación interna entre los trabajadores.
 
-Perfecto. A continuación tienes una sección profesional de **Proceso de instalación y puesta en marcha del proyecto TimeLoom**, pensada para que cualquier persona (tutor, profesor o colaborador) pueda clonar, instalar y ejecutar el proyecto fácilmente.
-
-Esta sección está pensada para proyectos con estructura monorepo usando **Turborepo**, **Node.js**, **pnpm**, **Prisma** y una base de datos PostgreSQL:
 
 ---
 

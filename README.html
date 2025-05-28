@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>README.md</title>
+	<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+	<style>
+		/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+		/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+		body {
+			font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+			font-size: var(--vscode-markdown-font-size, 14px);
+			padding: 0 26px;
+			line-height: var(--vscode-markdown-line-height, 22px);
+			word-wrap: break-word;
+		}
+
+		#code-csp-warning {
+			position: fixed;
+			top: 0;
+			right: 0;
+			color: white;
+			margin: 16px;
+			text-align: center;
+			font-size: 12px;
+			font-family: sans-serif;
+			background-color: #444444;
+			cursor: pointer;
+			padding: 6px;
+			box-shadow: 1px 1px 1px rgba(0, 0, 0, .25);
+		}
+
+		#code-csp-warning:hover {
+			text-decoration: none;
+			background-color: #007acc;
+			box-shadow: 2px 2px 2px rgba(0, 0, 0, .25);
+		}
+
+		body.scrollBeyondLastLine {
+			margin-bottom: calc(100vh - 22px);
+		}
+
+		body.showEditorSelection .code-line {
+			position: relative;
+		}
+
+		body.showEditorSelection .code-active-line:before,
+		body.showEditorSelection .code-line:hover:before {
+			content: "";
+			display: block;
+			position: absolute;
+			top: 0;
+			left: -12px;
+			height: 100%;
+		}
+
+		body.showEditorSelection li.code-active-line:before,
+		body.showEditorSelection li.code-line:hover:before {
+			left: -30px;
+		}
+
+		.vscode-light.showEditorSelection .code-active-line:before {
+			border-left: 3px solid rgba(0, 0, 0, 0.15);
+		}
+
+		.vscode-light.showEditorSelection .code-line:hover:before {
+			border-left: 3px solid rgba(0, 0, 0, 0.40);
+		}
+
+		.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+			border-left: none;
+		}
+
+		.vscode-dark.showEditorSelection .code-active-line:before {
+			border-left: 3px solid rgba(255, 255, 255, 0.4);
+		}
+
+		.vscode-dark.showEditorSelection .code-line:hover:before {
+			border-left: 3px solid rgba(255, 255, 255, 0.60);
+		}
+
+		.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+			border-left: none;
+		}
+
+		.vscode-high-contrast.showEditorSelection .code-active-line:before {
+			border-left: 3px solid rgba(255, 160, 0, 0.7);
+		}
+
+		.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+			border-left: 3px solid rgba(255, 160, 0, 1);
+		}
+
+		.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+			border-left: none;
+		}
+
+		img {
+			max-width: 100%;
+			max-height: 100%;
+		}
+
+		a {
+			text-decoration: none;
+		}
+
+		a:hover {
+			text-decoration: underline;
+		}
+
+		a:focus,
+		input:focus,
+		select:focus,
+		textarea:focus {
+			outline: 1px solid -webkit-focus-ring-color;
+			outline-offset: -1px;
+		}
+
+		hr {
+			border: 0;
+			height: 2px;
+			border-bottom: 2px solid;
+		}
+
+		h1 {
+			padding-bottom: 0.3em;
+			line-height: 1.2;
+			border-bottom-width: 1px;
+			border-bottom-style: solid;
+		}
+
+		h1,
+		h2,
+		h3 {
+			font-weight: normal;
+		}
+
+		table {
+			border-collapse: collapse;
+		}
+
+		table>thead>tr>th {
+			text-align: left;
+			border-bottom: 1px solid;
+		}
+
+		table>thead>tr>th,
+		table>thead>tr>td,
+		table>tbody>tr>th,
+		table>tbody>tr>td {
+			padding: 5px 10px;
+		}
+
+		table>tbody>tr+tr>td {
+			border-top: 1px solid;
+		}
+
+		blockquote {
+			margin: 0 7px 0 5px;
+			padding: 0 16px 0 10px;
+			border-left-width: 5px;
+			border-left-style: solid;
+		}
+
+		code {
+			font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+			font-size: 1em;
+			line-height: 1.357em;
+		}
+
+		body.wordWrap pre {
+			white-space: pre-wrap;
+		}
+
+		pre:not(.hljs),
+		pre.hljs code>div {
+			padding: 16px;
+			border-radius: 3px;
+			overflow: auto;
+		}
+
+		pre code {
+			color: var(--vscode-editor-foreground);
+			tab-size: 4;
+		}
+
+		/** Theming */
+
+		.vscode-light pre {
+			background-color: rgba(220, 220, 220, 0.4);
+		}
+
+		.vscode-dark pre {
+			background-color: rgba(10, 10, 10, 0.4);
+		}
+
+		.vscode-high-contrast pre {
+			background-color: rgb(0, 0, 0);
+		}
+
+		.vscode-high-contrast h1 {
+			border-color: rgb(0, 0, 0);
+		}
+
+		.vscode-light table>thead>tr>th {
+			border-color: rgba(0, 0, 0, 0.69);
+		}
+
+		.vscode-dark table>thead>tr>th {
+			border-color: rgba(255, 255, 255, 0.69);
+		}
+
+		.vscode-light h1,
+		.vscode-light hr,
+		.vscode-light table>tbody>tr+tr>td {
+			border-color: rgba(0, 0, 0, 0.18);
+		}
+
+		.vscode-dark h1,
+		.vscode-dark hr,
+		.vscode-dark table>tbody>tr+tr>td {
+			border-color: rgba(255, 255, 255, 0.18);
+		}
+	</style>
+
+	<style>
+		@page {
+			size: A4;
+			margin: 2cm;
+		}
+
+		/* Tomorrow Theme */
+		/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+		/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+		/* Tomorrow Comment */
+		.hljs-comment,
+		.hljs-quote {
+			color: #8e908c;
+		}
+
+		/* Tomorrow Red */
+		.hljs-variable,
+		.hljs-template-variable,
+		.hljs-tag,
+		.hljs-name,
+		.hljs-selector-id,
+		.hljs-selector-class,
+		.hljs-regexp,
+		.hljs-deletion {
+			color: #c82829;
+		}
+
+		/* Tomorrow Orange */
+		.hljs-number,
+		.hljs-built_in,
+		.hljs-builtin-name,
+		.hljs-literal,
+		.hljs-type,
+		.hljs-params,
+		.hljs-meta,
+		.hljs-link {
+			color: #f5871f;
+		}
+
+		/* Tomorrow Yellow */
+		.hljs-attribute {
+			color: #eab700;
+		}
+
+		/* Tomorrow Green */
+		.hljs-string,
+		.hljs-symbol,
+		.hljs-bullet,
+		.hljs-addition {
+			color: #718c00;
+		}
+
+		/* Tomorrow Blue */
+		.hljs-title,
+		.hljs-section {
+			color: #4271ae;
+		}
+
+		/* Tomorrow Purple */
+		.hljs-keyword,
+		.hljs-selector-tag {
+			color: #8959a8;
+		}
+
+		.hljs {
+			display: block;
+			overflow-x: auto;
+			color: #4d4d4c;
+			padding: 0.5em;
+		}
+
+		.hljs-emphasis {
+			font-style: italic;
+		}
+
+		.hljs-strong {
+			font-weight: bold;
+		}
+	</style>
+
+	<style>
+		/*
+ * Markdown PDF CSS
+ */
+
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+			padding: 0 12px;
+		}
+
+		pre {
+			background-color: #f8f8f8;
+			border: 1px solid #cccccc;
+			border-radius: 3px;
+			overflow-x: auto;
+			white-space: pre-wrap;
+			overflow-wrap: break-word;
+		}
+
+		pre:not(.hljs) {
+			padding: 23px;
+			line-height: 19px;
+		}
+
+		blockquote {
+			background: rgba(127, 127, 127, 0.1);
+			border-color: rgba(0, 122, 204, 0.5);
+		}
+
+		.emoji {
+			height: 1.4em;
+		}
+
+		code {
+			font-size: 14px;
+			line-height: 19px;
+		}
+
+		/* for inline code */
+		:not(pre):not(.hljs)>code {
+			color: #C9AE75;
+			/* Change the old color so it seems less like an error */
+			font-size: inherit;
+		}
+
+		/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+		.page {
+			page-break-after: always;
+			width: 210mm;
+			min-height: 297mm;
+			padding: 2cm;
+			box-sizing: border-box;
+			background: white;
+			overflow: hidden;
+		}
+
+		.title2 {
+			font-weight: 600;
+			font-size: 1.5rem;
+		}
+
+		.title3 {
+			font-weight: 600;
+			font-size: 1.2rem;
+		}
+	</style>
+
+	<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+
+<body>
+	<script>
+		mermaid.initialize({
+			startOnLoad: true,
+			theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+				? 'dark'
+				: 'default'
+		});
+	</script>
+	<div class="page">
+
+		<h1 id="%F0%9F%93%9A-trabajo-de-fin-de-grado-tfg"
+			style="font-weight: 800; text-align: center; font-size: 44px;">TimeLoom</h1>
+		<div style="width: 100%; display: flex; justify-content: center; padding: 150px 0px;"><img
+				src="img/LogoTimeLoom.svg" alt="Logo" title="Logo"></div>
+		<p>TFG DAM Cesur by <span style="font-weight: 600;">Alexis Jiménez Ríos</span></p>
+	</div>
+
+	<div class="page">
+
+		<h2 id="%F0%9F%97%82%EF%B8%8F-%C3%ADndice-general" class="title2">🗂️ Índice General</h2>
+		<ol>
+			<li>
+				<p><strong><a href="#-1-introducci%C3%B3n">Introducción</a></strong><br>
+					1.1 <a href="#11-timeloom--de-d%C3%B3nde-viene">TimeLoom — ¿De dónde viene?</a></p>
+				<ul>
+					<li>1.1.1 <a href="#111-%F0%9F%9A%80-instalaci%C3%B3n-y-puesta-en-marcha">Instalación y puesta en
+							marcha</a><br>
+						1.2 <a href="#-12-metodolog%C3%ADa">Metodología</a></li>
+				</ul>
+			</li>
+			<li>
+				<p><strong><a href="#-2-estado-del-arte--marco-te%C3%B3rico">Estado del Arte / Marco
+							Teórico</a></strong></p>
+			</li>
+			<li>
+				<p><strong><a href="#-3-requisitos">Requisitos</a></strong><br>
+					3.1 <a href="#31-requisitos-funcionales-rf">Requisitos funcionales (RF)</a><br>
+					3.2 <a href="#32-requisitos-no-funcionales-rnf">Requisitos no funcionales (RNF)</a></p>
+			</li>
+			<li>
+				<p><strong><a href="#-4-dise%C3%B1o">Diseño</a></strong><br>
+					4.1 <a href="#41-arquitectura-general">Arquitectura General</a><br>
+					4.2 <a href="#42-dise%C3%B1o-de-datos">Diseño de Datos</a><br>
+					4.3 <a href="#43-dise%C3%B1o-de-la-interfaz">Diseño de la Interfaz</a></p>
+			</li>
+			<li>
+				<p><strong><a href="#-5-implementaci%C3%B3n">Implementación</a></strong></p>
+				<ul>
+					<li>5.1 <a href="#51-estructura-del-proyecto">Estructura del proyecto</a></li>
+					<li>5.2 <a href="#52-backend-nestjs">Backend (NestJS)</a></li>
+					<li>5.3 <a href="#53-frontend-nextjs">Frontend (NextJS)</a></li>
+					<li>5.4 <a href="#54-integraci%C3%B3n-entre-frontend-y-backend">Integración entre frontend y
+							backend</a></li>
+				</ul>
+			</li>
+			<li>
+				<p><strong><a href="#6-pruebas">Pruebas</a></strong></p>
+				<ul>
+					<li>6.1 <a href="#61-pruebas-en-el-backend">Pruebas en el backend</a></li>
+					<li>6.2 <a href="#62-pruebas-en-el-frontend">Pruebas en el frontend</a></li>
+				</ul>
+			</li>
+			<li>
+				<p><strong><a href="#7-conclusiones">Conclusiones</a></strong></p>
+			</li>
+			<li>
+				<p><strong><a href="#8-l%C3%ADneas-de-investigaci%C3%B3n-futuras">Líneas de Investigación
+							Futuras</a></strong></p>
+			</li>
+			<li>
+				<p><strong><a href="#9-anexos">Anexos</a></strong></p>
+				<ul>
+					<li>Capturas de pantalla</li>
+					<li>Esquemas de diseño (Figma)</li>
+				</ul>
+			</li>
+			<li>
+				<p><strong><a href="#10-bibliograf%C3%ADa">Bibliografía</a></strong></p>
+			</li>
+		</ol>
+		<br>
+		<h3 id="%F0%9F%94%8D-secciones-destacadas" class="title3">🔍 Secciones Destacadas</h3>
+		<ul>
+			<li><strong>Instalación</strong>: Guía paso a paso para configurar el proyecto (<a
+					href="#111-%F0%9F%9A%80-instalaci%C3%B3n-y-puesta-en-marcha">ver sección</a>).</li>
+			<li><strong>Diseño de datos</strong>: Modelado de entidades como <span style="color: #414141;">
+					User, TimeEntry,
+					y Payroll
+				</span> (<a href="#42-dise%C3%B1o-de-datos">ver sección</a>).</li>
+			<li><strong>Anexos</strong>: Imágenes de la interfaz y esquemas de diseño (<a href="#9-anexos">ver
+					sección</a>).</li>
+		</ul>
+	</div>
+	<div class="page">
+
+		<h2 id="%F0%9F%93%8C-1-introducci%C3%B3n" class="title2">📌 1 Introducción</h2>
+		<br>
+		<h3 id="11-timeloom--de-d%C3%B3nde-viene" class="title3">1.1 TimeLoom — De dónde viene</h3>
+		<p><strong>TimeLoom</strong> nace de la idea de gestionar la difícil tarea del control del cumplimiento del
+			turno
+			laboral de los trabajadores de una empresa. Está pensado para que sea accesible a cualquier empresa,
+			garantizando el cumplimiento de horarios y optimizando la administración del personal.</p>
+		<p>En su versión final, este sistema debería facilitar la gestión de nóminas, el monitoreo del cumplimiento
+			horario
+			y la comunicación interna entre los trabajadores.</p>
+		<br>
+		<hr>
+		<br>
+		<h3 id="111-%F0%9F%9A%80-instalaci%C3%B3n-y-puesta-en-marcha" class="title3">1.1.1 🚀 Instalación y puesta en
+			marcha</h3>
+		<p>A continuación se detallan los pasos necesarios para clonar y ejecutar el proyecto <strong>TimeLoom</strong>
+			en
+			local.</p>
+		<h3 id="%F0%9F%94%A7-requisitos-previos" class="title3">🔧 Requisitos previos</h3>
+		<p>Asegúrate de tener instaladas las siguientes herramientas:</p>
+		<ul>
+			<li><a href="https://nodejs.org/">Node.js</a> (versión 18 o superior)</li>
+			<li><a href="https://pnpm.io/">pnpm</a> (versión 8 o superior)</li>
+			<li><a href="https://www.postgresql.org/">PostgreSQL</a> en local o una base de datos externa</li>
+			<li><a href="https://git-scm.com/">Git</a></li>
+		</ul>
+		<h3 id="%F0%9F%93%A6-1-clonar-el-repositorio" class="title3">📦 1. Clonar el repositorio</h3>
+		<pre class="hljs"><code><div>git <span class="hljs-built_in">clone</span> https://github.com/alexcoding10/timeloom.dev.git
+	<span class="hljs-built_in">cd</span> timeloom
+	</div></code></pre>
+	</div>
+
+	<div class="page">
+		<h3 id="%F0%9F%93%82-2-instalar-las-dependencias" class="title3">📂 2. Instalar las dependencias</h3>
+		<pre class="hljs"><code><div>pnpm install
+	</div></code></pre>
+		<blockquote>
+			<p>⚠️ El proyecto usa <strong>Turborepo</strong> con múltiples paquetes y aplicaciones. Este comando
+				instalará
+				las dependencias de todo el monorepo.</p>
+		</blockquote>
+		<br>
+		<hr>
+		<br>
+		<h3 id="%F0%9F%94%8C-3-configurar-la-base-de-datos" class="title3">🔌 3. Configurar la base de datos</h3>
+		<p>Crea un archivo <code>.env</code> en el directorio <code>apps/backend/</code> con la variable
+			<code>DATABASE_URL</code> que apunte a tu base de datos PostgreSQL. Ejemplo:
+		</p>
+		<pre class="hljs"><code><div>DATABASE_URL=postgresql://usuario:contraseña@localhost:5432/timeloom
+	</div></code></pre>
+		<blockquote>
+			<p>📌 Puedes usar servicios como <a href="https://railway.app/">Railway</a>, <a
+					href="https://supabase.com/">Supabase</a> o tu instancia local de PostgreSQL.</p>
+		</blockquote>
+		<br>
+		<hr>
+		<br>
+		<h3 id="%F0%9F%9B%A0%EF%B8%8F-4-configurar-prisma" class="title3">🛠️ 4. Configurar Prisma</h3>
+		<p>Entra al directorio del backend y ejecuta las migraciones para preparar la base de datos:</p>
+		<pre class="hljs"><code><div><span class="hljs-built_in">cd</span> apps/backend
+	
+	<span class="hljs-comment"># Generar cliente de Prisma</span>
+	npx prisma generate
+	
+	<span class="hljs-comment"># Ejecutar migraciones y crear tablas</span>
+	npx prisma migrate dev
+	</div></code></pre>
+		<blockquote>
+			<p>Si es la primera vez que ejecutas el proyecto, esto generará el esquema completo definido en
+				<code>schema.prisma</code>.
+			</p>
+		</blockquote>
+	</div>
+
+	<div class="page">
+		<h3 id="%E2%96%B6%EF%B8%8F-5-ejecutar-el-proyecto" class="title3">▶️ 5. Ejecutar el proyecto</h3>
+		<p>Desde la raíz del repositorio, puedes iniciar tanto el frontend como el backend con Turborepo:</p>
+		<pre class="hljs"><code><div>pnpm run dev
+	</div></code></pre>
+		<p>Este comando lanzará los servicios necesarios en paralelo.</p>
+		<br>
+		<hr>
+		<br>
+		<h3 id="%E2%9C%85-verificaci%C3%B3n" class="title3">✅ Verificación</h3>
+		<ul>
+			<li>Backend (NestJS): <a href="http://localhost:3333">http://localhost:3030</a></li>
+			<li>Frontend (NextJS): <a href="http://localhost:3000">http://localhost:3000</a></li>
+		</ul>
+
+		<h3 id="%F0%9F%9B%A0-herramientas-%C3%BAtiles-durante-el-desarrollo" class="title3">🛠 Herramientas útiles
+			durante el
+			desarrollo
+		</h3>
+		<ul>
+			<li>
+				<p><strong>Prisma Studio</strong> (inspección de datos):</p>
+				<pre class="hljs"><code><div>npx prisma studio
+	</div></code></pre>
+			</li>
+			<li>
+				<p><strong>DBeaver</strong>: alternativa visual para gestionar la base de datos PostgreSQL.</p>
+			</li>
+		</ul>
+	</div>
+
+	<div class="page">
+		<h2 id="%F0%9F%A7%AA-12-metodolog%C3%ADa" class="title2">🧪 1.2 Metodología</h2>
+		<p>El desarrollo del proyecto se abordó mediante una metodología práctica, centrada en la solución de un
+			problema
+			real relacionado con la gestión del control horario. Las etapas fueron:</p>
+		<ol>
+			<li>
+				<p><strong>Definición del problema:</strong><br>
+					Identifiqué que muchas empresas necesitan una herramienta para controlar de forma eficiente que sus
+					empleados cumplan con los horarios establecidos.</p>
+			</li>
+			<li>
+				<p><strong>Selección del stack tecnológico:</strong><br>
+					Esta etapa fue clave. Realicé una búsqueda intensiva de información para elegir tecnologías que me
+					permitieran crear, escalar, mantener y optimizar el proyecto de forma segura y eficiente.</p>
+			</li>
+			<li>
+				<p><strong>Diseño:</strong><br>
+					Se diseñaron tanto las estructuras de datos mínimas viables para la primera versión, como el aspecto
+					gráfico de la aplicación. Investigué sobre paletas de color, tipografías, tipos de iconos, y enfoqué
+					el
+					diseño en ofrecer una experiencia clara e intuitiva.</p>
+			</li>
+			<li>
+				<p><strong>Implementación del software:</strong><br>
+					El desarrollo del código se realizó de forma iterativa. Me aseguré de conectar backend y frontend
+					desde
+					el inicio, aplicando buenas prácticas de modularización y control de versiones con GitHub.</p>
+			</li>
+			<li>
+				<p><strong>Pruebas:</strong><br>
+					Realicé pruebas funcionales centradas en formularios y algoritmos internos clave para asegurar que
+					los
+					datos importantes se mostraran correctamente al usuario final.</p>
+			</li>
+			<li>
+				<p><strong>Despliegue:</strong><br>
+					Esta etapa aún está en proceso. Será la fase final, junto con el mantenimiento y posibles mejoras
+					futuras.</p>
+			</li>
+		</ol>
+		<p>En este documento encontrarás todo el proceso que me llevó a crear esta primera versión de
+			<strong>TimeLoom</strong>.
+		</p>
+
+	</div>
+
+	<div class="page">
+		<h2 id="%F0%9F%A7%A0-2-estado-del-arte--marco-te%C3%B3rico" class="title2">🧠 2 Estado del Arte / Marco Teórico
+		</h2>
+		<p>El control horario y la gestión del cumplimiento de turnos laborales es un reto común en empresas de todos
+			los
+			tamaños. A lo largo de los años han surgido distintas soluciones tecnológicas para automatizar este proceso,
+			mejorar la eficiencia y cumplir con normativas laborales.</p>
+		<p>Actualmente existen plataformas como <strong>Factorial</strong>, <strong>Sesame</strong> o
+			<strong>Kronos</strong>, que ofrecen servicios avanzados de gestión de personal. Estas herramientas suelen
+			estar
+			orientadas a empresas medianas o grandes, y requieren suscripciones de pago, lo que puede suponer una
+			barrera
+			para pequeñas empresas.
+		</p>
+		<p>Por otro lado, la mayoría de estas soluciones priorizan la gestión administrativa pero dejan de lado la
+			experiencia del trabajador.</p>
+		<p>En cuanto a tecnologías, predominan las aplicaciones web desarrolladas con stacks como <strong>React o
+				Angular en
+				el frontend</strong> y <strong>Node.js o Java en el backend</strong>, con bases de datos relacionales y
+			arquitecturas RESTful.</p>
+		<p>En cambio, se optó por un <strong>stack moderno y flexible basado en JavaScript</strong>, lo que permite
+			rapidez
+			en el desarrollo, modularidad, y una comunidad amplia. La arquitectura del sistema se basa en:</p>
+		<ul>
+			<li><strong>NestJS</strong>: un framework backend para Node.js que sigue principios de diseño similares a
+				los de
+				Angular, ideal para crear APIs estructuradas y mantenibles.</li>
+			<li><strong>NextJS</strong>: framework frontend y full-stack basado en React, que permite renderizado
+				híbrido
+				(SSR/SSG), una gran experiencia de desarrollo y rendimiento óptimo.</li>
+			<li><strong>Turborepo</strong>: herramienta de alto rendimiento para organizar múltiples paquetes en un
+				monorepositorio, facilitando el desarrollo modular, la compartición de código entre frontend y backend,
+				y
+				optimizando los tiempos de ejecución de scripts y builds.</li>
+		</ul>
+		<p>Este stack permite construir una aplicación escalable, fácil de mantener y con una excelente experiencia de
+			usuario, al mismo tiempo que se reduce la complejidad de despliegue gracias a la unificación del lenguaje
+			(JavaScript/TypeScript) en todo el proyecto.</p>
+		<p><strong>TimeLoom</strong> se posiciona como una solución ligera, accesible y personalizable para empresas que
+			buscan cubrir sus necesidades básicas de control horario, comunicación y eventualmente, gestión de nóminas,
+			sin
+			depender de sistemas complejos o costosos.</p>
+		<p>Este proyecto busca aportar valor mediante una interfaz cuidada, un diseño funcional y una arquitectura
+			modular
+			que pueda escalar en el futuro.</p>
+	</div>
+
+	<div class="page">
+		<h2 id="%F0%9F%93%8B-3-requisitos" class="title2">📋 3 Requisitos</h2>
+
+		<p>El sistema propuesto, TimeLoom, debe cumplir una serie de requisitos funcionales y no funcionales para
+			garantizar
+			su utilidad, escalabilidad y facilidad de uso.</p>
+		<h3 id="31-requisitos-funcionales-rf" class="title3">3.1 Requisitos funcionales (RF)</h3>
+		<ul>
+			<li>RF1: El sistema debe permitir a los trabajadores registrar su hora de entrada, pausas y salida.</li>
+			<li>RF2: Los administradores deben poder visualizar el historial de fichajes de cada trabajador.</li>
+			<li>RF3: El sistema debe generar reportes con las horas trabajadas por cada empleado.</li>
+			<li>RF4: El sistema debe permitir la creación de bonus y deducciones de cada contrato.</li>
+			<li>RF5: El sistema debe incluir un sistema básico de autenticación de usuarios.</li>
+			<li>RF6: El sistema debe permitir la comunicación interna entre empleados (mensajería interna o
+				notificaciones).
+			</li>
+			<li>RF7: El sistema debe guardar y mostrar correctamente el estado de cumplimiento del horario por parte de
+				cada
+				trabajador.</li>
+		</ul>
+		<h3 id="32-requisitos-no-funcionales-rnf" class="title3">3.2 Requisitos no funcionales (RNF)</h3>
+		<ul>
+			<li>RNF1: El sistema debe tener una interfaz intuitiva y fácil de usar.</li>
+			<li>RNF2: La aplicación debe ser accesible desde dispositivos móviles y de escritorio.</li>
+			<li>RNF3: El backend debe ofrecer una API REST estructurada y segura.</li>
+			<li>RNF4: Los tiempos de respuesta del sistema no deben superar los 500ms en condiciones normales de uso.
+			</li>
+			<li>RNF5: El sistema debe seguir una arquitectura modular, facilitando su mantenimiento y escalabilidad.
+			</li>
+		</ul>
+	</div>
+	<div class="page">
+
+		<h2 id="%F0%9F%A7%B1-4-dise%C3%B1o" class="title2">🧱 4 Diseño</h2>
+		<p>El diseño de TimeLoom se ha centrado en modularidad, escalabilidad y claridad. El modelo de datos se
+			construyó
+			con Prisma y PostgreSQL, organizado en torno a una arquitectura de empresa que gestiona trabajadores,
+			turnos,
+			horarios, incidencias, nóminas y roles.</p>
+		<h3 id="41-arquitectura-general" class="title3">4.1 Arquitectura General</h3>
+		<p>El proyecto está estructurado como un monorepositorio utilizando <strong>Turborepo</strong>, con separación
+			entre:</p>
+		<ul>
+			<li><strong>Frontend (NextJS):</strong> interfaz de usuario moderna, responsive y de alto rendimiento.</li>
+			<li><strong>Backend (NestJS):</strong> API REST modular con TypeScript, usando Prisma para la capa de acceso
+				a
+				datos.</li>
+			<li><strong>Base de datos PostgreSQL:</strong> modelada en Prisma con relaciones fuertes y soporte para
+				lógica
+				empresarial compleja.</li>
+		</ul>
+		<pre class="hljs"><code><div>graph TD
+			UI[Usuario]
+			FE[Frontend (Next.js)]
+			BE[Backend (Nest.js)]
+			DB[(PostgreSQL)]
+			UI --&gt; FE
+			FE --&gt; BE
+			BE --&gt; DB
+		</div></code></pre>
+	</div>
+	<div class="page">
+
+		<h3 id="42-dise%C3%B1o-de-datos" class="title3">4.2 Diseño de Datos</h3>
+		<p>Las entidades principales se agrupan en áreas funcionales del sistema:</p>
+		<p>🏢 <strong>Empresa y estructura organizativa</strong></p>
+		<ul>
+			<li>
+				<p>Company: entidad central del sistema. Cada empresa puede tener múltiples oficinas, empleados, roles y
+					turnos.</p>
+				<ul>
+					<li>Ejemplo de Company</li>
+				</ul>
+				<pre class="hljs"><code><div>model Company {
+	   id          Int         @id @default(autoincrement())
+	   name        String      @unique
+	   email       String      @unique
+	   address     String?
+	   zipCode     String?
+	   logoUrl     String?
+	   coordinates Json?
+	   users       User[]
+	   offices     Office[]
+	   shifts      Shift[]
+	   pauseTypes  PauseType[]
+	   rol         Rol[]
+	   team        Team[]
+	   Deduction   Deduction[]
+	   Bonus       Bonus[]
+	}
+	</div></code></pre>
+			</li>
+			<li>
+				<p>Office: localización física de la empresa.</p>
+			</li>
+			<li>
+				<p>Team, Rol, TeamRolUser, GlobalRol: gestión de equipos y roles asignados a empleados.</p>
+			</li>
+		</ul>
+
+		<p>👥 <strong>Gestión de empleados y contratos</strong></p>
+		<ul>
+			<li>
+				<p>User: representa al empleado, incluyendo perfil, oficina asignada y empresa.</p>
+			</li>
+			<li>
+				<p>Contract: almacena información contractual como salario, tipo de contrato (FIXED, TEMPORARY,
+					FREELANCE).
+				</p>
+			</li>
+			<li>
+				<p>WorkWeek, WorkHour: control de planificación y horas trabajadas (normales y extra).</p>
+			</li>
+		</ul>
+	</div>
+
+	<div class="page">
+
+		<p>⏱️ <strong>Control horario y pausas</strong></p>
+		<ul>
+			<li>
+				<p>TimeEntry: registro de entrada y salida diaria de los empleados.</p>
+				<ul>
+					<li>Ejemplo de TimeEntry</li>
+				</ul>
+				<pre class="hljs"><code><div>   model TimeEntry {
+		  id          Int         @id @default(autoincrement())
+		  userId      Int
+		  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+		  clockIn     DateTime    @default(now())
+		  clockOut    DateTime?
+		  duration    Int?
+		  coordinates Json?
+		  timebreaks  TimeBreak[] 
+	   }
+	</div></code></pre>
+			</li>
+			<li>
+				<p>TimeBreak: pausas dentro de una jornada, con duración, tipo (PauseType) y localización opcional.</p>
+				<ul>
+					<li>Ejemplo de TimeBreak</li>
+				</ul>
+				<pre class="hljs"><code><div>model TimeBreak {
+	   id          Int       @id @default(autoincrement())
+	   timeEntryId Int
+	   timeEntry   TimeEntry @relation(fields: [timeEntryId], references: [id])
+	   clockIn     DateTime  @default(now())
+	   clockOut    DateTime?
+	   duration    Int?
+	   coordinates Json?
+	   pauseTypeId Int
+	   pauseType   PauseType @relation(fields: [pauseTypeId], references: [id])
+	   description String
+	}
+	</div></code></pre>
+			</li>
+		</ul>
+	</div>
+
+	<div class="page">
+		<p>🔔 <strong>Notificaciones e incidencias</strong></p>
+		<ul>
+			<li>
+				<p>Notification: avisos entre responsables y empleados, con estados (PENDING, READ, etc.).</p>
+			</li>
+			<li>
+				<p>Indicent: registro de incidencias (llegadas tarde, ausencias, etc.), con tipo (IncidentType) y estado
+					de
+					revisión (IncidentStatus).</p>
+			</li>
+		</ul>
+		<p>💰 <strong>Nómina y deducciones</strong></p>
+		<ul>
+			<li>
+				<p>Payroll: gestiona cada período de pago, incluyendo salario bruto, bonificaciones, deducciones y neto.
+				</p>
+			</li>
+			<li>
+				<p>Deduction y Bonus: elementos asociados al contrato que afectan el salario final.</p>
+			</li>
+		</ul>
+		<br>
+		<h3 id="43-dise%C3%B1o-de-la-interfaz" class="title3">4.3 Diseño de la Interfaz</h3>
+		<p>Para el diseño de la interfaz se llevó a cabo un estudio exhaustivo utilizando la herramienta Figma, donde se
+			construyó un sistema de diseño completo. A partir de este sistema se generaron varios prototipos
+			interactivos,
+			evaluando múltiples combinaciones de paletas de colores con el objetivo de lograr una estética profesional
+			que
+			transmita confianza, claridad y modernidad al usuario final.</p>
+		<p>El diseño de la UI se basa en los siguientes principios:</p>
+		<ul>
+			<li>
+				<p>✅ <strong>Estructura clara</strong> con navegación lateral que permite acceder fácilmente a las
+					secciones
+					principales: Dashboard, Fichajes, Turnos, Nóminas, etc.</p>
+			</li>
+			<li>
+				<p>🎨 <strong>Paleta de colores profesional</strong>, seleccionada tras varias iteraciones para
+					favorecer la
+					legibilidad y generar una identidad visual sólida.</p>
+			</li>
+			<li>
+				<p>🔤 <strong>Tipografía accesible y jerárquica</strong>, junto a componentes visuales reutilizables que
+					garantizan coherencia en toda la interfaz.</p>
+			</li>
+			<li>
+				<p>👥<strong>Interfaces adaptadas al rol del usuario</strong>, diferenciando entre trabajadores,
+					administradores y responsables de RRHH, mostrando solo la información relevante en cada caso.</p>
+			</li>
+			<li>
+				<p>📱 <strong>Diseño responsive</strong> desde el inicio, asegurando la correcta visualización y
+					usabilidad
+					en dispositivos móviles y de escritorio.</p>
+			</li>
+		</ul>
+	</div>
+
+	<div class="page">
+
+		<h3 id="%F0%9F%92%BB-5-implementaci%C3%B3n" class="title2">💻 5 Implementación</h3>
+		<p>La implementación de <strong>TimeLoom</strong> se llevó a cabo de forma iterativa, dividiendo el trabajo en
+			distintas fases para asegurar la correcta integración entre los componentes y facilitar el desarrollo
+			modular
+			del sistema.</p>
+		<h3 id="51-estructura-del-proyecto" class="title3">5.1 Estructura del proyecto</h3>
+		<p>El sistema está organizado en un <strong>monorepositorio</strong> utilizando <strong>Turborepo</strong>, lo
+			que
+			permite separar claramente el frontend, el backend y los paquetes compartidos, manteniendo una base de
+			código
+			limpia y escalable.</p>
+		<pre class="hljs"><code><div>apps/
+	├── web/ → Aplicación web (NextJS)
+	└── backend/ → API REST (NestJS)
+	</div></code></pre>
+		<p>Gracias al uso de un monorepositorio mediante Turborepo, es posible centralizar todos los proyectos
+			relacionados
+			con TimeLoom en un único entorno de desarrollo. Este enfoque no solo facilita la gestión y escalabilidad del
+			sistema actual, sino que también abre la puerta a futuras integraciones, como el desarrollo de una
+			aplicación
+			nativa para Android u otras plataformas, manteniendo una estructura coherente, modular y reutilizable.</p>
+		<h3 id="52-backend-nestjs" class="title3">5.2 Backend (NestJS)</h3>
+		<p>El backend fue desarrollado con <strong>NestJS</strong> usando <strong>TypeScript</strong> y <strong>Prisma
+				ORM</strong> para interactuar con una base de datos PostgreSQL.</p>
+		<p>Principales características:</p>
+		<ul>
+			<li>Modularización por funcionalidades (auth, users, payroll, etc.).</li>
+			<li>Controladores RESTful con validación y DTOs.</li>
+			<li>Uso de servicios y repositorios para mantener una arquitectura limpia.</li>
+			<li>Prisma como ORM para manejar las entidades y relaciones del sistema.</li>
+		</ul>
+	</div>
+
+	<div class="page">
+
+
+		<h3 id="53-frontend-nextjs" class="title3">5.3 Frontend (NextJS)</h3>
+		<p>La interfaz de usuario fue desarrollada con <strong>NextJS</strong>, permitiendo un renderizado híbrido (SSR
+			y
+			SSG), ideal para escalar el proyecto y mejorar la experiencia del usuario.</p>
+		<p>Características clave:</p>
+		<ul>
+			<li>Componentes reutilizables construidos con React y TypeScript.</li>
+			<li>Manejo del estado local y global.</li>
+			<li>Comunicación con el backend a través de llamadas a la API.</li>
+			<li>Diseño responsive basado en el sistema definido en Figma.</li>
+		</ul>
+		<h3 id="54-integraci%C3%B3n-entre-frontend-y-backend" class="title3">5.4 Integración entre frontend y backend
+		</h3>
+		<p>La integración entre frontend y backend se realizó mediante una <strong>API REST desarrollada en
+				NestJS</strong>,
+			consumida desde el frontend construido en NextJS. Se implementaron rutas seguras con control de
+			autenticación y
+			autorización basado en el rol del usuario.</p>
+		<p>En cuanto a la seguridad, se prestó especial atención al manejo de sesiones. En el módulo de autenticación,
+			una
+			vez que el backend valida las credenciales del usuario, se genera un <strong>token JWT</strong> que se envía
+			al
+			frontend en forma de <strong>cookie HTTP-only</strong>. Esto garantiza que el token <strong>no sea accesible
+				desde el entorno del navegador</strong>, protegiendo así contra ataques XSS. Todas las peticiones
+			protegidas
+			deben incluir este token como credencial para que el backend las valide mediante los <strong>guards</strong>
+			definidos.</p>
+		<p>En el frontend, las llamadas a la API están encapsuladas en <strong>hooks personalizados</strong>, que se
+			conectan a <strong>contextos específicos</strong>. Esto permite organizar y reutilizar la lógica de
+			comunicación
+			con el backend en cada componente de React, favoreciendo la modularidad y el mantenimiento del código.</p>
+		<ul style="width: 100%;">
+			<li>Hook useAhut, obtiene el usuario autentificado y hace el logout:
+			</li>
+		</ul>
+
+	</div>
+	<div class="page">
+
+		<pre class="hljs"><code><div> <span class="hljs-keyword">import</span> { URL_BACKEND_DEV } <span class="hljs-keyword">from</span> <span class="hljs-string">"@/utils/config"</span>;
+<span class="hljs-keyword">import</span> { useEffect, useState } <span class="hljs-keyword">from</span> <span class="hljs-string">"react"</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> useAuth = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+<span class="hljs-keyword">const</span> [user, setUser] = useState&lt;<span class="hljs-built_in">any</span>&gt;(<span class="hljs-literal">null</span>);
+<span class="hljs-keyword">const</span> [loading, setLoading] = useState(<span class="hljs-literal">true</span>);
+<span class="hljs-keyword">const</span> [error, setError] = useState(<span class="hljs-string">""</span>);
+
+<span class="hljs-keyword">const</span> logout = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+<span class="hljs-comment">//elimina el token y el usuario</span>
+<span class="hljs-comment">//el token se elimina desde el back</span>
+fetch(<span class="hljs-string">`<span class="hljs-subst">${URL_BACKEND_DEV}</span>/auth/logout`</span>,{
+   method:<span class="hljs-string">'GET'</span>,
+   credentials:<span class="hljs-string">"include"</span>
+})
+setUser(<span class="hljs-literal">null</span>); <span class="hljs-comment">// hace que vaya al login</span>
+};
+
+<span class="hljs-keyword">const</span> fetchUser = <span class="hljs-keyword">async</span> () =&gt; {
+setLoading(<span class="hljs-literal">true</span>);
+<span class="hljs-keyword">try</span> {
+   <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> fetch(<span class="hljs-string">`<span class="hljs-subst">${URL_BACKEND_DEV}</span>/auth/me`</span>, {
+   method: <span class="hljs-string">"GET"</span>,
+   credentials: <span class="hljs-string">"include"</span>,
+   });
+   <span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> response.json();
+
+   <span class="hljs-keyword">if</span> (data.success) {
+   setUser(data.data);
+   } <span class="hljs-keyword">else</span> {
+   setUser(<span class="hljs-literal">null</span>);
+   setError(data.message);
+   }
+} <span class="hljs-keyword">catch</span> (err) {
+   setUser(<span class="hljs-literal">null</span>);
+   setError(<span class="hljs-string">"Error en la autenticación"</span>);
+} <span class="hljs-keyword">finally</span> {
+   setLoading(<span class="hljs-literal">false</span>);
+}
+};
+
+useEffect(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+fetchUser();
+}, []);
+
+<span class="hljs-keyword">return</span> { user, loading, error, fetchUser, logout };
+};
+
+</div></code></pre>
+
+	</div>
+
+	<div class="page">
+		<ul>
+			<li>UseMemo que crea el dato para las gráficas:
+				<pre class="hljs"><code><div>    <span class="hljs-keyword">const</span> cols: Col[] = useMemo(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+		<span class="hljs-keyword">if</span> (!options || options.length === <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> [];
+		<span class="hljs-keyword">const</span> fristDay = options[<span class="hljs-number">0</span>].day;
+	
+		<span class="hljs-keyword">const</span> numberColsWithInfo =  getCalendarDayDiff(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(),<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(fristDay))
+		<span class="hljs-comment">//console.log(options,numberColsWithInfo)</span>
+		<span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Array</span>(numberCols).fill(<span class="hljs-literal">null</span>).map(<span class="hljs-function">(<span class="hljs-params">_, idx</span>) =&gt;</span> {
+		   <span class="hljs-keyword">const</span> day = formatDate(
+		   <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(
+			  <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>().setDate(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>().getDate() - (numberCols - idx) + <span class="hljs-number">1</span>)
+		   ).toISOString(),
+		   <span class="hljs-string">"dd/mm/yyyy"</span>
+		   );
+	
+		   <span class="hljs-keyword">if</span> (idx &gt;= numberCols - numberColsWithInfo) {
+		   <span class="hljs-keyword">const</span> option = options.find(<span class="hljs-function"><span class="hljs-params">option</span> =&gt;</span> formatDate(option.day,<span class="hljs-string">'dd/mm/yyyy'</span>)=== day)
+		   <span class="hljs-keyword">const</span> timebreaks = option?.timebreaks || [];
+	
+		   <span class="hljs-keyword">return</span> {
+			  value: timebreaks.length || <span class="hljs-number">0</span>,
+			  timebreaks,
+			  day,
+		   };
+		   }
+		   <span class="hljs-comment">//esta entrando aqui en el primer render</span>
+		   <span class="hljs-keyword">return</span> { value: <span class="hljs-number">0</span>, timebreaks: [], day };
+		});
+	 }, [options, numberCols]);
+	</div></code></pre>
+			</li>
+		</ul>
+	</div>
+
+	<div class="page">
+
+		<ul>
+			<p>El proceso de integración incluyó:</p>
+			<ul>
+				<li>Uso de control de versiones con <strong>Git y GitHub</strong>.</li>
+				<li>Pruebas manuales para validar el correcto funcionamiento de los endpoints.</li>
+				<li>Gestión y evolución del esquema de datos con <strong>Prisma Migrate</strong>.</li>
+				<li>Revisión y supervisión del estado de la base de datos mediante herramientas como
+					<strong>DBeaver</strong> y
+					<strong>Prisma Studio</strong>.
+				</li>
+			</ul>
+			<p>Perfecto. Aquí tienes la sección <strong>Pruebas</strong> redactada de forma profesional, clara y
+				adaptada a
+				tu
+				proyecto. Explica el enfoque de pruebas manuales tanto en el backend como en el frontend, el uso de
+				herramientas
+				como Postman y la validación de los requisitos funcionales.</p>
+		</ul>
+	</div>
+
+	<div class="page">
+		<h2 id="6-pruebas" class="title2">6 Pruebas</h2>
+
+		<p>Durante el desarrollo de <strong>TimeLoom</strong>, se realizaron <strong>pruebas manuales de forma
+				continua</strong> para verificar el cumplimiento de los requisitos funcionales y asegurar la estabilidad
+			general del sistema.</p>
+		<p>El proceso de pruebas se dividió en dos niveles principales:</p>
+		<h3 id="61-pruebas-en-el-backend">6.1 Pruebas en el backend</h3>
+		<p>Para validar la correcta implementación de los endpoints de la API REST construida con NestJS, se utilizaron
+			herramientas como <strong>Postman</strong> y <strong>Thunder Client</strong>. Estas pruebas incluyeron:</p>
+		<ul>
+			<li>Validación de rutas protegidas mediante autenticación JWT.</li>
+			<li>Comprobación del correcto manejo de errores (usuarios inexistentes, peticiones mal formateadas, etc.).
+			</li>
+			<li>Verificación de relaciones y estructuras de datos complejas (usuarios, turnos, contratos,
+				incidencias...).
+			</li>
+			<li>Inspección directa de la base de datos mediante <strong>Prisma Studio</strong> y
+				<strong>DBeaver</strong>
+				para confirmar la persistencia de los datos.
+			</li>
+		</ul>
+		<p>Se probaron todos los módulos críticos como:</p>
+		<ul>
+			<li>Autenticación y autorización.</li>
+			<li>Gestión de fichajes (TimeEntry).</li>
+			<li>Registro y actualización de incidencias.</li>
+		</ul>
+		<h3 id="62-pruebas-en-el-frontend" class="title3">6.2 Pruebas en el frontend</h3>
+		<p>En el frontend desarrollado con NextJS, se realizaron pruebas manuales de usabilidad y flujo funcional,
+			centradas
+			en los siguientes aspectos:</p>
+		<ul>
+			<li>Comprobación del comportamiento esperado en formularios (login, registro de turnos, fichaje...).</li>
+			<li>Validación visual y funcional de los distintos roles de usuario (trabajador, administrador,
+				responsable).
+			</li>
+			<li>Verificación de navegación, redirecciones protegidas y rutas seguras según el estado de autenticación.
+			</li>
+			<li>Observación del manejo del estado global mediante contextos y hooks personalizados para asegurar una
+				correcta sincronización con la API.</li>
+		</ul>
+		<p>Además, se probaron distintos escenarios de uso, incluyendo errores intencionados, cambios de conexión, y uso
+			en
+			distintos dispositivos o tamaños de pantalla para garantizar un comportamiento coherente.</p>
+		<blockquote>
+			<p>Estas pruebas permitieron detectar errores en etapas tempranas, refinar flujos de usuario y confirmar que
+				la
+				aplicación cumple con los <strong>requisitos funcionales y no funcionales</strong> definidos
+				previamente.
+			</p>
+		</blockquote>
+	</div>
+
+	<div class="page">
+		<h2 id="7-conclusiones" class="title2">7 Conclusiones</h2>
+		<p>El desarrollo de <strong>TimeLoom</strong> ha representado una oportunidad clave para consolidar y aplicar de
+			forma práctica todos los conocimientos técnicos adquiridos durante mi formación en <strong>Cesur</strong>,
+			especialmente en el ámbito del desarrollo web full-stack y la arquitectura de software moderno.</p>
+		<p>A lo largo del proyecto, he trabajado en la creación de un sistema funcional para el control horario
+			empresarial,
+			accesible, escalable y adaptable a diferentes contextos organizativos. Este proceso no solo me ha permitido
+			profundizar en el uso de tecnologías actuales como <strong>NestJS</strong>, <strong>NextJS</strong>,
+			<strong>Prisma</strong> y <strong>PostgreSQL</strong>, sino también en aspectos clave como la organización
+			del
+			código, la seguridad, el diseño de interfaces y la estructuración de un monorepositorio con
+			<strong>Turborepo</strong>.
+		</p>
+		<p>Una de las partes más enriquecedoras del desarrollo ha sido la creación de una interfaz clara y profesional,
+			basada en un sistema de diseño desarrollado en <strong>Figma</strong>, que ha servido como guía para
+			mantener la
+			coherencia visual y mejorar la experiencia de usuario. A su vez, el backend fue diseñado con un enfoque
+			modular
+			y seguro, integrando autenticación mediante JWT, validaciones robustas y control de acceso según roles, lo
+			que
+			garantiza una base sólida para su mantenimiento y evolución futura.</p>
+		<p>Además, he aprendido a estructurar mi trabajo de forma más eficiente, implementando un flujo de desarrollo
+			limpio, versionado con Git y orientado a la escalabilidad. Aunque algunas funcionalidades se encuentran aún
+			en
+			proceso o pendientes de despliegue, el resultado alcanzado representa una base sólida sobre la cual
+			continuar
+			trabajando y mejorando la aplicación.</p>
+		<p>En definitiva, <strong>TimeLoom</strong> ha sido el reflejo práctico de mi etapa como estudiante,
+			permitiéndome
+			integrar todo lo aprendido en un proyecto real y funcional, que no solo resuelve un problema común en el
+			ámbito
+			empresarial, sino que también me ha preparado para afrontar nuevos retos en el desarrollo de software
+			profesional.</p>
+
+
+	</div>
+
+	<div class="page">
+
+		<h2 id="8-l%C3%ADneas-de-investigaci%C3%B3n-futuras" class="title2">8 Líneas de Investigación Futuras</h2>
+		<p>Este proyecto, aunque funcional, está concebido como la <strong>primera versión de una plataforma en
+				crecimiento</strong>. Algunas ideas y mejoras que podrían abordarse en futuras iteraciones son:</p>
+		<ul>
+			<li>📱 <strong>Desarrollo de una aplicación móvil nativa</strong> (por ejemplo, con React Native) integrada
+				en
+				el mismo monorepositorio, para facilitar el fichaje desde dispositivos móviles.</li>
+			<li>🔐 <strong>Implementación de tests automatizados</strong> (unitarios, de integración y end-to-end) para
+				garantizar la fiabilidad del sistema a medida que crezca.</li>
+			<li>📊 <strong>Panel de análisis y estadísticas</strong> para responsables y administradores, con
+				visualizaciones gráficas del rendimiento, ausencias, y cumplimiento horario.</li>
+			<li>📝 <strong>Sistema avanzado de comunicación interna</strong>, con historial de mensajes, archivos
+				adjuntos y
+				alertas en tiempo real.</li>
+			<li>🌐 <strong>Internacionalización (i18n)</strong> para que la interfaz pueda adaptarse a múltiples
+				idiomas.
+			</li>
+			<li>☁️ <strong>Despliegue en la nube con infraestructura automatizada</strong> (CI/CD con GitHub Actions,
+				Vercel, Railway, Docker...).</li>
+		</ul>
+		<p>Estas líneas de mejora permitirían que <strong>TimeLoom</strong> evolucione desde una herramienta básica de
+			control horario hacia una <strong>solución integral de gestión de personal</strong>, adaptable a entornos
+			empresariales reales.</p>
+	</div>
+
+	<div class="page">
+		<h2 id="9-anexos" class="title2">9 Anexos</h2>
+		<p>A continuación se incluyen recursos adicionales que complementan el desarrollo del proyecto:</p>
+		<ul>
+			<li>Capturas de pantalla de la interfaz en diferentes dispositivos.</li>
+		</ul>
+		<h3 id="incio-sesion-web" class="title3"><em>Incio sesion web</em></h3>
+		<p><img src="img/webinicio.PNG" alt="Imagen de regisitro web"></p>
+	</div>
+
+	<div class="page">
+
+		<h3 id="incio-sesion-movil"><em><strong>Incio sesion movil</strong></em></h3>
+		<p><img src="img/webinicioMv.PNG" alt="Imagen de regisitro web"></p>
+	</div>
+	<div class="page">
+		<h3 id="fichaje-web"><em><strong>Fichaje web</strong></em></h3>
+		<p><img src="img/timelom.PNG" alt="Imagen de regisitro web"></p>
+	</div>
+	<div class="page">
+		<h3 id="fichaje-movil"><em><strong>Fichaje movil</strong></em></h3>
+		<p><img src="img/fichajemv.PNG" alt="Imagen de regisitro web"></p>
+	</div>
+	<div class="page">
+
+		<ul>
+			<li>Esquemas visuales del sistema de diseño elaborado en Figma.</li>
+		</ul>
+		<h3 id="dise%C3%B1o-del-color"><em><strong>Diseño del color</strong></em></h3>
+		<img src="img/colorDesigner.png" alt="Imagen de regisitro web" style="height: 900px;">
+	</div>
+	<div class="page">
+
+		<h3 id="dise%C3%B1o-del-texto"><em><strong>Diseño del Texto</strong></em></h3>
+		<p><img src="img/TextDesigner.png" alt="Imagen de regisitro web"></p>
+		<h3 id="mockup-de-dahsboard-propuesto"><em><strong>Mockup de Dahsboard propuesto</strong></em></h3>
+		<p><img src="img/mokupDashboard.PNG" alt="Imagen de regisitro web"></p>
+	</div>
+
+	<div class="page">
+
+		<h2 id="10-bibliograf%C3%ADa" class="title2">10 Bibliografía</h2>
+		<p>Durante el desarrollo de TimeLoom se consultaron las siguientes fuentes y tecnologías:</p>
+		<ul>
+			<li><a href="https://www.prisma.io/">Prisma</a> – ORM para TypeScript y Node.js</li>
+			<li><a href="https://tailwindcss.com/">Tailwind CSS</a> – Framework de estilos utilitario para diseño
+				responsive
+			</li>
+			<li><a href="https://nextjs.org/">Next.js</a> – Framework React para desarrollo frontend y full-stack</li>
+			<li><a href="https://nestjs.com/">NestJS</a> – Framework backend progresivo basado en Node.js</li>
+			<li><a href="https://turbo.build/repo">Turborepo</a> – Herramienta para monorepositorios de alto rendimiento
+			</li>
+			<li><a href="https://chat.openai.com/">ChatGPT</a> – Asistencia en redacción técnica</li>
+		</ul>
+	</div>
+
+</body>
+
+</html>
