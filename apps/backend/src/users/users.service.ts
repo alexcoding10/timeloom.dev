@@ -9,7 +9,7 @@ export class UsersService {
     private readonly prismaService: PrismaService,
     private readonly authService: AuthService
   ) { }
-  
+
   async getUsersByCompany(companyId: number) {
     //Devolvemos los usuarios, en principio con su rol
     const users = await this.prismaService.user.findMany({
@@ -95,12 +95,37 @@ export class UsersService {
     }
   }
 
-  async getUserById (id:number){
-    return await this.prismaService.user.findFirst({where:{id},omit:{password:true}, include:{globalRol:true,incidents:true,contract:true,timeEntries:{include:{timebreaks:true}},office:true,company:true}})
+  async getUserById(id: number) {
+    return await this.prismaService.user.findFirst({
+      where: { id },
+      omit: { password: true },
+      include: {
+        globalRol: true,
+        incidents: true,
+        contract: {
+          include: {
+            bonuses: {
+              omit: { companyId: true }
+            },
+            deductions: {
+              omit: { companyId: true }
+            }
+          },
+
+        },
+        timeEntries: {
+          include: {
+            timebreaks: true
+          }
+        },
+        office: true,
+        company: true
+      }
+    })
   }
 
-  async updateUserById(id:number,data:Prisma.UserUpdateInput){
-    return await this.prismaService.user.update({data,where:{id}})
+  async updateUserById(id: number, data: Prisma.UserUpdateInput) {
+    return await this.prismaService.user.update({ data, where: { id } })
   }
 
 }

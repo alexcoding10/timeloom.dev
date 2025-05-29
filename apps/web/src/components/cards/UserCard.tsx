@@ -2,12 +2,18 @@ import { useUploadImg } from "@/hooks/useUploadImg";
 import { User } from "@/types/user";
 import { URL_BACKEND_DEV } from "@/utils/config";
 import { useRef } from "react";
+import ContainerCards from "./ContainerCards";
 
-function UserCard({ currentUser,setCurrentUser }:{currentUser:User,setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>}) {
-  const {uploadImage,isUploading} = useUploadImg()
-  //const {handlerUpdateUser} = useUser()
-  
-    const fileInputRef = useRef<HTMLInputElement>(null);
+interface Props {
+  currentUser: User,
+  setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>,
+  updateUsersCompanyById?:(id: number, data: any) => void
+}
+
+function UserCard({ currentUser, setCurrentUser, updateUsersCompanyById }: Props) {
+  const { uploadImage, isUploading } = useUploadImg()
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleClick = () => {
     fileInputRef.current?.click();
@@ -16,20 +22,24 @@ function UserCard({ currentUser,setCurrentUser }:{currentUser:User,setCurrentUse
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file && uploadImage) {
-      const url = await uploadImage(file,currentUser.id); // Puedes subirlo al backend aquí
+      const url = await uploadImage(file, currentUser.id); // Puedes subirlo al backend aquí
       //actualizar el currentUser y el usuario en base de datos
-        setCurrentUser(prev => prev && ({
-            ...prev,
-            imgProfile:url
-        }))
+      setCurrentUser(prev => prev && ({
+        ...prev,
+        imgProfile: url
+      }))
 
-        //handlerUpdateUser(currentUser.id,{imgProfile:url})
+      if (updateUsersCompanyById) {
+        // actualizar en el usuario global del context
+        updateUsersCompanyById(currentUser.id, { key: 'imgProfile', value: url })
+
+      }
 
     }
   };
 
   return (
-    <div className="flex gap-6 p-4 bg-white shadow-md rounded-xl items-start max-w-xl">
+    <ContainerCards>
       {/* Imagen o iniciales clicables */}
       <div className="relative group cursor-pointer" onClick={handleClick}>
         {currentUser?.imgProfile ? (
@@ -76,7 +86,7 @@ function UserCard({ currentUser,setCurrentUser }:{currentUser:User,setCurrentUse
           </div>
         )}
       </div>
-    </div>
+    </ContainerCards>
   );
 }
 

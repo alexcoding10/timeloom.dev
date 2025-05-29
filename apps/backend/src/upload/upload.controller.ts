@@ -19,6 +19,7 @@ export class UploadController {
       filePath: `/uploads/${file.filename}`, // Devuelve la URL pública
     };
   }
+  
   @Post('user/:id')
   @UseInterceptors(FileInterceptor('image'))  // Asegúrate de que 'file' coincide con el nombre del campo en el formulario
   async uploadImgProfileByUserId(@Param('id', ParseIntPipe) id: number,  @UploadedFile() image: Express.Multer.File) {

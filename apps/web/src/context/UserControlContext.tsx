@@ -15,6 +15,7 @@ interface UserControlState {
   handlerSelectUser: (id: number) => void;
   handlerDeselectUser: () => void;
   currentUserSelect: UserControl | undefined
+  updateUsersCompanyById: (id: number, data: any) => void
 }
 const UserControlContext = createContext<UserControlState | undefined>(undefined);
 
@@ -24,25 +25,25 @@ interface UserControlProviderProps {
 }
 
 export const UserControlProvider: React.FC<UserControlProviderProps> = ({ children }) => {
-    const { usersByCompany, loadingUserFetch,addUsersByCompany } = useGetUsersByCompany();
+  const { usersByCompany, loadingUserFetch, addUsersByCompany, updateUsersCompanyById } = useGetUsersByCompany();
   const [openCreateUser, setOpenCreateUser] = useState(false);
-    const [currentUserSelect, setCurrentUserSelect] = useState<UserControl | undefined>(undefined)
-  
-  
-    const handlerSelectUser = (id: number) => {
-      setCurrentUserSelect(usersByCompany.find(user => user.id === id))
-    }
-    const handlerDeselectUser = () => {
-      setCurrentUserSelect(undefined)
-    }
+  const [currentUserSelect, setCurrentUserSelect] = useState<UserControl | undefined>(undefined)
+
+
+  const handlerSelectUser = (id: number) => {
+    setCurrentUserSelect(usersByCompany.find(user => user.id === id))
+  }
+  const handlerDeselectUser = () => {
+    setCurrentUserSelect(undefined)
+  }
 
 
   const handlerCloseCreateUserView = () => {
     setOpenCreateUser(false);
   };
-  
-    return (
-    <UserControlContext.Provider value={{usersByCompany, loadingUserFetch,addUsersByCompany,openCreateUser,handlerCloseCreateUserView,setOpenCreateUser,handlerSelectUser,handlerDeselectUser,currentUserSelect}}>
+
+  return (
+    <UserControlContext.Provider value={{ usersByCompany, loadingUserFetch, addUsersByCompany, openCreateUser, handlerCloseCreateUserView, setOpenCreateUser, handlerSelectUser, handlerDeselectUser, currentUserSelect, updateUsersCompanyById }}>
       {children}
     </UserControlContext.Provider>
   );

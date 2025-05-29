@@ -86,20 +86,7 @@ export default function ControlUserView() {
                 </motion.div>
             ) : (
                 /* Si hay usuarios, pero no estamos creando uno, mostrar la lista */
-                <motion.div
-                    animate={{
-                        opacity: [0, 1],
-                        x: [10, 0],
-                    }}
-                    exit={{
-                        opacity: 0,
-                    }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="p-4 flex gap-2 w-full"
-                >
                     <UsersCompanyView />
-                    {/* Aquí puedes mostrar la lista de usuarios */}
-                </motion.div>
             )}
         </Container>
     )

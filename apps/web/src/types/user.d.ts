@@ -1,4 +1,6 @@
 import { RolName } from "./rol";
+import type {Bonus} from './bonus'
+import type { Deduction } from "./deductions";
 
 export type FormOptionInputCreateUser = {
     id: number | string;
@@ -108,6 +110,8 @@ type Contract = {
   job: string;
   irpf_percentage: number;
   type: "FIXED" | string; // puedes usar un union más completo si hay más tipos
+  bonuses?:Bonus[],
+  deductions?:Deduction[]
 };
 
 type TimeEntry = {
@@ -156,3 +160,4 @@ type Company = {
   logoUrl: string;
   coordinates: Coordinates;
 };
+

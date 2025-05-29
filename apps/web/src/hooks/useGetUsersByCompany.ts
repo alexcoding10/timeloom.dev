@@ -15,6 +15,13 @@ function useGetUsersByCompany() {
     setUsersByCompany((prevUsers) => [...prevUsers, user])
   }
 
+  const updateUsersCompanyById = (id:number,data:any) =>{
+    setUsersByCompany((prev) => prev.map(user => user.id === id ? ({
+      ...user,
+      [data.key]:data.value
+    }): user))
+  }
+
   const fetchUsersByCompany = async () => {
     setLoadingUserFetch(true)
     try {
@@ -51,7 +58,7 @@ function useGetUsersByCompany() {
     }
   }, [user, loading]) // Dependemos de 'user' y 'loading'
 
-  return { usersByCompany, setUsersByCompany, addUsersByCompany,loadingUserFetch }
+  return { usersByCompany, setUsersByCompany, addUsersByCompany,loadingUserFetch, updateUsersCompanyById }
 }
 
 export default useGetUsersByCompany

@@ -6,12 +6,13 @@ import ListUserSCompany from './ListUserSCompany';
 import { useGetUsersById } from '@/hooks/useGetUsersById';
 import Loading from '@/components/Loading';
 import { URL_BACKEND_DEV } from '@/utils/config';
-import UserCard from '@/components/users/UserCard';
+import UserCard from '@/components/cards/UserCard';
+import ContractCard from '@/components/cards/ContractCard';
 
 
 export default function UsersCompanyView() {
 
-  const { currentUserSelect, handlerDeselectUser } = useUserControlContext()
+  const { currentUserSelect, handlerDeselectUser, updateUsersCompanyById } = useUserControlContext()
   const { user: currentUser, setUser: setCurrentUser, loading } = useGetUsersById(currentUserSelect?.id)
 
 
@@ -30,7 +31,7 @@ export default function UsersCompanyView() {
             animate={{ x: 0, opacity: 1 }}
             initial={{ x: 10, opacity: 0 }}
             exit={{ x: -10, opacity: 0 }}
-            className='w-full flex justify-center'
+            className='w-full flex justify-center '
           >
             {/*TODO:Buscador */}
             <ListUserSCompany />
@@ -38,23 +39,29 @@ export default function UsersCompanyView() {
         ) : loading ?
           <Loading />
           : (
-            <div className='w-full'
+            <div className='w-full px-10 '
             >
               <button onClick={handlerDeselectUser} className='bg-blue-500 text-white px-4 py-2 rounded-lg mb-3'>Ver todos los usuarios</button>
 
-              <div className='flex justify-center'>
-                {
-                  currentUser && (
+              {
+                currentUser && (
+                  <div className='flex flex-col justify-center items-center gap-5'>
+
                     <UserCard
                       currentUser={currentUser}
                       setCurrentUser={setCurrentUser}
-
+                      updateUsersCompanyById={updateUsersCompanyById}
                     />
 
-                  )
-                }
+                    <ContractCard
+                      contract={currentUser.contract[0]}
+                    />
 
-              </div>
+
+                  </div>
+                )
+              }
+
             </div>
           )
       }
