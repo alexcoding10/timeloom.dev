@@ -96,7 +96,11 @@ export class UsersService {
   }
 
   async getUserById (id:number){
-    return await this.prismaService.user.findFirst({where:{id},include:{globalRol:true,incidents:true,contract:true,timeEntries:{include:{timebreaks:true}},office:true}})
+    return await this.prismaService.user.findFirst({where:{id},omit:{password:true}, include:{globalRol:true,incidents:true,contract:true,timeEntries:{include:{timebreaks:true}},office:true,company:true}})
+  }
+
+  async updateUserById(id:number,data:Prisma.UserUpdateInput){
+    return await this.prismaService.user.update({data,where:{id}})
   }
 
 }

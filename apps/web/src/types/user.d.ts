@@ -73,3 +73,86 @@ export type UserControl = {
     name: RolName;
   }[];
 };
+
+
+type User = {
+  id: number;
+  companyId: number;
+  officeId: number;
+  name: string;
+  email: string;
+  address: string | null;
+  zipCode: string | null;
+  imgProfile: string | null;
+  globalRol: GlobalRol[];
+  incidents: any[]; // Ajusta si tienes el tipo real
+  contract: Contract[];
+  timeEntries: TimeEntry[];
+  office: Office;
+  company: Company;
+};
+
+type GlobalRol = {
+  id: number;
+  userId: number;
+  rolId: number;
+};
+
+type Contract = {
+  id: number;
+  userId: number;
+  startDate: string; // ISO 8601 format
+  endDate: string | null;
+  salaryHours: number;
+  hoursForWeek: number;
+  job: string;
+  irpf_percentage: number;
+  type: "FIXED" | string; // puedes usar un union más completo si hay más tipos
+};
+
+type TimeEntry = {
+  id: number;
+  userId: number;
+  clockIn: string;
+  clockOut: string | null;
+  duration: number | null;
+  coordinates: Coordinates;
+  timebreaks: TimeBreak[];
+};
+
+type TimeBreak = {
+  id: number;
+  timeEntryId: number;
+  clockIn: string;
+  clockOut: string | null;
+  duration: number | null;
+  coordinates: Coordinates;
+  pauseTypeId: number;
+  description: string;
+};
+
+type Coordinates = {
+  lat: number;
+  lon: number;
+};
+
+type Office = {
+  id: number;
+  companyId: number;
+  name: string;
+  email: string;
+  address: string;
+  zipCode: string;
+  state: string;
+  coordinates: Coordinates | null;
+};
+
+type Company = {
+  id: number;
+  name: string;
+  email: string;
+  address: string;
+  zipCode: string | null;
+  logoUrl: string;
+  coordinates: Coordinates;
+};

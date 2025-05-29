@@ -4,9 +4,11 @@ import { diskStorage } from 'multer';
 import { extname, join } from 'path';
 import { UploadController } from './upload.controller';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
   imports: [
+    PrismaModule,
     MulterModule.register({
       storage: diskStorage({
         destination: './uploads', // Carpeta donde se guardarán los archivos

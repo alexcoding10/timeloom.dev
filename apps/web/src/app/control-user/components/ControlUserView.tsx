@@ -59,7 +59,7 @@ export default function ControlUserView() {
                         ❌
                     </motion.div>
                     <p>
-                        No hay usuarios registrados en tu empresa.{" "}
+                        {" "}
                         <span
                             className="text-secondary-500 cursor-pointer"
                             onClick={() => setOpenCreateUser(true)}
@@ -95,7 +95,7 @@ export default function ControlUserView() {
                         opacity: 0,
                     }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="py-4 flex gap-2"
+                    className="p-4 flex gap-2 w-full"
                 >
                     <UsersCompanyView />
                     {/* Aquí puedes mostrar la lista de usuarios */}

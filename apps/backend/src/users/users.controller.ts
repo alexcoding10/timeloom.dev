@@ -44,4 +44,9 @@ export class UsersController {
   async getUserById(@Param('id', ParseIntPipe) id: number) {
     return await this.usersService.getUserById(id)
   }
+
+  @Post('/:id')
+    async updateUserById(@Param('id', ParseIntPipe) id: number ,@Body() data:Prisma.UserUpdateInput) {
+    return await this.usersService.updateUserById(id,data)
+  }
 }
