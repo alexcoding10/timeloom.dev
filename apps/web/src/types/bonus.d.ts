@@ -15,6 +15,7 @@ export type Bonus = {
   name: string;
   percentage: number;
   companyId?: number;
+  type?:string
 };
 
 //para el contexto

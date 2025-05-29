@@ -14,7 +14,7 @@ export default function ControlUserView() {
     }
 
     return (
-        <Container>
+        <Container heightAuto>
             {/* Titulo */}
             <div className="text-start w-full py-5 px-10 flex justify-between items-center">
                 <div className="font-montserrat md:text-xl font-semibold">

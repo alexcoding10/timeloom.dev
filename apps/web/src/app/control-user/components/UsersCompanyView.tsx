@@ -5,16 +5,13 @@ import { useUserControlContext } from '@/context/UserControlContext';
 import ListUserSCompany from './ListUserSCompany';
 import { useGetUsersById } from '@/hooks/useGetUsersById';
 import Loading from '@/components/Loading';
-import { URL_BACKEND_DEV } from '@/utils/config';
 import UserCard from '@/components/cards/UserCard';
 import ContractCard from '@/components/cards/ContractCard';
-
 
 export default function UsersCompanyView() {
 
   const { currentUserSelect, handlerDeselectUser, updateUsersCompanyById } = useUserControlContext()
   const { user: currentUser, setUser: setCurrentUser, loading } = useGetUsersById(currentUserSelect?.id)
-
 
   useEffect(() => {
     if (currentUser) {
@@ -53,7 +50,7 @@ export default function UsersCompanyView() {
                       updateUsersCompanyById={updateUsersCompanyById}
                     />
 
-                    <ContractCard
+                    <ContractCard 
                       contract={currentUser.contract[0]}
                     />
 

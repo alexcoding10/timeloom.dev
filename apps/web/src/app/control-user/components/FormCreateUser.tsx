@@ -1,9 +1,9 @@
 import { generarPasswordSegura, mapSubmitUser } from "@/utils/utils";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
-import type { FormCreateUser, UserControl } from "@/types/user";
+import type { FormCreateUser } from "@/types/user";
 import { useCreateUser } from "@/hooks/useCreateUser";
 import Loading from "@/components/Loading";
 import { useAuthContext } from "@/context/AuthContext";

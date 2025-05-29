@@ -27,3 +27,6 @@ export type CreateUserData = {
         deductions:{connect:{id:number}[]},
     }
 }
+
+
+export type TypeContract = 'FIXED' | 'FREELANCE' | 'TEMPORARY'
