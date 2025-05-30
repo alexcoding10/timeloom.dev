@@ -9,6 +9,7 @@ interface AuthState {
   loading: boolean;
   fetchUser: () => Promise<void>;
   logout:()=>void
+  setUser: React.Dispatch<any>
 }
 
 // Crea el contexto de autenticación
@@ -19,10 +20,10 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const { user, loading, fetchUser ,logout} = useAuth(); // Supongo que useAuth retorna un `user` y `loading`
+  const { user, loading, fetchUser ,logout,setUser} = useAuth(); // Supongo que useAuth retorna un `user` y `loading`
 
   return (
-    <AuthContext.Provider value={{ user, loading, fetchUser ,logout}}>
+    <AuthContext.Provider value={{ user, loading, fetchUser ,logout,setUser}}>
       {children}
     </AuthContext.Provider>
   );

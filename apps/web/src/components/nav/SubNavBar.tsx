@@ -3,24 +3,33 @@ import { useNav } from "@/hooks/useNav";
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
 import { IoIosLogOut } from "react-icons/io";
+import { FaRegUser } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 
 export default function SubNavBar() {
   const { user, logout } = useAuthContext();
-  const { collapsed, openSettings,handlerOpenSettings } = useNav();
-
+  const { collapsed, openSettings, handlerOpenSettings } = useNav();
+  const router = useRouter();
   //Aqui puedes poner mas botones si lo deseas
-  const subNavData = [ 
+  const subNavData = [
     {
-      title:"Cerrar sesion",
-      icon:<IoIosLogOut/>,
-      handler:()=>{
+      title: "Perfil",
+      icon: <FaRegUser />,
+      handler: () => {
+        router.push('/profile',{scroll:false})
+      }
+    }, {
+      title: "Cerrar sesion",
+      icon: <IoIosLogOut />,
+      handler: () => {
         logout(); //cierra sesion
         handlerOpenSettings() //cierra el menu
       }
-    }
+    },
+
   ]
-  
+
 
   return (
     <AnimatePresence>
@@ -64,8 +73,8 @@ export default function SubNavBar() {
           >
             {/*Botones como cerrar sesion */}
             <ul className="flex flex-col  flex-col-reverse gap-2">
-              {subNavData.map((item,index)=>(
-                <li key={index}  onClick={item.handler} className="flex gap-3 items-center rounded-lg hover:bg-zinc-300 px-2 py-1 cursor-pointer">
+              {subNavData.map((item, index) => (
+                <li key={index} onClick={item.handler} className="flex gap-3 items-center rounded-lg hover:bg-zinc-300 px-2 py-1 cursor-pointer">
                   {item.icon}
                   <p className="text-zinc-600">{item.title}</p>
                 </li>

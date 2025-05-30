@@ -43,5 +43,5 @@ export const useAuth = () => {
     fetchUser();
   }, []);
 
-  return { user, loading, error, fetchUser, logout };
+  return { user,setUser, loading, error, fetchUser, logout };
 };

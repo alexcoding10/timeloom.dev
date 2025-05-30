@@ -60,7 +60,7 @@ const SectionListWhitAdd = ({
           {add ? <TbEdit /> : <IoCloudUploadOutline />}
         </button>
       </div>
-      <hr className="text-neutral-dark-400" />
+      <hr className='text-zinc-300' />
       <div className="mt-5 w-full lg:w-[60%] mx-auto">
         {!add ? (
           <Select

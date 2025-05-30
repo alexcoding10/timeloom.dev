@@ -1,3 +1,5 @@
+'use client'
+
 import { useUploadImg } from "@/hooks/useUploadImg";
 import { User } from "@/types/user";
 import { URL_BACKEND_DEV } from "@/utils/config";

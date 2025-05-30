@@ -52,6 +52,7 @@ export default function ContractCard({ contract }: Props) {
             )}
           </button>
         </div>
+        <hr className='text-zinc-300 my-3' />
         <div className="grid  md:grid-cols-2 gap-3  w-[60%] mx-auto">
           <Field
             typeInput="text"
@@ -100,23 +101,31 @@ export default function ContractCard({ contract }: Props) {
             value={contract.irpf_percentage}
           />
         </div>
-        <SectionListWhitAdd
-          title="Bonus"
-          items={contract.bonuses || []}
-          emptyMessage="No tiene ningun bonus"
-          color="green"
-          allItems={bonus}
-          typeContract={contract.type}
-        />
+        {
+          contract.type !== 'FREELANCE' && (
+            <>
+              <SectionListWhitAdd
+                title="Bonus"
+                items={contract.bonuses || []}
+                emptyMessage="No tiene ningún bonus"
+                color="green"
+                allItems={bonus}
+                typeContract={contract.type}
+              />
 
-        <SectionListWhitAdd
-          title="Deducciones"
-          items={contract.deductions || []}
-          emptyMessage="No tiene ningun deducciones"
-          color="red"
-          allItems={deductions}
-          typeContract={contract.type}
-        />
+              <SectionListWhitAdd
+                title="Deducciones"
+                items={contract.deductions || []}
+                emptyMessage="No tiene ningún deducciones"
+                color="red"
+                allItems={deductions}
+                typeContract={contract.type}
+              />
+
+            </>
+
+          )
+        }
       </div>
     </ContainerCards>
   );

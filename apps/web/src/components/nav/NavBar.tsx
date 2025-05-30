@@ -62,7 +62,7 @@ export default function NavBar() {
   const { collapsed, setCollapsed, handlerOpenSettings, openSettings } =
     useNav();
 
-  const handlerReload = (urlReload: string) => {
+   const handlerReload = (urlReload: string) => {
     if (urlReload === pathname) return;
     router.push(urlReload, { scroll: false });
   };

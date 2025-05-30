@@ -7,6 +7,7 @@ import { useGetUsersById } from '@/hooks/useGetUsersById';
 import Loading from '@/components/Loading';
 import UserCard from '@/components/cards/UserCard';
 import ContractCard from '@/components/cards/ContractCard';
+import SigningsCards from '@/components/cards/SigningsCards';
 
 export default function UsersCompanyView() {
 
@@ -50,8 +51,12 @@ export default function UsersCompanyView() {
                       updateUsersCompanyById={updateUsersCompanyById}
                     />
 
-                    <ContractCard 
+                    <ContractCard
                       contract={currentUser.contract[0]}
+                    />
+
+                    <SigningsCards
+                      signings={currentUser.timeEntries}
                     />
 
 
