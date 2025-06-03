@@ -8,4 +8,9 @@ export class ContractController {
 
     constructor(private readonly contractService:ContractService){}
 
+    @Get('user/:id')
+    getContractByUser (@Param('id',ParseIntPipe)  id:number){
+        return this.contractService.findByUserId(id)
+    }
+
 }

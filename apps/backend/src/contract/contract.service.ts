@@ -10,4 +10,8 @@ export class ContractService {
     const newContract = await this.prismaService.contract.create({data:contract})
   }
 
+  async findByUserId (id:number){
+    return this.prismaService.contract.findFirst({where:{userId:id}})
+  }
+
 }

@@ -9,6 +9,7 @@ import {
   BsBuildingsFill,
   BsBellFill,
   BsTrello,
+  BsChatLeftDotsFill 
 } from "react-icons/bs";
 import { FaUsers } from "react-icons/fa";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
@@ -50,6 +51,12 @@ export const NavBarData = {
       title: "Notificaciones",
       url: "/notification",
       icon: <BsBellFill />,
+      rol: null,
+    },
+    {
+      title: "Chat",
+      url: "/chat",
+      icon: <BsChatLeftDotsFill />,
       rol: null,
     },
   ],

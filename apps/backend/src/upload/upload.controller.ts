@@ -21,7 +21,7 @@ export class UploadController {
   }
   
   @Post('user/:id')
-  @UseInterceptors(FileInterceptor('image'))  // Asegúrate de que 'file' coincide con el nombre del campo en el formulario
+  @UseInterceptors(FileInterceptor('image'))  // Asegúrate de que 'image' coincide con el nombre del campo en el formulario
   async uploadImgProfileByUserId(@Param('id', ParseIntPipe) id: number,  @UploadedFile() image: Express.Multer.File) {
 
     if (!image) {

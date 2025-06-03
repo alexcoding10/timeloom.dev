@@ -9,7 +9,7 @@ type SectionItem = {
   id?: number;
   name: string;
   percentage: number;
-  type?:string
+  type?: string
 };
 
 type SectionListProps = {
@@ -18,7 +18,8 @@ type SectionListProps = {
   emptyMessage: string;
   color: "green" | "red";
   allItems?: Bonus[] | Deduction[];
-  typeContract:string
+  typeContract: string
+  editable?: Boolean
 };
 
 const SectionListWhitAdd = ({
@@ -27,7 +28,8 @@ const SectionListWhitAdd = ({
   emptyMessage,
   color,
   allItems,
-  typeContract
+  typeContract,
+  editable = true
 }: SectionListProps) => {
   const bgColor = color === "green" ? "bg-green-200" : "bg-red-200";
   const textColor = color === "green" ? "text-green-700" : "text-red-700";
@@ -52,24 +54,29 @@ const SectionListWhitAdd = ({
             {total.toFixed(2)}%
           </p>
         </div>
-        <button
-          title={add ? "Editar" : "Guardar"}
-          onClick={handlerAddToggle}
-          className={`${add ? "bg-lime-100 text-lime-700" : "bg-blue-100 text-blue-700"} rounded-full p-2 flex items-center justify-center cursor-pointer transition-all `}
-        >
-          {add ? <TbEdit /> : <IoCloudUploadOutline />}
-        </button>
+        {
+          editable && (
+            <button
+              title={add ? "Editar" : "Guardar"}
+              onClick={handlerAddToggle}
+              className={`${add ? "bg-lime-100 text-lime-700" : "bg-blue-100 text-blue-700"} rounded-full p-2 flex items-center justify-center cursor-pointer transition-all `}
+            >
+              {add ? <TbEdit /> : <IoCloudUploadOutline />}
+            </button>
+
+          )
+        }
       </div>
       <hr className='text-zinc-300' />
       <div className="mt-5 w-full lg:w-[60%] mx-auto">
         {!add ? (
           <Select
             isMulti
-            options={allItems?.filter(opt=> opt.type === 'ALL' || opt.type === typeContract)
-                .map((opt) => ({
-              value: opt.id ? opt.id : -1,
-              label: opt.name,
-            }))}
+            options={allItems?.filter(opt => opt.type === 'ALL' || opt.type === typeContract)
+              .map((opt) => ({
+                value: opt.id ? opt.id : -1,
+                label: opt.name,
+              }))}
             value={items.map((opt) => ({
               value: opt.id,
               label: opt.name,

@@ -12,9 +12,10 @@ import { useGetDeductions } from "@/hooks/useGetDeductions";
 
 interface Props {
   contract: Contract;
+  editable?: boolean
 }
 
-export default function ContractCard({ contract }: Props) {
+export default function ContractCard({ contract, editable = true }: Props) {
   //buscar los bonus y las deducciones de la base de datos
   const { bonus } = useBonus();
   const { deductions } = useGetDeductions();
@@ -35,22 +36,27 @@ export default function ContractCard({ contract }: Props) {
       <div className="flex w-full flex-col">
         <div className="w-full text-start flex justify-between">
           <h1 className="font-montserrat text-2xl font-semibold">Contrato</h1>
-          <button
-            onClick={handlerToggleEditable}
-            className={`cursor-pointer px-4 py-2 rounded-lg flex gap-2 items-center transition-all ease-in ${!isEditable ? "bg-lime-100 text-lime-800" : "bg-blue-100 text-blue-800"} `}
-          >
-            {!isEditable ? (
-              <>
-                <TbEdit />
-                Editar
-              </>
-            ) : (
-              <>
-                <IoCloudUploadOutline />
-                Guardar
-              </>
-            )}
-          </button>
+          {
+            editable && (
+              <button
+                onClick={handlerToggleEditable}
+                className={`cursor-pointer px-4 py-2 rounded-lg flex gap-2 items-center transition-all ease-in ${!isEditable ? "bg-lime-100 text-lime-800" : "bg-blue-100 text-blue-800"} `}
+              >
+                {!isEditable ? (
+                  <>
+                    <TbEdit />
+                    Editar
+                  </>
+                ) : (
+                  <>
+                    <IoCloudUploadOutline />
+                    Guardar
+                  </>
+                )}
+              </button>
+
+            )
+          }
         </div>
         <hr className='text-zinc-300 my-3' />
         <div className="grid  md:grid-cols-2 gap-3  w-[60%] mx-auto">
@@ -104,22 +110,24 @@ export default function ContractCard({ contract }: Props) {
         {
           contract.type !== 'FREELANCE' && (
             <>
-              <SectionListWhitAdd
+              <SectionListWhitAdd 
                 title="Bonus"
                 items={contract.bonuses || []}
-                emptyMessage="No tiene ningún bonus"
+                emptyMessage={editable ? 'No tiene ningún bonus' : "No tienes ningún bonus"}
                 color="green"
                 allItems={bonus}
                 typeContract={contract.type}
+                editable={editable}
               />
 
               <SectionListWhitAdd
                 title="Deducciones"
                 items={contract.deductions || []}
-                emptyMessage="No tiene ningún deducciones"
+                emptyMessage={editable ? 'No tiene deduciones' : "No tienes deduciones"}
                 color="red"
                 allItems={deductions}
                 typeContract={contract.type}
+                editable={editable}
               />
 
             </>

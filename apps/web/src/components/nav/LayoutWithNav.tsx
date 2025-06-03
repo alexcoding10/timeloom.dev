@@ -4,7 +4,6 @@ import React from "react";
 import NavBar from "./NavBar";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { NavProvider } from "@/context/NavContext";
 import { useNav } from "@/hooks/useNav";
 
 export default function LayoutWithNav({

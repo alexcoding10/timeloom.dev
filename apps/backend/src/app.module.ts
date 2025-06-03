@@ -11,12 +11,13 @@ import { UsersModule } from './users/users.module';
 import { ContractModule } from './contract/contract.module';
 import { ConfigModule } from '@nestjs/config';
 import { SigningModule } from './signing/signing.module';
+import { ChatGateway } from './chat/chat.gateway';
 
 
 
 @Module({
   controllers: [AppController],
-  providers: [AppService, ResponseService],
+  providers: [AppService, ResponseService, ChatGateway],
   imports: [AuthModule, CompanyModule, ResponseModule, AddressModule, UploadModule, UsersModule, ContractModule,ConfigModule.forRoot({
     isGlobal: true,
   }), SigningModule,],
