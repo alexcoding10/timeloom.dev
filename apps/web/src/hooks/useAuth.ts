@@ -1,30 +1,33 @@
-'use client'
+"use client";
 
 import { URL_BACKEND_DEV } from "@/utils/config";
 import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
-
+import { useRouter } from "next/navigation";
 
 export const useAuth = () => {
   const socketRef = useRef<Socket | null>(null);
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [usersConnected, setUsersConnected] = useState<any>(null) // en principio
+  const [usersConnected, setUsersConnected] = useState<any>(null); // en principio
+  const router = useRouter();
 
   const logout = () => {
     //elimina el token y el usuario
     //el token se elimina desde el back
     fetch(`${URL_BACKEND_DEV}/auth/logout`, {
-      method: 'GET',
-      credentials: "include"
-    })
+      method: "GET",
+      credentials: "include",
+    });
     // Desconecta el socket si está activo
     if (socketRef.current) {
       socketRef.current.disconnect();
       socketRef.current = null;
     }
 
+    // Redirige primero
+    router.push("/");
     // Borra el usuario
     setUser(null);
   };
@@ -60,8 +63,8 @@ export const useAuth = () => {
     if (!user) return;
 
     const socket: Socket = io(URL_BACKEND_DEV, {
-      transports: ['websocket'],
-      withCredentials: true
+      transports: ["websocket"],
+      withCredentials: true,
     });
 
     socketRef.current = socket;
@@ -70,7 +73,7 @@ export const useAuth = () => {
       console.log("🟢 Conectado con socket.io:", socket.id);
       socket.emit("register", {
         userId: user.id,
-        companyId: user.companyId
+        companyId: user.companyId,
       });
     });
 
@@ -96,6 +99,5 @@ export const useAuth = () => {
     };
   }, [user]);
 
-
-  return { user, setUser, loading, error, fetchUser, logout,usersConnected };
+  return { user, setUser, loading, error, fetchUser, logout, usersConnected };
 };
