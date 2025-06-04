@@ -5,15 +5,16 @@ type Props = {
     name: string,
     url?: string | null
     connected?:boolean
+    width?:string
 }
 
-export default function Avatar({ name, url,connected }: Props) {
+export default function Avatar({ name, url,connected,width }: Props) {
     return (
         <div className='flex items-center'>
             {
                 url ? (
                     <img
-                        className={`w-10 h-10 md:w-12 md:h-12 lg:w-15 lg:h-15 rounded-full border border-zinc-200  transition-all duration-300 ${connected ? 'ring-2 ring-success-600':''}`}
+                        className={` ${width ? `${width} h-auto` :'w-10 h-10 md:w-12 md:h-12 lg:w-15 lg:h-15'} rounded-full border border-zinc-200  transition-all duration-300 ${connected ? 'ring-2 ring-success-600':''}`}
                         src={`${URL_BACKEND_DEV}${url}`}
                         alt="user"
                     />

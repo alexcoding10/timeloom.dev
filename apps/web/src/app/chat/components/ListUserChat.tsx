@@ -2,72 +2,27 @@
 
 import Avatar from "@/components/Avatar";
 import Loading from "@/components/Loading";
-import { useAuthContext } from "@/context/AuthContext";
-import useGetUsersByCompany from "@/hooks/useGetUsersByCompany";
-import React, { useEffect, useRef, useState } from "react";
+import { UserConnected } from "@/types/user";
+import React from "react";
 import { FiSearch } from "react-icons/fi";
 
-type UserConnected = {
-  userId: number;
-  connected: boolean;
-  name: string;
-  img: string | null;
+
+type Props = {
+  listUserConnected: React.RefObject<UserConnected[]>
+  searchUser: string
+  setSearchUser: React.Dispatch<React.SetStateAction<string>>
+  listSearchUser: UserConnected[]
+  handlerSelectedUserChat: (userId?: number) => void
 };
 
-export default function ListUserChat() {
-  const { usersConnected, user } = useAuthContext();
-  const { usersByCompany } = useGetUsersByCompany(user.companyId | 0);
-  const listUserConnected = useRef<UserConnected[]>([]);
-  const [listSearchUser, setListSearchUser] = useState<UserConnected[]>([]);
+export default function ListUserChat({
+  listUserConnected,
+  searchUser,
+  setSearchUser,
+  listSearchUser,
+  handlerSelectedUserChat
 
-  const [searchUser, setSearchUser] = useState<string>("");
-
-  useEffect(() => {
-    if (!usersConnected || !usersByCompany) return;
-    // mapear los usuarios en listUser
-
-    const users: UserConnected[] = usersByCompany.map((user) => ({
-      userId: user.id,
-      name: user.name,
-      img: user.imgProfile ?? null,
-      connected: usersConnected.some(
-        (conn: { userId: number }) => conn.userId === user.id
-      ),
-    }));
-
-    listUserConnected.current = users;
-    setListSearchUser(users)
-  }, [usersByCompany]);
-
-  useEffect(() => {
-  if (!usersConnected) return;
-
-  // Actualiza solo el campo "connected" en la lista actual
-  setListSearchUser((prev) =>
-    prev.map((user) => ({
-      ...user,
-      connected: usersConnected.some((conn: { userId: number; }) => conn.userId === user.userId),
-    }))
-  );
-
-  // Actualiza también la ref base si quieres que siga sincronizada
-  listUserConnected.current = listUserConnected.current.map((user) => ({
-    ...user,
-    connected: usersConnected.some((conn: { userId: number; }) => conn.userId === user.userId),
-  }));
-}, [usersConnected]);
-
-  useEffect(() => {
-    if (searchUser === "") {
-      setListSearchUser(listUserConnected.current);
-    } else {
-      setListSearchUser(
-        listUserConnected.current.filter((user) =>
-          user.name.toLowerCase().includes(searchUser.toLowerCase())
-        )
-      );
-    }
-  }, [searchUser]);
+}: Props) {
 
   if (!listUserConnected.current || listUserConnected.current.length === 0) {
     return <Loading />;
@@ -101,6 +56,7 @@ export default function ListUserChat() {
           <div
             key={user.userId}
             className="flex items-center gap-3 p-4 border-b border-zinc-200 rounded-lg hover:bg-zinc-100 hover:cursor-pointer transition-all duration-200 ease-in"
+            onClick={()=>handlerSelectedUserChat(user.userId)}
           >
             <Avatar
               url={user.img}

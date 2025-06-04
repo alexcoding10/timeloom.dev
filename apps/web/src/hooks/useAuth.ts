@@ -10,26 +10,20 @@ export const useAuth = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [usersConnected, setUsersConnected] = useState<any>(null); // en principio
+  const [usersConnected, setUsersConnected] = useState<any>(null);
+  const [messages, setMessages] = useState<any[]>([]);  // plural messages
   const router = useRouter();
 
   const logout = () => {
-    //elimina el token y el usuario
-    //el token se elimina desde el back
     fetch(`${URL_BACKEND_DEV}/auth/logout`, {
       method: "GET",
       credentials: "include",
     });
-    // Desconecta el socket si está activo
     if (socketRef.current) {
       socketRef.current.disconnect();
       socketRef.current = null;
     }
-
-    // Redirige primero
     router.push("/");
-    // Borra el usuario
-    setUser(null);
   };
 
   const fetchUser = async () => {
@@ -82,22 +76,23 @@ export const useAuth = () => {
       setUsersConnected(data.users);
     });
 
-    socket.on("message", (payload) => {
-      console.log("📨 Mensaje público:", payload);
-    });
-
-    socket.on("private_message", (payload) => {
-      console.log("📩 Mensaje privado:", payload);
-    });
-
-    socket.on("disconnect", () => {
-      console.log("🔌 Socket desconectado");
+    socket.on('private_message', (msg) => {
+      setMessages(prev => [...prev, msg]);
     });
 
     return () => {
       socket.disconnect();
+      socket.off('private_message');
+      socket.off('chat_history');
+      socket.off('user_connected');
+      socket.off('connect');
     };
   }, [user]);
 
-  return { user, setUser, loading, error, fetchUser, logout, usersConnected };
+  const sendMessage = (toUserId: number, message: string) => {
+    if (!socketRef.current) return;
+    socketRef.current.emit('private_message', { toUserId, message });
+  };
+
+  return { user, setUser, loading, error, fetchUser, logout, usersConnected, messages, sendMessage ,socketRef};
 };

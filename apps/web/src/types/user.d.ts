@@ -161,3 +161,10 @@ type Company = {
   coordinates: Coordinates;
 };
 
+
+export type UserConnected = {
+  userId: number;
+  connected: boolean;
+  name: string;
+  img: string | null;
+};

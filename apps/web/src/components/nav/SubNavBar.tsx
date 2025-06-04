@@ -17,15 +17,17 @@ export default function SubNavBar() {
       title: "Perfil",
       icon: <FaRegUser />,
       handler: () => {
-        router.push('/profile',{scroll:false})
-      }
+        router.push('/profile', { scroll: false })
+      },
+      rol: ["supervisor", "employee", "hr"],
     }, {
       title: "Cerrar sesion",
       icon: <IoIosLogOut />,
       handler: () => {
         logout(); //cierra sesion
         handlerOpenSettings() //cierra el menu
-      }
+      },
+      rol: null
     },
 
   ]
@@ -72,13 +74,19 @@ export default function SubNavBar() {
             className="w-full h-full bg-zinc-100 rounded-2xl transition-all ease-in-out duration-200 p-4"
           >
             {/*Botones como cerrar sesion */}
-            <ul className="flex flex-col  flex-col-reverse gap-2">
-              {subNavData.map((item, index) => (
-                <li key={index} onClick={item.handler} className="flex gap-3 items-center rounded-lg hover:bg-zinc-300 px-2 py-1 cursor-pointer">
-                  {item.icon}
-                  <p className="text-zinc-600">{item.title}</p>
-                </li>
-              ))}
+            <ul className="flex  flex-col  gap-2">
+              {subNavData.filter((link) => {
+                if (!link.rol) return true
+                //mostrar solo si el permiso esta en rol del link
+                return link.rol.includes(user.globalRol[0].rol.name);
+              })
+
+                .map((item, index) => (
+                  <li key={index} onClick={item.handler} className="flex gap-3 items-center rounded-lg hover:bg-zinc-300 px-2 py-1 cursor-pointer">
+                    {item.icon}
+                    <p className="text-zinc-600">{item.title}</p>
+                  </li>
+                ))}
             </ul>
           </motion.div>
         </motion.div>
