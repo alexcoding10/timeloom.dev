@@ -46,7 +46,7 @@ export const UserControlProvider: React.FC<UserControlProviderProps> = ({ childr
     <UserControlContext.Provider value={{ usersByCompany, loadingUserFetch, addUsersByCompany, openCreateUser, handlerCloseCreateUserView, setOpenCreateUser, handlerSelectUser, handlerDeselectUser, currentUserSelect, updateUsersCompanyById }}>
       {children}
     </UserControlContext.Provider>
-  );
+  );""
 };
 
 export const useUserControlContext = (): UserControlState => {

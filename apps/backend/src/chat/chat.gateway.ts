@@ -20,7 +20,19 @@ interface ChatMessage {
   timestamp: number;
 }
 
-@WebSocketGateway({ cors: true })
+@WebSocketGateway({
+  cors: {
+    origin: [
+      'http://localhost:3000',
+      'http://192.168.68.100:3000',
+      'http://localhost:3030',
+      'http://192.168.68.100:3030',
+      'http://85.219.2.167'
+    ],
+    credentials: true,
+    path: '/socket.io/', // importante: debe coincidir
+  }
+})
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @WebSocketServer()

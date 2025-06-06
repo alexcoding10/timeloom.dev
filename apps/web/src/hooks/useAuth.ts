@@ -1,6 +1,6 @@
 "use client";
 
-import { URL_BACKEND_DEV } from "@/utils/config";
+import { URL_BACKEND_DEV, URL_WEBSOCKET } from "@/utils/config";
 import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { useRouter } from "next/navigation";
@@ -56,7 +56,7 @@ export const useAuth = () => {
   useEffect(() => {
     if (!user) return;
 
-    const socket: Socket = io(URL_BACKEND_DEV, {
+    const socket: Socket = io(URL_WEBSOCKET, {
       transports: ["websocket"],
       withCredentials: true,
     });

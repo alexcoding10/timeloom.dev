@@ -8,9 +8,11 @@ async function bootstrap() {
   app.use(cookieParser());
   // Configuración personalizada de CORS
   app.enableCors({
-    origin: ['http://localhost:3000','http://192.168.68.108:3000','http://localhost:3030','http://192.168.68.108:3030'], // Permite peticiones desde cualquier origen
+    origin: ['http://localhost:3000','http://192.168.68.100:3000','http://localhost:3030','http://192.168.68.100:3030','http://85.219.2.167'], // Permite peticiones desde cualquier origen
     credentials: true, // Permite el uso de credenciales como cookies y cabeceras de autorización
   });
+
+  //app.setGlobalPrefix('api')
 
    const port = process.env.PORT || 3001; // <-- PORT
  

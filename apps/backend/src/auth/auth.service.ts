@@ -18,7 +18,7 @@ export class AuthService {
     private readonly responseService: ResponseService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-  ) {}
+  ) { }
 
   async registerAdmin(userData: CreateUserAdminDto) {
     // Comprobamos si el email ya está registrado
@@ -112,11 +112,13 @@ export class AuthService {
 
         //guardamos el token en una cookie segura
         resp.cookie('auth_token', token, {
-          httpOnly: true, //bloquea el acceso desde js
-          secure: this.configService.get<boolean>('COOKIE_SECURE'), // solo en produccion
-          sameSite: this.configService.get('SAME_SITE'), // Protege contra CSRF
-          maxAge: 3600000, // Expira en 1 hora
+          httpOnly: true,
+          secure: false,         // 👈 en local, debe ser false
+          sameSite: 'lax',       // 👈 debe ser lax en local
+          path: '/',             // 👈 debe estar presente
+          maxAge: 3600000,
         });
+
 
         return this.responseService.formatResponse(
           true,
@@ -158,7 +160,7 @@ export class AuthService {
         },
       },
     });
-    
+
 
     if (!user) {
       throw new UnauthorizedException('Usuario no encontrado');
@@ -178,7 +180,7 @@ export class AuthService {
     // Eliminar la cookie 'auth_token' enviada al frontend
     res.clearCookie('auth_token', {
       httpOnly: true, // Asegura que no pueda ser accedida desde JS
-      secure:  this.configService.get<boolean>('COOKIE_SECURE'), // Usa `true` solo si estás usando HTTPS
+      secure: this.configService.get<boolean>('COOKIE_SECURE'), // Usa `true` solo si estás usando HTTPS
       sameSite: this.configService.get('SAME_SITE'), // Asegura que la cookie se pueda compartir entre el backend y frontend
     });
 

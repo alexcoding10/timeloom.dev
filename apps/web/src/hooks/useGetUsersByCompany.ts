@@ -5,7 +5,7 @@ import { UserControl } from '@/types/user'
 import { URL_BACKEND_DEV } from '@/utils/config'
 import { useEffect, useState } from 'react'
 
-function useGetUsersByCompany(companyId: any) {
+function useGetUsersByCompany(companyId?: any) {
   const { user, loading } = useAuthContext()
   const [loadingUserFetch, setLoadingUserFetch] = useState(true)
   const [usersByCompany, setUsersByCompany] = useState<UserControl[]>([])
