@@ -27,7 +27,8 @@ interface ChatMessage {
       'http://192.168.68.100:3000',
       'http://localhost:3030',
       'http://192.168.68.100:3030',
-      'http://85.219.2.167'
+      'http://85.219.2.167',
+      'http://timeloomapp.com'
     ],
     credentials: true,
     path: '/socket.io/', // importante: debe coincidir
