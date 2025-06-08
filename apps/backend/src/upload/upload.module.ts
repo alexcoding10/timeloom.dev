@@ -11,7 +11,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
     PrismaModule,
     MulterModule.register({
       storage: diskStorage({
-        destination: join(process.cwd(), 'uploads'), // Carpeta donde se guardarán los archivos
+        destination: '/home/alexcoding/dev/timeloom.dev-clean/apps/backend/uploads', // Carpeta donde se guardarán los archivos
         filename: (req, file, callback) => {
           const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
           callback(null, uniqueSuffix + extname(file.originalname)); // Guardar con un nombre único
@@ -19,7 +19,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
       }),
     }),
     ServeStaticModule.forRoot({
-        rootPath:join(process.cwd(), 'uploads'),
+        rootPath:join(__dirname,'..', '..','uploads'),
         serveRoot:'/uploads'
     })
   ],
