@@ -110,6 +110,7 @@ export default function ChatPrivate({
                     url={userCurrentChat.img}
                     name={userCurrentChat.name}
                     width='w-10'
+                    height='h-10'
                 />
                 <h1 className='text-white'>{userCurrentChat.name}</h1>
             </div>
