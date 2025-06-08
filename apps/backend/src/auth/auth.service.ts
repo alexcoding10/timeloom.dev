@@ -180,8 +180,8 @@ export class AuthService {
     // Eliminar la cookie 'auth_token' enviada al frontend
     res.clearCookie('auth_token', {
       httpOnly: true, // Asegura que no pueda ser accedida desde JS
-      secure: this.configService.get<boolean>('COOKIE_SECURE'), // Usa `true` solo si estás usando HTTPS
-      sameSite: this.configService.get('SAME_SITE'), // Asegura que la cookie se pueda compartir entre el backend y frontend
+      secure: true, // Usa `true` solo si estás usando HTTPS
+      sameSite:'none', // Asegura que la cookie se pueda compartir entre el backend y frontend
     });
 
     // Enviar respuesta de logout
