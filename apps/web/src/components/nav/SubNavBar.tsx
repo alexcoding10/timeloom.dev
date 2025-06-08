@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 
 export default function SubNavBar() {
   const { user, logout } = useAuthContext();
-  const { collapsed, openSettings, handlerOpenSettings } = useNav();
+  const { collapsed, openSettings, handlerOpenSettings,isMobile } = useNav();
   const router = useRouter();
   //Aqui puedes poner mas botones si lo deseas
   const subNavData = [
@@ -38,15 +38,15 @@ export default function SubNavBar() {
       {openSettings && (
         <motion.div
           key="settings-panel"
-          initial={{ opacity: 0, left: 100 }}
+          initial={{ opacity: 0, left: isMobile? 0: 100, bottom : isMobile ? -100:0, }}
           animate={{
             opacity: 1,
-            left: collapsed ? 80 : 230,
-            bottom: 0,
+            left: isMobile ? 0 : collapsed ? 80 : 230,
+            bottom: isMobile ? 80 : 0,
             transition: { duration: 0.3, ease: "easeInOut" },
           }}
-          exit={{ opacity: 0, left: 100, transition: { duration: 0.2 } }}
-          className="absolute bg-white border border-zinc-300 w-[200px] rounded-2xl rounded-bl-none z-50 p-2 shadow-lg shadow-blue-500/30"
+          exit={{ opacity: 0, left: isMobile? 0: 100, bottom : isMobile ? -100:0, transition: { duration: 0.2 } }}
+          className={`absolute bg-white  z-50 p-2 ${isMobile ? ' border border-zinc-300 border-b-0 rounded-tr-2xl ': 'shadow-lg  shadow-blue-500/30 border border-zinc-300 w-[200px] rounded-2xl rounded-bl-none'} `}
         >
           {/* Animación del nombre y email */}
           {collapsed && (

@@ -12,7 +12,7 @@ export default function LayoutWithNav({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const { collapsed} = useNav();
+  const { collapsed,isMobile} = useNav();
 
   return (
     <div className="flex h-screen">
@@ -24,7 +24,7 @@ export default function LayoutWithNav({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.25 }}
-          className={`flex-1 py-4 px-4 lg:py-5 lg:px-20 ${collapsed? 'ml-[100px]' : 'min-[770px]:ml-[250px]'} transition-all duration-200 ease-in`}
+          className={`flex-1 py-4 px-4 lg:py-5 lg:px-20 ${isMobile? '' : collapsed? 'ml-[100px]' : 'min-[770px]:ml-[250px]'} transition-all duration-200 ease-in`}
         >
           {children}
         </motion.div>
