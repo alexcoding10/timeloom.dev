@@ -11,7 +11,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
     PrismaModule,
     MulterModule.register({
       storage: diskStorage({
-        destination: './uploads', // Carpeta donde se guardarán los archivos
+        destination: join(process.cwd(), 'uploads'), // Carpeta donde se guardarán los archivos
         filename: (req, file, callback) => {
           const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
           callback(null, uniqueSuffix + extname(file.originalname)); // Guardar con un nombre único
@@ -19,7 +19,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
       }),
     }),
     ServeStaticModule.forRoot({
-        rootPath:join(__dirname,'..', '..','uploads'),
+        rootPath:join(process.cwd(), 'uploads'),
         serveRoot:'/uploads'
     })
   ],
