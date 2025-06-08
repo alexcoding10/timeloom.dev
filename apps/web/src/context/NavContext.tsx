@@ -23,7 +23,7 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 420);
+      setIsMobile(window.innerWidth <= 500);
     };
 
     handleResize();
