@@ -5,7 +5,6 @@ import { URL_BACKEND_DEV } from "@/utils/config";
 import { useEffect, useRef, useState } from "react";
 import {
   CreateTimeBreak,
-  NameControl,
   NameInfo,
   TimeEntry,
 } from "@/types/signings";

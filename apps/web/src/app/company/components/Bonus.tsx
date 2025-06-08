@@ -3,17 +3,19 @@
 import FormCreateBonus from "@/components/form/FormCreateBonus";
 import BonusTable from "@/components/tables/BonusTable";
 import { BonusProvaider } from "@/context/BonusContext";
+import { useNav } from "@/hooks/useNav";
 import React, { useState } from "react";
 import { Modal } from "rsuite";
 
 export default function Bonus() {
+  const{collapsed}= useNav()
   const [openNewBonus, setOpenNewBonus] = useState(false);
   const handlerOpenNewBonus = () => setOpenNewBonus(true);
   const handlerCloseNewBonus = () => setOpenNewBonus(false);
   return (
     <BonusProvaider>
       <div className="rounded-3xl border-2 border-zinc-200 shadow-md p-10">
-        <div className="flex gap-2 md:gap-10 mb-5 flex-col md:flex-row items-center">
+        <div className={`${collapsed ? '': 'flex-col md:flex-row'}flex gap-2 md:gap-10 mb-5  items-center`}>
           <h1 className="font-montserrat md:text-xl font-semibold">
             Bonus de contratos
           </h1>
