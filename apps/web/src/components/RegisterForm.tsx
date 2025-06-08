@@ -10,7 +10,7 @@ interface Props {
 }
 
 type Error = {
-  value: Boolean;
+  value: boolean;
   text: string;
 };
 

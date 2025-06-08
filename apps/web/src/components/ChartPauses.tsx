@@ -1,7 +1,4 @@
-import { ColsPauses, GetPauses } from '@/types/signings'
-import { formatDate } from '@/utils/utils'
-import { col } from 'framer-motion/client'
-import React, { useRef } from 'react'
+import React from 'react'
 import Loading from './Loading'
 import { Col } from '@/hooks/useChartPause'
 

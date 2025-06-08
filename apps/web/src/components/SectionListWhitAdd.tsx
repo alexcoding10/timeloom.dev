@@ -19,7 +19,7 @@ type SectionListProps = {
   color: "green" | "red";
   allItems?: Bonus[] | Deduction[];
   typeContract: string
-  editable?: Boolean
+  editable?: boolean
 };
 
 const SectionListWhitAdd = ({

@@ -265,7 +265,7 @@ export const useSignings = () => {
       ? new Date(signings.clockOut)
       : new Date();
     const timeOut = new Date(clockIn.getTime() + 8 * 60 * 60 * 1000); //!mas 8 horas de momento
-    let timePause = getTimePause();
+    const timePause = getTimePause();
     //Setear tiempo de salida
     setTimeControl(timeOut, "timeOut");
 

@@ -1,7 +1,6 @@
 'use client';
 
 import { useAuthContext } from '@/context/AuthContext';
-import { div } from 'framer-motion/client';
 import { useRouter, usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import Loading from '../Loading';
