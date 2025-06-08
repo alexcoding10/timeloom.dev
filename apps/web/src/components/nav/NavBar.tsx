@@ -51,7 +51,7 @@ export const NavBarData = {
       title: "Notificaciones",
       url: "/notification",
       icon: <BsBellFill />,
-      rol: null,
+      rol: [],
     },
     {
       title: "Chat",
@@ -88,7 +88,7 @@ export default function NavBar() {
     <nav
       className={`${
         collapsed ? "w-[100px]" : "w-[250px]"
-      } bg-white flex flex-col border-r border-zinc-200 transition-all duration-300 ease-in-out fixed h-full z-50`}
+      } bg-white flex flex-col border-r border-zinc-200 transition-all duration-300 ease-in-out fixed h-screen z-50`}
     >
       {/* Header / Company Info */}
       <div className="bg-zinc-100 rounded-3xl flex-1 m-2">

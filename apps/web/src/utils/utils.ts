@@ -153,6 +153,12 @@ export function getCalendarDayDiff(date1: Date, date2: Date): number {
   return Math.floor(msDiff / (1000 * 60 * 60 * 24)) + 1;
 }
 
+export function decimalHoursToHHMM(decimalHours:number) {
+  const hours = Math.floor(decimalHours);
+  const minutes = Math.round((decimalHours - hours) * 60);
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+}
+
 export function formatTypeContract(type: TypeContract): string {
   switch (type) {
     case "FIXED":

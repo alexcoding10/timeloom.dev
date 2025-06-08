@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DateRangePicker } from "rsuite";
 import dayjs from "dayjs";
+import { useGetBalanceCompany } from "@/hooks/useGetBalanceCompany";
+import { decimalHoursToHHMM } from "@/utils/utils";
 
 type Balance = {
   id: string;
@@ -19,7 +21,7 @@ const balances: Balance[] = [
   {
     id: "payments",
     label: "Pagos",
-    value: "300",
+    value: "0",
     icon: {
       color: "text-success-700",
       img: "💰",
@@ -29,7 +31,7 @@ const balances: Balance[] = [
   {
     id: "hours",
     label: "Horas totales",
-    value: "1000",
+    value: "0",
     icon: {
       color: "text-info-600",
       img: "⏱️",
@@ -39,7 +41,7 @@ const balances: Balance[] = [
   {
     id: "workers",
     label: "Tabajadores",
-    value: "300",
+    value: "0",
     icon: {
       color: "text-error-600",
       img: "🧑🏻‍💻",
@@ -48,7 +50,7 @@ const balances: Balance[] = [
   },
 ];
 
-function Balances() {
+function Balances({ user }: { user: any }) {
   const [balance, setBalance] = useState<Balance[]>(balances);
   const today = dayjs();
   const thirtyDaysAgo = today.subtract(30, "day");
@@ -57,6 +59,10 @@ function Balances() {
     thirtyDaysAgo.toDate(),
     today.toDate(),
   ]);
+  const startDateStr = dayjs(dateRange[0]).format("YYYY-MM-DD");
+  const endDateStr = dayjs(dateRange[1]).format("YYYY-MM-DD");
+
+  const { balance: balanceData } = useGetBalanceCompany(user.companyId,startDateStr,endDateStr);
 
   const updateValueBalance = ({
     id,
@@ -69,6 +75,26 @@ function Balances() {
       prev.map((item) => (item.id === id ? { ...item, value: newValue } : item))
     );
   };
+
+  useEffect(() => {
+    if (!balanceData) return;
+    updateValueBalance({
+      id: "workers",
+      newValue: balanceData.workers.toString(),
+    });
+    updateValueBalance({
+      id: "payments",
+      newValue: balanceData.totalPayment.toString(),
+    });
+    updateValueBalance({
+      id: "hours",
+      newValue: decimalHoursToHHMM(balanceData.totalWorkedHours),
+    });
+  }, [balanceData]);
+
+  useEffect(() => {
+    console.log(dateRange);
+  }, [dateRange]);
 
   return (
     <div className=" md:col-span-2 rounded-3xl border-2 border-zinc-200 shadow-md p-10">

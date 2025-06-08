@@ -4,8 +4,9 @@ import React from "react";
 import Balances from "./components/Balances";
 import Deductions from "./components/Deductions";
 import Bonus from "./components/Bonus";
-import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import AuthGuard from "@/components/auth/AuthGuard";
+import { useAuth } from "@/hooks/useAuth";
+import Loading from "@/components/Loading";
 
 const balances = [
   {
@@ -35,13 +36,19 @@ const balances = [
 ];
 
 export default function Company() {
+    const { user } = useAuth();
+
+    if(!user){
+      return <Loading/>
+    }
+
   return (
     <AuthGuard allowedRoles={["admin"]}>
       <LayoutWithNav>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {/**Balance de horas y pagos de la empresa */}
           {/** Sincronizacion del server */}
-          <Balances /> {/*Hay que conectarlo con base de datos */}
+          <Balances user={user}/> {/*Hay que conectarlo con base de datos */}
           {/**Deducciones y crear deducciones */}
           <Deductions />
           {/**Bonus y crear bonus*/}
